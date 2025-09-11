@@ -57,7 +57,18 @@ export function ChatCard({ subjects, onTaskAdded }: ChatCardProps) {
     setInput("");
 
     startTransition(async () => {
-      const result = await chatWithBotAction(currentInput, subjects);
+      // Create a serializable version of the subjects object
+      const serializableSubjects = Object.fromEntries(
+        Object.entries(subjects).map(([key, value]) => [
+          key,
+          {
+            name: value.name,
+            todos: value.todos.map(t => t.text),
+          },
+        ])
+      );
+
+      const result = await chatWithBotAction(currentInput, serializableSubjects);
 
       if (result.success && result.response) {
         setMessages((prev) => [
@@ -73,14 +84,12 @@ export function ChatCard({ subjects, onTaskAdded }: ChatCardProps) {
           const subjectMatch = lowerCaseResponse.match(
             /(chemistry|physics|pure maths|applied maths)/
           );
-          // A more robust regex to capture the task between 'add' and 'to'
           const taskRegex = /add(?:ed)?\s(?:task\s)?(?:'|")?(.+?)(?:'|")?\s*to/i;
           const taskMatch = currentInput.match(taskRegex);
 
           let task = taskMatch ? taskMatch[1].trim() : null;
 
           if (subjectMatch && task) {
-            // Simple fuzzy matching for subject keys
             let subjectKey = subjectMatch[1].replace(" ", "").toLowerCase();
             if (subjectKey === "puremaths") subjectKey = "pureMaths";
             if (subjectKey === "appliedmaths") subjectKey = "appliedMaths";
@@ -96,7 +105,6 @@ export function ChatCard({ subjects, onTaskAdded }: ChatCardProps) {
           title: "AI Chat Error",
           description: result.message,
         });
-        // On error, remove the user's last message to allow them to try again
         setMessages((prev) => prev.slice(0, -1));
       }
     });

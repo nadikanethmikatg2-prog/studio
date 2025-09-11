@@ -10,8 +10,14 @@ import {
 } from "@/ai/flows/generate-study-goals";
 import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-schemas";
 import { chatWithBot } from "@/ai/flows/chat-flow";
-import type { Subjects } from "./page";
 
+// Define a type for the serializable subjects data
+type SerializableSubjects = {
+  [key: string]: {
+    name: string;
+    todos: string[];
+  }
+}
 
 export async function getMotivationalMessageAction(
   input: MotivationalMessageInput
@@ -45,16 +51,10 @@ export async function generateStudyGoalsAction(
 
 export async function chatWithBotAction(
   prompt: string,
-  subjects: Subjects
+  subjects: SerializableSubjects
 ): Promise<{ success: boolean; response: string | null; message: string }> {
   try {
-    // Convert subjects object to a string for the prompt
-    const todosString = JSON.stringify(
-      Object.entries(subjects).map(([key, value]) => ({
-        subject: value.name,
-        todos: value.todos.map(t => t.text)
-      })), null, 2
-    );
+    const todosString = JSON.stringify(subjects, null, 2);
 
     const result = await chatWithBot(prompt, todosString);
     return { success: true, response: result, message: "Success" };
@@ -63,7 +63,7 @@ export async function chatWithBotAction(
     return {
       success: false,
       response: null,
-      message: `Failed to get response from AI. Details: ${error.message} Stack: ${error.stack}`,
+      message: `Failed to get response from AI. Details: ${error.message}`,
     };
   }
 }
