@@ -35,12 +35,12 @@ export function CountdownCard() {
       return timeLeft;
     };
 
+    // Set initial value
+    setTimeLeft(calculateTimeLeft());
+
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
-
-    // Set initial value
-    setTimeLeft(calculateTimeLeft());
 
     return () => clearInterval(timer);
   }, []);
@@ -48,15 +48,15 @@ export function CountdownCard() {
   const timeParts = [
     { label: "Days", value: timeLeft.days },
     { label: "Hours", value: timeLeft.hours },
-    { label: "Minutes", value: timeLeft.minutes },
-    { label: "Seconds", value: timeLeft.seconds },
+    { label: "Mins", value: timeLeft.minutes },
+    { label: "Secs", value: timeLeft.seconds },
   ];
 
   return (
     <Card className="bg-primary/10 border-primary/20 text-primary-foreground">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-primary">
-          <Timer className="h-6 w-6" />
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center text-base gap-2 text-primary">
+          <Timer className="h-5 w-5" />
           Countdown to A/L 2027
         </CardTitle>
       </CardHeader>
@@ -65,9 +65,9 @@ export function CountdownCard() {
           {timeParts.map((part) => (
             <div
               key={part.label}
-              className="flex flex-col items-center justify-center p-2 rounded-md bg-primary/20"
+              className="flex flex-col items-center justify-center p-2 rounded-lg bg-primary/20"
             >
-              <div className="text-3xl font-bold text-primary-foreground">
+              <div className="text-2xl font-bold text-primary-foreground">
                 {String(part.value).padStart(2, "0")}
               </div>
               <div className="text-xs uppercase tracking-wider text-primary-foreground/80">

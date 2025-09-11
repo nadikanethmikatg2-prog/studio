@@ -1,6 +1,6 @@
 "use client";
 
-import { Line, LineChart, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import {
   Card,
   CardContent,
@@ -16,84 +16,113 @@ import { format, startOfWeek, endOfWeek } from "date-fns";
 import type { Subjects } from "@/app/page";
 
 interface WeeklyProgressChartProps {
-  weekData: any[];
+  currentWeekData: any[];
+  previousWeekData: any[];
   subjects: Subjects;
   selectedDate: Date;
   onDateChange: (date: Date) => void;
 }
 
-export function WeeklyProgressChart({ weekData, subjects, selectedDate, onDateChange }: WeeklyProgressChartProps) {
+const CustomTooltip = ({ active, payload, label, subjects }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="p-2 bg-card border border-border rounded-lg shadow-lg">
+        <p className="label font-bold">{`${label}`}</p>
+        {payload.map((pld: any, index: number) => (
+            <div key={index} style={{ color: pld.stroke || pld.fill }}>
+                {`${pld.name}: ${pld.value.toFixed(1)}h`}
+            </div>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+};
+
+
+export function WeeklyProgressChart({ currentWeekData, previousWeekData, subjects, selectedDate, onDateChange }: WeeklyProgressChartProps) {
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
+  
+  const combinedData = currentWeekData.map((d, i) => ({
+      ...d,
+      previousTotalHours: previousWeekData[i]?.totalHours || 0
+  }))
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="space-y-1.5">
-            <CardTitle className="flex items-center gap-2">
-                <GanttChart className="h-6 w-6 text-primary"/>
-                Weekly Progress
-            </CardTitle>
-            <CardDescription>
-                {format(weekStart, "MMM d")} - {format(weekEnd, "MMM d, yyyy")}
-            </CardDescription>
-        </div>
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button variant={"outline"} size={"sm"}>
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {format(selectedDate, "MMM d, yyyy")}
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-                <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={(day) => day && onDateChange(day)}
-                    initialFocus
-                />
-            </PopoverContent>
-        </Popover>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={250}>
-            {weekData.some(d => d.totalHours > 0) ? (
-                <LineChart data={weekData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                    <XAxis
-                    dataKey="date"
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
+    <div className="h-full flex flex-col">
+        <div className="flex flex-row items-start justify-between p-4 pb-0">
+            <div className="space-y-1.5">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <GanttChart className="h-5 w-5 text-primary"/>
+                    Weekly Progress
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                    {format(weekStart, "MMM d")} - {format(weekEnd, "MMM d, yyyy")}
+                </p>
+            </div>
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button variant={"outline"} size={"sm"} className="text-xs">
+                        <CalendarIcon className="mr-1.5 h-3.5 w-3.5" />
+                        {format(selectedDate, "MMM d, yyyy")}
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                    <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(day) => day && onDateChange(day)}
+                        initialFocus
                     />
-                    <YAxis
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `${value}h`}
-                    />
-                    <Tooltip
-                        cursor={{ fill: "hsl(var(--muted))" }}
-                        contentStyle={{
-                            backgroundColor: "hsl(var(--background))",
-                            borderColor: "hsl(var(--border))",
-                        }}
-                        formatter={(value: number) => [`${value.toFixed(1)} hrs`, 'Hours']}
-                    />
-                    <Legend iconSize={10} />
-                    <Line type="monotone" dataKey="totalHours" name="Total Hours" stroke="hsl(var(--primary))" strokeWidth={2} />
-                    {Object.entries(subjects).map(([key, subject]) => (
-                        <Line key={key} type="monotone" dataKey={key} name={subject.name} stroke={subject.color} strokeWidth={1} strokeDasharray="3 3"/>
-                    ))}
-                </LineChart>
+                </PopoverContent>
+            </Popover>
+      </div>
+      <div className="flex-1 min-h-0">
+            {currentWeekData.some(d => d.totalHours > 0) || previousWeekData.some(d => d.totalHours > 0) ? (
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={combinedData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
+                                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                            </linearGradient>
+                        </defs>
+                        <XAxis
+                        dataKey="date"
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        />
+                        <YAxis
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={(value) => `${value}h`}
+                        />
+                        <Tooltip
+                            content={<CustomTooltip subjects={subjects} />}
+                            cursor={{ fill: "hsl(var(--muted))", fillOpacity: 0.5 }}
+                            contentStyle={{
+                                backgroundColor: "hsl(var(--card))",
+                                borderColor: "hsl(var(--border))",
+                                borderRadius: "var(--radius)",
+                            }}
+                        />
+                        <Legend iconSize={10} wrapperStyle={{fontSize: '0.8rem'}}/>
+                        <Area dataKey="previousTotalHours" name="Previous Week" stroke="hsl(var(--muted-foreground))" fill="transparent" strokeWidth={1.5} strokeDasharray="4 4" />
+                        <Area type="monotone" dataKey="totalHours" name="Current Week" stroke="hsl(var(--primary))" fill="url(#colorTotal)" strokeWidth={2} />
+                    </AreaChart>
+                </ResponsiveContainer>
             ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
                     No study hours logged for this week.
                 </div>
             )}
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+        </div>
+    </div>
   );
 }

@@ -9,21 +9,23 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import type { Subjects } from "@/app/page";
-import { BrainCircuit } from "lucide-react";
+import { PieChart as PieChartIcon } from "lucide-react";
 import React from "react";
 
 interface SubjectPieChartProps {
   subjects: Subjects;
 }
 
-const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name }: any) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.6;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
+  if (percent < 0.05) return null; // Don't render label for small slices
+
   return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-xs font-medium">
       {`${(percent * 100).toFixed(0)}%`}
     </text>
   );
@@ -40,51 +42,54 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
     }));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BrainCircuit className="h-6 w-6 text-primary" />
-          Subject Distribution
-        </CardTitle>
-        <CardDescription>
-          How your study time is distributed across subjects.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={250}>
+    <div className="h-full flex flex-col">
+        <div className="p-4 pb-0">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+                <PieChartIcon className="h-5 w-5 text-primary" />
+                Subject Distribution
+            </h3>
+            <p className="text-sm text-muted-foreground">
+                Your study time distribution.
+            </p>
+        </div>
+        <div className="flex-1 min-h-0">
           {chartData.length > 0 ? (
-            <PieChart>
-              <Tooltip
-                cursor={{ fill: "hsl(var(--muted))" }}
-                contentStyle={{
-                  backgroundColor: "hsl(var(--background))",
-                  borderColor: "hsl(var(--border))",
-                }}
-                formatter={(value: number, name: string) => [`${value.toFixed(1)} hrs`, name]}
-              />
-              <Pie
-                data={chartData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                labelLine={false}
-                label={renderCustomizedLabel}
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} stroke={entry.fill} />
-                ))}
-              </Pie>
-              <Legend iconSize={10} />
-            </PieChart>
-          ) : (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
+            <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                <Tooltip
+                    cursor={{ fill: "hsl(var(--muted))" }}
+                    contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    borderColor: "hsl(var(--border))",
+                    borderRadius: "var(--radius)",
+                    }}
+                    formatter={(value: number, name: string) => [`${value.toFixed(1)} hrs`, name]}
+                />
+                <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius="80%"
+                    innerRadius="50%"
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                    paddingAngle={2}
+                >
+                    {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} stroke={"hsl(var(--card))"} strokeWidth={2} />
+                    ))}
+                </Pie>
+                <Legend iconSize={10} wrapperStyle={{fontSize: '0.8rem'}}/>
+                </PieChart>
+            </ResponsiveContainer>
+           ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
               Log some hours to see the chart.
             </div>
           )}
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+        </div>
+    </div>
   );
 }

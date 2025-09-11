@@ -11,16 +11,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Clock, ListTodo } from "lucide-react";
+import { Plus, Clock, ListTodo, Activity } from "lucide-react";
 import type { Subject, Todo, Subjects } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface ActivityLoggerCardProps {
   subjects: Subjects;
@@ -89,33 +83,43 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Log Your Activity</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+            <Activity className="text-primary"/>
+            Log Your Activity
+        </CardTitle>
         <CardDescription>
-          Select a subject to log study hours or add new tasks to your to-do list.
+          Select a subject, then log study hours or add new tasks.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <Label htmlFor="subject-select" className="mb-2 block">
-            Subject
+          <Label className="mb-2 block">
+            1. Select a subject
           </Label>
-          <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-            <SelectTrigger id="subject-select">
-              <SelectValue placeholder="Select a subject..." />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(subjects).map(([key, subject]) => (
-                <SelectItem key={key} value={key}>
-                  {subject.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {Object.entries(subjects).map(([key, subject]) => {
+              const Icon = subject.icon;
+              return (
+                <Button
+                  key={key}
+                  variant="outline"
+                  className={cn(
+                    "h-20 flex-col gap-2 justify-center text-center",
+                    selectedSubject === key ? "border-primary ring-2 ring-primary" : ""
+                  )}
+                  onClick={() => setSelectedSubject(key)}
+                >
+                  <Icon className="h-6 w-6" style={{ color: subject.color }} />
+                  <span className="text-xs">{subject.name}</span>
+                </Button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-                <Label htmlFor={`hours-input`} className="flex items-center gap-2"><Clock /> Log Study Hours</Label>
+                <Label htmlFor={`hours-input`} className="flex items-center gap-2"><Clock /> 2. Log Study Hours</Label>
                 <div className="flex gap-2 items-center">
                     <Input
                     id={`hours-input`}
@@ -124,12 +128,13 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
                     onChange={(e) => setHoursToAdd(e.target.value)}
                     placeholder="e.g., 1.5"
                     onKeyDown={(e) => e.key === 'Enter' && handleLogHoursFromInput()}
+                    disabled={!selectedSubject}
                     />
-                    <Button onClick={handleLogHoursFromInput} disabled={isPending || !selectedSubject}>
+                    <Button onClick={handleLogHoursFromInput} disabled={isPending || !selectedSubject || !hoursToAdd}>
                     Log
                     </Button>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" onClick={() => handleAddHours(0.5)} disabled={!selectedSubject}>+30m</Button>
                     <Button variant="outline" size="sm" onClick={() => handleAddHours(1)} disabled={!selectedSubject}>+1h</Button>
                     <Button variant="outline" size="sm" onClick={() => handleAddHours(2)} disabled={!selectedSubject}>+2h</Button>
@@ -137,7 +142,7 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="todo-input" className="flex items-center gap-2"><ListTodo /> Add a Task</Label>
+                <Label htmlFor="todo-input" className="flex items-center gap-2"><ListTodo /> 3. Add a Task</Label>
                 <div className="flex gap-2">
                     <Input
                     id="todo-input"
@@ -146,8 +151,9 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
                     onChange={(e) => setNewTodo(e.target.value)}
                     placeholder="New task description..."
                     onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
+                    disabled={!selectedSubject}
                     />
-                    <Button onClick={handleAddTodo} variant="outline" size="icon" disabled={isPending || !selectedSubject}>
+                    <Button onClick={handleAddTodo} variant="outline" size="icon" disabled={isPending || !selectedSubject || !newTodo}>
                     <Plus className="h-4 w-4" />
                     </Button>
                 </div>

@@ -15,7 +15,11 @@ import { SubjectPieChart } from "@/components/dashboard/subject-pie-chart";
 import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card";
 import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
 import { WeeklyProgressChart } from "@/components/dashboard/weekly-progress-chart";
-import { startOfWeek, endOfWeek, eachDayOfInterval, format } from "date-fns";
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks } from "date-fns";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 
 export type Todo = {
   id: number;
@@ -54,7 +58,7 @@ const initialSubjects: Subjects = {
     name: "Chemistry",
     icon: FlaskConical,
     totalHours: 0,
-    goalHours: 20,
+    goalHours: 5,
     todos: [],
     color: "hsl(var(--chart-1))",
   },
@@ -62,7 +66,7 @@ const initialSubjects: Subjects = {
     name: "Physics",
     icon: Atom,
     totalHours: 0,
-    goalHours: 20,
+    goalHours: 5,
     todos: [],
     color: "hsl(var(--chart-2))",
   },
@@ -70,7 +74,7 @@ const initialSubjects: Subjects = {
     name: "Pure Maths",
     icon: Sigma,
     totalHours: 0,
-    goalHours: 25,
+    goalHours: 6,
     todos: [],
     color: "hsl(var(--chart-3))",
   },
@@ -78,7 +82,7 @@ const initialSubjects: Subjects = {
     name: "Applied Maths",
     icon: Combine,
     totalHours: 0,
-    goalHours: 25,
+    goalHours: 6,
     todos: [],
     color: "hsl(var(--chart-4))",
   },
@@ -115,7 +119,12 @@ export default function Home() {
     if (isClient) {
       try {
         const dataToSave = {
-          subjects,
+          subjects: {
+            chemistry: { ...subjects.chemistry, icon: undefined },
+            physics: { ...subjects.physics, icon: undefined },
+            pureMaths: { ...subjects.pureMaths, icon: undefined },
+            appliedMaths: { ...subjects.appliedMaths, icon: undefined },
+          },
           dailyLogs
         };
         localStorage.setItem("alTrailblazerData", JSON.stringify(dataToSave));
@@ -153,10 +162,22 @@ export default function Home() {
       [key]: { ...prev[key], ...updatedData },
     }));
   }, []);
+  
+  const handleBulkUpdateGoals = useCallback((newGoals: { [key: string]: number }) => {
+    setSubjects((prev) => {
+      const newSubjects = {...prev};
+      Object.keys(newGoals).forEach(key => {
+        if (newSubjects[key]) {
+          newSubjects[key].goalHours = newGoals[key];
+        }
+      });
+      return newSubjects;
+    });
+  }, []);
 
-  const getWeekData = useCallback(() => {
-    const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
-    const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
+  const getWeekData = useCallback((date: Date) => {
+    const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
     const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
     return weekDays.map(day => {
@@ -170,29 +191,45 @@ export default function Home() {
             ...Object.keys(subjects).reduce((acc, key) => ({...acc, [key]: dayLog[key] || 0 }), {})
         };
     });
-  }, [selectedDate, dailyLogs, subjects]);
+  }, [dailyLogs, subjects]);
+  
+  const currentWeekData = getWeekData(selectedDate);
+  const lastWeekDate = subWeeks(selectedDate, 1);
+  const previousWeekData = getWeekData(lastWeekDate);
 
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background">
       <SiteHeader />
-      <main className="flex-1 p-4 md:p-8">
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 grid gap-8">
+      <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
+          {/* Left Column */}
+          <div className="lg:col-span-2 grid gap-6 md:gap-8">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+                <MotivationCard subjects={subjects} />
+                <CountdownCard />
+            </div>
+             <Card>
+                <CardContent className="p-2 md:p-4">
+                    <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+                        <WeeklyProgressChart
+                            currentWeekData={currentWeekData}
+                            previousWeekData={previousWeekData}
+                            subjects={subjects}
+                            selectedDate={selectedDate}
+                            onDateChange={setSelectedDate}
+                        />
+                        <SubjectPieChart subjects={subjects} />
+                    </div>
+                </CardContent>
+            </Card>
             <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} onUpdate={handleUpdate} />
-            <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
           </div>
-          <div className="space-y-8">
-            <MotivationCard subjects={subjects} />
-            <CountdownCard />
-            <WeeklyProgressChart
-                weekData={getWeekData()}
-                subjects={subjects}
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-            />
-            <SubjectPieChart subjects={subjects} />
-            <GoalsCard subjects={subjects} onUpdate={handleUpdate} />
+
+          {/* Right Column */}
+          <div className="space-y-6 md:space-y-8">
+            <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
+            <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
           </div>
         </div>
       </main>

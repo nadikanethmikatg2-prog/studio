@@ -4,42 +4,11 @@
  * @fileOverview Personalized motivational messages for students based on their study patterns.
  *
  * - generateMotivationalMessage - A function that generates a motivational message.
- * - MotivationalMessageInput - The input type for the generateMotivationalMessage function.
- * - MotivationalMessageOutput - The return type for the generateMotivationalMessage function.
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { MotivationalMessageInputSchema, MotivationalMessageOutputSchema, type MotivationalMessageInput, type MotivationalMessageOutput } from '@/ai/schemas/motivational-message-schemas';
 
-const MotivationalMessageInputSchema = z.object({
-  studyHoursChemistry: z
-    .number()
-    .describe('Number of study hours for Chemistry.'),
-  studyHoursPhysics: z.number().describe('Number of study hours for Physics.'),
-  studyHoursPureMaths: z
-    .number()
-    .describe('Number of study hours for Pure Maths.'),
-  studyHoursAppliedMaths: z
-    .number()
-    .describe('Number of study hours for Applied Maths.'),
-  todoListChemistry: z
-    .string()
-    .describe('To-do list for Chemistry, comma separated.'),
-  todoListPhysics: z.string().describe('To-do list for Physics, comma separated.'),
-  todoListPureMaths: z
-    .string()
-    .describe('To-do list for Pure Maths, comma separated.'),
-  todoListAppliedMaths: z
-    .string()
-    .describe('To-do list for Applied Maths, comma separated.'),
-});
-export type MotivationalMessageInput = z.infer<typeof MotivationalMessageInputSchema>;
-
-const MotivationalMessageOutputSchema = z.object({
-  message: z.string().describe('A personalized motivational message and a brief analysis of study distribution. Mention if any subject is being neglected.'),
-  subjectSpotlight: z.string().describe('Based on the data, suggest one specific subject to focus on next and why. Be encouraging.'),
-});
-export type MotivationalMessageOutput = z.infer<typeof MotivationalMessageOutputSchema>;
 
 export async function generateMotivationalMessage(
   input: MotivationalMessageInput

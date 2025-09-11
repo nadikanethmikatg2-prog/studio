@@ -10,125 +10,100 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Target, Edit } from "lucide-react";
-import type { Subjects, Subject } from "@/app/page";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
+import { Target, Wand2 } from "lucide-react";
+import type { Subjects } from "@/app/page";
+import { useToast } from "@/hooks/use-toast";
+import { generateStudyGoalsAction } from "@/app/actions";
+import { Skeleton } from "../ui/skeleton";
 
 interface GoalsCardProps {
   subjects: Subjects;
-  onUpdate: (key: string, updatedData: Partial<Subject>) => void;
+  onUpdate: (newGoals: { [key: string]: number }) => void;
 }
 
 export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
-  const [editableGoals, setEditableGoals] = useState<Record<string, number>>(
-    {}
-  );
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const totalGoalHours = Object.values(subjects).reduce((sum, s) => sum + s.goalHours, 0);
 
-  const handleGoalChange = (key: string, value: string) => {
-    const numericValue = parseFloat(value);
-    setEditableGoals((prev) => ({
-      ...prev,
-      [key]: isNaN(numericValue) ? 0 : numericValue,
-    }));
-  };
-
-  const handleSaveGoals = () => {
-    startTransition(() => {
-      Object.entries(editableGoals).forEach(([key, goalHours]) => {
-        if (subjects[key].goalHours !== goalHours) {
-          onUpdate(key, { goalHours });
-        }
+  const handleGenerateGoals = () => {
+    startTransition(async () => {
+      const result = await generateStudyGoalsAction({
+        studyHoursChemistry: subjects.chemistry.totalHours,
+        studyHoursPhysics: subjects.physics.totalHours,
+        studyHoursPureMaths: subjects.pureMaths.totalHours,
+        studyHoursAppliedMaths: subjects.appliedMaths.totalHours,
       });
+
+      if (result.success && result.goals) {
+        onUpdate(result.goals);
+        toast({
+          title: "AI Goals Generated",
+          description: "Your weekly study goals have been updated by the AI.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.message,
+        });
+      }
     });
   };
-
-  React.useEffect(() => {
-    const initialGoals: Record<string, number> = {};
-    Object.entries(subjects).forEach(([key, subject]) => {
-      initialGoals[key] = subject.goalHours;
-    });
-    setEditableGoals(initialGoals);
-  }, [subjects]);
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader>
         <div className="space-y-1.5">
           <CardTitle className="flex items-center gap-2">
             <Target className="h-6 w-6 text-primary" />
             Weekly Goals
           </CardTitle>
-          <CardDescription>Track your weekly study hour goals.</CardDescription>
+          <CardDescription>
+            Your AI-powered weekly study hour goals.
+          </CardDescription>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Edit className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Weekly Goals</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              {Object.entries(subjects).map(([key, subject]) => (
-                <div key={key} className="grid grid-cols-3 items-center gap-4">
-                  <Label htmlFor={`goal-${key}`} className="text-right">
-                    {subject.name}
-                  </Label>
-                  <Input
-                    id={`goal-${key}`}
-                    type="number"
-                    value={editableGoals[key] ?? subject.goalHours}
-                    onChange={(e) => handleGoalChange(key, e.target.value)}
-                    className="col-span-2"
-                  />
-                </div>
-              ))}
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  onClick={handleSaveGoals}
-                  disabled={isPending}
-                >
-                  Save Changes
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </CardHeader>
       <CardContent className="space-y-4">
-        {Object.values(subjects).map((subject) => {
-          const progress =
-            subject.goalHours > 0
-              ? (subject.totalHours / subject.goalHours) * 100
-              : 0;
-          return (
-            <div key={subject.name} className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <Label>{subject.name}</Label>
-                <span className="text-muted-foreground">
-                  {subject.totalHours.toFixed(1)} / {subject.goalHours} hrs
-                </span>
+        <div className="flex items-center justify-between p-3 rounded-lg bg-muted">
+            <div className="text-sm font-medium text-muted-foreground">Total Weekly Goal</div>
+            <div className="text-2xl font-bold text-primary">{totalGoalHours.toFixed(1)} hrs</div>
+        </div>
+
+        {isPending ? (
+          <div className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        ) : (
+          Object.values(subjects).map((subject) => {
+            const progress =
+              subject.goalHours > 0
+                ? (subject.totalHours / subject.goalHours) * 100
+                : 0;
+            return (
+              <div key={subject.name} className="space-y-2">
+                <div className="flex justify-between text-sm items-center">
+                  <Label className="font-medium flex items-center gap-2">
+                    <subject.icon className="w-4 h-4" style={{ color: subject.color }}/>
+                    {subject.name}
+                  </Label>
+                  <span className="text-muted-foreground">
+                    {subject.totalHours.toFixed(1)} / {subject.goalHours} hrs
+                  </span>
+                </div>
+                <Progress value={progress} indicatorClassName="transition-all duration-500" style={{'--indicator-color': subject.color} as React.CSSProperties} />
               </div>
-              <Progress value={progress} />
-            </div>
-          );
-        })}
+            );
+          })
+        )}
+         <Button onClick={handleGenerateGoals} disabled={isPending} className="w-full">
+            <Wand2 className="h-4 w-4 mr-2" />
+            {isPending ? "Generating..." : "Generate with AI"}
+        </Button>
       </CardContent>
     </Card>
   );
