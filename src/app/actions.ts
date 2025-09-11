@@ -15,7 +15,7 @@ import { chatWithBot } from "@/ai/flows/chat-flow";
 type SerializableSubjects = {
   [key: string]: {
     name: string;
-    todos: string[];
+    todos: string[]; // Updated to string array
     totalHours: number;
     goalHours: number;
   }

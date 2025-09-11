@@ -65,7 +65,7 @@ export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubj
           key,
           {
             name: value.name,
-            todos: value.todos.map(t => t.text),
+            todos: value.todos.map(t => t.text), // Simplify todos to an array of strings
             totalHours: value.totalHours,
             goalHours: value.goalHours,
           },
@@ -81,6 +81,7 @@ export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubj
         ]);
 
         const lowerCaseResponse = result.response.toLowerCase();
+        const lowerCaseInput = currentInput.toLowerCase();
         
         // Handle adding a task
         if (
@@ -90,29 +91,58 @@ export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubj
           const subjectMatch = lowerCaseResponse.match(
             /(chemistry|physics|pure maths|applied maths)/
           );
-          const taskRegex = /add(?:ed)?\s(?:task\s)?(?:'|")?(.+?)(?:'|")?\s*to/i;
-          const taskMatch = currentInput.match(taskRegex);
 
+          // Try to extract task from user input first
+          const addRegex = /add(?:ed)?\s(?:task\s)?(?:'|")?(.+?)(?:'|")?\s*to/i;
+          const taskMatch = lowerCaseInput.match(addRegex);
           let task = taskMatch ? taskMatch[1].trim() : null;
+          
+          // Fallback for simpler prompts like "add review chapter 5 to chemistry"
+          if (!task) {
+            const simpleAddRegex = /add\s(.+?)\sto/i;
+            const simpleTaskMatch = lowerCaseInput.match(simpleAddRegex);
+            if (simpleTaskMatch) {
+              task = simpleTaskMatch[1].trim();
+            }
+          }
+          
 
           if (subjectMatch && task) {
-            let subjectKey = subjectMatch[1].replace(" ", "").toLowerCase();
-            if (subjectKey === "puremaths") subjectKey = "pureMaths";
-            if (subjectKey === "appliedmaths") subjectKey = "appliedMaths";
+            let subjectKey = subjectMatch[1].replace(/\s/g, '').toLowerCase();
+            if (subjectKey === 'puremaths') subjectKey = 'pureMaths';
+            if (subjectKey === 'appliedmaths') subjectKey = 'appliedMaths';
             
             if (subjects[subjectKey]) {
                 onTaskAdded(subjectKey, task);
+                toast({
+                  title: "Task Added",
+                  description: `"${task}" added to ${subjects[subjectKey].name}.`
+                })
             }
           }
         }
 
         // Handle deleting all tasks
         if (lowerCaseResponse.includes("deleted all to-do items")) {
-          if(lowerCaseResponse.includes("for chemistry")) onDeleteSubjectTodos("chemistry");
-          else if(lowerCaseResponse.includes("for physics")) onDeleteSubjectTodos("physics");
-          else if(lowerCaseResponse.includes("for puremaths")) onDeleteSubjectTodos("pureMaths");
-          else if(lowerCaseResponse.includes("for appliedmaths")) onDeleteSubjectTodos("appliedMaths");
-          else onDeleteAllTodos();
+            const subjectMatch = lowerCaseResponse.match(
+                /for (chemistry|physics|puremaths|appliedmaths)/
+            );
+            if (subjectMatch) {
+                let subjectKey = subjectMatch[1];
+                if (subjectKey === 'puremaths') subjectKey = 'pureMaths';
+                if (subjectKey === 'appliedmaths') subjectKey = 'appliedMaths';
+                onDeleteSubjectTodos(subjectKey);
+                 toast({
+                    title: "Tasks Deleted",
+                    description: `All tasks for ${subjects[subjectKey].name} have been deleted.`
+                });
+            } else {
+                onDeleteAllTodos();
+                toast({
+                    title: "All Tasks Deleted",
+                    description: "All your to-do items have been cleared."
+                });
+            }
         }
 
       } else {
