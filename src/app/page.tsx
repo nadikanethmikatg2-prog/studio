@@ -203,6 +203,26 @@ export default function Home() {
     []
   );
 
+  const handleDeleteAllTodos = useCallback(() => {
+    setSubjects(prev => {
+      const newSubjects = { ...prev };
+      for (const key in newSubjects) {
+        newSubjects[key].todos = [];
+      }
+      return newSubjects;
+    });
+  }, []);
+
+  const handleDeleteSubjectTodos = useCallback((subjectKey: string) => {
+    setSubjects(prev => ({
+      ...prev,
+      [subjectKey]: {
+        ...prev[subjectKey],
+        todos: [],
+      },
+    }));
+  }, []);
+
   const getWeekData = useCallback(
     (date: Date) => {
       const weekStart = startOfWeek(date, { weekStartsOn: 1 });
@@ -264,7 +284,12 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <FloatingChat subjects={subjects} onTaskAdded={handleAddTodo} />
+      <FloatingChat 
+        subjects={subjects} 
+        onTaskAdded={handleAddTodo}
+        onDeleteAllTodos={handleDeleteAllTodos}
+        onDeleteSubjectTodos={handleDeleteSubjectTodos}
+      />
     </div>
   );
 }

@@ -26,9 +26,11 @@ type Message = {
 interface ChatCardProps {
   subjects: Subjects;
   onTaskAdded: (subjectKey: string, task: string) => void;
+  onDeleteAllTodos: () => void;
+  onDeleteSubjectTodos: (subjectKey: string) => void;
 }
 
-export function ChatCard({ subjects, onTaskAdded }: ChatCardProps) {
+export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubjectTodos }: ChatCardProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
@@ -79,6 +81,8 @@ export function ChatCard({ subjects, onTaskAdded }: ChatCardProps) {
         ]);
 
         const lowerCaseResponse = result.response.toLowerCase();
+        
+        // Handle adding a task
         if (
           lowerCaseResponse.includes("added") &&
           (lowerCaseResponse.includes("to-do") || lowerCaseResponse.includes("task"))
@@ -101,12 +105,23 @@ export function ChatCard({ subjects, onTaskAdded }: ChatCardProps) {
             }
           }
         }
+
+        // Handle deleting all tasks
+        if (lowerCaseResponse.includes("deleted all to-do items")) {
+          if(lowerCaseResponse.includes("for chemistry")) onDeleteSubjectTodos("chemistry");
+          else if(lowerCaseResponse.includes("for physics")) onDeleteSubjectTodos("physics");
+          else if(lowerCaseResponse.includes("for puremaths")) onDeleteSubjectTodos("pureMaths");
+          else if(lowerCaseResponse.includes("for appliedmaths")) onDeleteSubjectTodos("appliedMaths");
+          else onDeleteAllTodos();
+        }
+
       } else {
         toast({
           variant: "destructive",
           title: "AI Chat Error",
           description: result.message,
         });
+        // On error, remove the user's message to allow them to try again.
         setMessages((prev) => prev.slice(0, -1));
       }
     });

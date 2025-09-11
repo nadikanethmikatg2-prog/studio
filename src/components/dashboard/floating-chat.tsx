@@ -14,9 +14,11 @@ import type { Subjects } from "@/app/page";
 interface FloatingChatProps {
   subjects: Subjects;
   onTaskAdded: (subjectKey: string, task: string) => void;
+  onDeleteAllTodos: () => void;
+  onDeleteSubjectTodos: (subjectKey: string) => void;
 }
 
-export function FloatingChat({ subjects, onTaskAdded }: FloatingChatProps) {
+export function FloatingChat({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubjectTodos }: FloatingChatProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -38,7 +40,12 @@ export function FloatingChat({ subjects, onTaskAdded }: FloatingChatProps) {
         // Prevent content from stealing focus and closing popover
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <ChatCard subjects={subjects} onTaskAdded={onTaskAdded} />
+        <ChatCard 
+          subjects={subjects} 
+          onTaskAdded={onTaskAdded}
+          onDeleteAllTodos={onDeleteAllTodos}
+          onDeleteSubjectTodos={onDeleteSubjectTodos}
+        />
       </PopoverContent>
     </Popover>
   );

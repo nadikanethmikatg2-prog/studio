@@ -30,3 +30,31 @@ export const addTodoTool = ai.defineTool(
     return `Successfully added the task "${task}" to the ${subjectKey} to-do list.`;
   }
 );
+
+export const deleteAllTodosTool = ai.defineTool(
+  {
+    name: "deleteAllTodos",
+    description: "Deletes all to-do items for all subjects.",
+    inputSchema: z.object({}),
+    outputSchema: z.string(),
+  },
+  async () => {
+    console.log(`[Tool] Deleting all to-do items.`);
+    return `Successfully deleted all to-do items.`;
+  }
+);
+
+export const deleteSubjectTodosTool = ai.defineTool(
+  {
+    name: "deleteSubjectTodos",
+    description: "Deletes all to-do items for a specific subject.",
+    inputSchema: z.object({
+      subjectKey: z.enum(["chemistry", "physics", "pureMaths", "appliedMaths"]).describe("The key for the subject."),
+    }),
+    outputSchema: z.string(),
+  },
+  async ({ subjectKey }) => {
+    console.log(`[Tool] Deleting all to-do items for subject "${subjectKey}".`);
+    return `Successfully deleted all to-do items for ${subjectKey}.`;
+  }
+);
