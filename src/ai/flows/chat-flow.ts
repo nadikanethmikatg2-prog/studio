@@ -20,12 +20,13 @@ The subjects are Chemistry, Physics, Pure Maths, and Applied Maths. Their keys a
 `;
 
 export async function chatWithBot(
+  history: MessageData[],
   prompt: string
 ): Promise<{ response: string | null; toolRan: boolean; updatedTodos?: { subjectKey: string, task: string } }> {
 
   const llmResponse = await ai.generate({
     model: "googleai/gemini-2.5-flash",
-    prompt: [{ role: "user", content: [{ text: prompt }] }],
+    prompt: [...history, { role: "user", content: [{ text: prompt }] }],
     system: systemInstruction,
     tools: [addTodoTool],
   });
@@ -37,7 +38,6 @@ export async function chatWithBot(
   if (toolRequest) {
     const toolOutput = await toolRequest.run();
     
-    // This is a temporary way to pass back what was added.
     const inputArgs = toolRequest.input();
     if (inputArgs.toolName === 'addTodo' && inputArgs.input) {
       updatedTodos = {
@@ -47,7 +47,7 @@ export async function chatWithBot(
     }
     
     const finalResponse = await ai.generate({
-        prompt: [{ role: "user", content: [{ text: prompt }] }, toolRequest, { role: "tool", content: toolOutput}],
+        prompt: [...history, { role: "user", content: [{ text: prompt }] }, toolRequest, { role: "tool", content: toolOutput}],
         system: systemInstruction,
         tools: [addTodoTool],
     });

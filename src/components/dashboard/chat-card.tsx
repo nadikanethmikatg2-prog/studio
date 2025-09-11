@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { chatWithBotAction } from "@/app/actions";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { MessageData } from "genkit";
 
 interface ChatCardProps {
   onUpdate: (key: string, updatedData: Partial<Subject>) => void;
@@ -35,12 +36,20 @@ export function ChatCard({ onUpdate }: ChatCardProps) {
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
-    const newMessages: Message[] = [...messages, { role: "user", content: input }];
+    const userMessage: Message = { role: "user", content: input };
+    const newMessages: Message[] = [...messages, userMessage];
     setMessages(newMessages);
+    const currentInput = input;
     setInput("");
 
     startTransition(async () => {
-      const result = await chatWithBotAction(input);
+      // Convert message history to MessageData format for the AI
+      const history: MessageData[] = messages.map(m => ({
+        role: m.role,
+        content: [{ text: m.content }]
+      }));
+
+      const result = await chatWithBotAction(history, currentInput);
 
       if (result.success && result.response) {
         setMessages([...newMessages, { role: "bot", content: result.response }]);
