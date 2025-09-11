@@ -213,13 +213,13 @@ export default function Home() {
                 onDateChange={setSelectedDate}
             />
             <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} onUpdate={handleUpdate} />
+             <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
           </div>
 
           {/* Right Column */}
-          <div className="lg:col-span-1 space-y-6 md:space-y-8">
+          <div className="lg:col-span-1 grid grid-rows-2 gap-6 md:gap-8">
             <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
             <SubjectPieChart subjects={subjects} />
-            <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
           </div>
         </div>
       </main>
