@@ -84,11 +84,13 @@ export function SubjectCard({
     });
   };
 
+  const Icon = subject.icon;
+
   return (
     <Card className="flex flex-col bg-card hover:bg-card/90 transition-colors">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <subject.icon
+          <Icon
             className="h-6 w-6"
             style={{ color: subject.color }}
           />
