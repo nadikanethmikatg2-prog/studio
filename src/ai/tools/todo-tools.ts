@@ -12,10 +12,15 @@ export const addTodoTool = ai.defineTool(
     name: "addTodo",
     description: "Adds a to-do item to a subject's to-do list.",
     inputSchema: z.object({
-      subjectKey: z.enum(["chemistry", "physics", "pureMaths", "appliedMaths"]).describe("The key for the subject."),
+      subjectKey: z
+        .enum(["chemistry", "physics", "pureMaths", "appliedMaths"])
+        .describe("The key for the subject."),
       task: z.string().describe("The description of the task to add."),
     }),
-    outputSchema: z.string(),
+    outputSchema: z.object({
+      subjectKey: z.string(),
+      task: z.string(),
+    }),
   },
   async ({ subjectKey, task }) => {
     // In a real app, you would have a database call here.
@@ -26,8 +31,8 @@ export const addTodoTool = ai.defineTool(
     // Since tools can't directly modify the client, the client needs to refetch data.
     // The current implementation on the client-side shows a toast but doesn't
     // actually add the item to the list visually. This would be a next step.
-    
-    return `Successfully added the task "${task}" to the ${subjectKey} to-do list.`;
+
+    return { subjectKey, task };
   }
 );
 
@@ -49,7 +54,9 @@ export const deleteSubjectTodosTool = ai.defineTool(
     name: "deleteSubjectTodos",
     description: "Deletes all to-do items for a specific subject.",
     inputSchema: z.object({
-      subjectKey: z.enum(["chemistry", "physics", "pureMaths", "appliedMaths"]).describe("The key for the subject."),
+      subjectKey: z
+        .enum(["chemistry", "physics", "pureMaths", "appliedMaths"])
+        .describe("The key for the subject."),
     }),
     outputSchema: z.string(),
   },

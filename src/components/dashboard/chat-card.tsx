@@ -30,7 +30,27 @@ interface ChatCardProps {
   onDeleteSubjectTodos: (subjectKey: string) => void;
 }
 
-export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubjectTodos }: ChatCardProps) {
+// Helper function to extract JSON from the AI's response
+function extractJsonFromString(text: string): any | null {
+  const jsonRegex = /```json\s*([\s\S]*?)\s*```/;
+  const match = text.match(jsonRegex);
+  if (match && match[1]) {
+    try {
+      return JSON.parse(match[1]);
+    } catch (error) {
+      console.error("Failed to parse JSON from AI response:", error);
+      return null;
+    }
+  }
+  return null;
+}
+
+export function ChatCard({
+  subjects,
+  onTaskAdded,
+  onDeleteAllTodos,
+  onDeleteSubjectTodos,
+}: ChatCardProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
@@ -65,14 +85,17 @@ export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubj
           key,
           {
             name: value.name,
-            todos: value.todos.map(t => t.text), // Simplify todos to an array of strings
+            todos: value.todos.map((t) => t.text), // Simplify todos to an array of strings
             totalHours: value.totalHours,
             goalHours: value.goalHours,
           },
         ])
       );
 
-      const result = await chatWithBotAction(currentInput, serializableSubjects);
+      const result = await chatWithBotAction(
+        currentInput,
+        serializableSubjects
+      );
 
       if (result.success && result.response) {
         setMessages((prev) => [
@@ -81,70 +104,43 @@ export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubj
         ]);
 
         const lowerCaseResponse = result.response.toLowerCase();
-        const lowerCaseInput = currentInput.toLowerCase();
-        
-        // Handle adding a task
-        if (
-          lowerCaseResponse.includes("added") &&
-          (lowerCaseResponse.includes("to-do") || lowerCaseResponse.includes("task"))
-        ) {
-          const subjectMatch = lowerCaseResponse.match(
-            /(chemistry|physics|pure maths|applied maths)/
-          );
 
-          // Try to extract task from user input first
-          const addRegex = /add(?:ed)?\s(?:task\s)?(?:'|")?(.+?)(?:'|")?\s*to/i;
-          const taskMatch = lowerCaseInput.match(addRegex);
-          let task = taskMatch ? taskMatch[1].trim() : null;
-          
-          // Fallback for simpler prompts like "add review chapter 5 to chemistry"
-          if (!task) {
-            const simpleAddRegex = /add\s(.+?)\sto/i;
-            const simpleTaskMatch = lowerCaseInput.match(simpleAddRegex);
-            if (simpleTaskMatch) {
-              task = simpleTaskMatch[1].trim();
-            }
-          }
-          
-
-          if (subjectMatch && task) {
-            let subjectKey = subjectMatch[1].replace(/\s/g, '').toLowerCase();
-            if (subjectKey === 'puremaths') subjectKey = 'pureMaths';
-            if (subjectKey === 'appliedmaths') subjectKey = 'appliedMaths';
-            
-            if (subjects[subjectKey]) {
-                onTaskAdded(subjectKey, task);
-                toast({
-                  title: "Task Added",
-                  description: `"${task}" added to ${subjects[subjectKey].name}.`
-                })
-            }
+        // Handle adding a task by looking for the JSON block
+        const taskData = extractJsonFromString(result.response);
+        if (taskData && taskData.subjectKey && taskData.task) {
+          if (subjects[taskData.subjectKey]) {
+            onTaskAdded(taskData.subjectKey, taskData.task);
+            toast({
+              title: "Task Added",
+              description: `"${taskData.task}" added to ${
+                subjects[taskData.subjectKey].name
+              }.`,
+            });
           }
         }
 
         // Handle deleting all tasks
         if (lowerCaseResponse.includes("deleted all to-do items")) {
-            const subjectMatch = lowerCaseResponse.match(
-                /for (chemistry|physics|puremaths|appliedmaths)/
-            );
-            if (subjectMatch) {
-                let subjectKey = subjectMatch[1];
-                if (subjectKey === 'puremaths') subjectKey = 'pureMaths';
-                if (subjectKey === 'appliedmaths') subjectKey = 'appliedMaths';
-                onDeleteSubjectTodos(subjectKey);
-                 toast({
-                    title: "Tasks Deleted",
-                    description: `All tasks for ${subjects[subjectKey].name} have been deleted.`
-                });
-            } else {
-                onDeleteAllTodos();
-                toast({
-                    title: "All Tasks Deleted",
-                    description: "All your to-do items have been cleared."
-                });
-            }
+          const subjectMatch = lowerCaseResponse.match(
+            /for (chemistry|physics|puremaths|appliedmaths)/
+          );
+          if (subjectMatch) {
+            let subjectKey = subjectMatch[1];
+            if (subjectKey === "puremaths") subjectKey = "pureMaths";
+            if (subjectKey === "appliedmaths") subjectKey = "appliedMaths";
+            onDeleteSubjectTodos(subjectKey);
+            toast({
+              title: "Tasks Deleted",
+              description: `All tasks for ${subjects[subjectKey].name} have been deleted.`,
+            });
+          } else {
+            onDeleteAllTodos();
+            toast({
+              title: "All Tasks Deleted",
+              description: "All your to-do items have been cleared.",
+            });
+          }
         }
-
       } else {
         toast({
           variant: "destructive",
@@ -196,7 +192,7 @@ export function ChatCard({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubj
                           : "bg-muted"
                       )}
                     >
-                      {message.content}
+                      {message.content.replace(/```json[\s\S]*?```/, '').trim()}
                     </div>
                   </div>
                 ))}

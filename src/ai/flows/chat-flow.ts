@@ -7,13 +7,24 @@
  */
 
 import { ai } from "@/ai/genkit";
-import { addTodoTool, deleteAllTodosTool, deleteSubjectTodosTool } from "@/ai/tools/todo-tools";
+import {
+  addTodoTool,
+  deleteAllTodosTool,
+  deleteSubjectTodosTool,
+} from "@/ai/tools/todo-tools";
 import { z } from "genkit";
 
 const systemInstruction = `You are a helpful assistant for the A/L Study Buddy app.
 Your goal is to assist the user with managing their study tasks and providing information about their progress.
 Be friendly and answer questions.
+
 If the user asks you to add a task, use the addTodoTool.
+IMPORTANT: After you call the addTodoTool, you MUST include the JSON output from the tool in your response to the user, inside a markdown JSON code block. This is critical for the app to work. For example:
+"OK, I've added that.
+\`\`\`json
+{ "subjectKey": "chemistry", "task": "Review chapter 5" }
+\`\`\`"
+
 If the user asks to delete all tasks, use the deleteAllTodosTool.
 If the user asks to delete tasks for a specific subject, use the deleteSubjectTodosTool.
 If the user asks about their to-do items, study hours, or goals, answer based on the provided JSON data. Do not use a tool to view this data.
@@ -36,7 +47,7 @@ export async function chatWithBot(
     tools: [addTodoTool, deleteAllTodosTool, deleteSubjectTodosTool],
     input: {
       todos,
-    }
+    },
   });
 
   return llmResponse.text;
