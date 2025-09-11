@@ -211,7 +211,7 @@ export default function Home() {
             </div>
              <Card>
                 <CardContent className="p-2 md:p-4">
-                    <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+                    <div className="grid gap-6 md:gap-8 md:grid-cols-2 min-h-[420px]">
                         <WeeklyProgressChart
                             currentWeekData={currentWeekData}
                             previousWeekData={previousWeekData}
@@ -227,7 +227,7 @@ export default function Home() {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-6 md:space-y-8">
+          <div className="lg:col-span-1 space-y-6 md:space-y-8">
             <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
             <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
           </div>
