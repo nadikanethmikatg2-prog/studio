@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { chatWithBotAction } from "@/app/actions";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 type Message = {
   role: "user" | "model";
@@ -36,7 +37,7 @@ export function ChatCard() {
             viewport.scrollTop = viewport.scrollHeight;
         }
     }
-  }, [messages]);
+  }, [messages, isPending]);
 
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
@@ -63,8 +64,8 @@ export function ChatCard() {
           title: "AI Chat Error",
           description: result.message,
         });
-        // Revert to user message only on error
-        setMessages(newMessages);
+        // On error, remove the user's last message to allow them to try again
+        setMessages(messages);
       }
     });
   };
@@ -81,25 +82,48 @@ export function ChatCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-48 w-full rounded-md border p-4 mb-4" ref={scrollAreaRef}>
+        <ScrollArea className="h-64 w-full rounded-md border p-4 mb-4" ref={scrollAreaRef}>
           {messages.length > 0 ? (
-            <div className="space-y-4">
+             <div className="space-y-4">
               {messages.map((message, index) => (
                 <div
                   key={index}
                   className={cn(
-                    "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
-                    message.role === "user"
-                      ? "ml-auto bg-primary text-primary-foreground"
-                      : "bg-muted"
+                    "flex items-start gap-3",
+                    message.role === "user" && "justify-end"
                   )}
                 >
-                  {message.content}
+                  {message.role === "model" && (
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        <Bot className="h-5 w-5" />
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div
+                    className={cn(
+                      "max-w-[75%] rounded-lg px-3 py-2 text-sm",
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    )}
+                  >
+                    {message.content}
+                  </div>
                 </div>
               ))}
               {isPending && (
-                <div className="text-sm text-muted-foreground">
-                  Bot is thinking...
+                <div className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        <Bot className="h-5 w-5" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="bg-muted px-3 py-2 rounded-lg text-sm flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" style={{animationDelay: '0s'}}/>
+                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" style={{animationDelay: '0.2s'}}/>
+                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" style={{animationDelay: '0.4s'}}/>
+                    </div>
                 </div>
               )}
             </div>
