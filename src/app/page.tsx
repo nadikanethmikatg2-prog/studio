@@ -205,28 +205,20 @@ export default function Home() {
           {/* Left Column */}
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
             <MotivationCard subjects={subjects} />
-            <Card>
-                <CardContent className="p-2 md:p-4">
-                    <div className="grid gap-6 md:gap-8 lg:grid-cols-3 min-h-[420px]">
-                        <div className="lg:col-span-2">
-                            <WeeklyProgressChart
-                                currentWeekData={currentWeekData}
-                                previousWeekData={previousWeekData}
-                                subjects={subjects}
-                                selectedDate={selectedDate}
-                                onDateChange={setSelectedDate}
-                            />
-                        </div>
-                        <SubjectPieChart subjects={subjects} />
-                    </div>
-                </CardContent>
-            </Card>
+            <WeeklyProgressChart
+                currentWeekData={currentWeekData}
+                previousWeekData={previousWeekData}
+                subjects={subjects}
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+            />
             <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} onUpdate={handleUpdate} />
           </div>
 
           {/* Right Column */}
           <div className="lg:col-span-1 space-y-6 md:space-y-8">
             <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
+            <SubjectPieChart subjects={subjects} />
             <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
           </div>
         </div>

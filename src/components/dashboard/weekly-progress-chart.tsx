@@ -51,38 +51,40 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
   }))
 
   return (
-    <div className="h-full flex flex-col">
-        <div className="flex flex-row items-start justify-between p-4 pb-0">
-            <div className="space-y-1.5">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <GanttChart className="h-5 w-5 text-primary"/>
-                    Weekly Progress
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                    {format(weekStart, "MMM d")} - {format(weekEnd, "MMM d, yyyy")}
-                </p>
+    <Card className="min-h-[420px] flex flex-col">
+        <CardHeader>
+            <div className="flex flex-row items-start justify-between">
+                <div className="space-y-1.5">
+                    <CardTitle className="flex items-center gap-2">
+                        <GanttChart className="h-5 w-5 text-primary"/>
+                        Weekly Progress
+                    </CardTitle>
+                    <CardDescription>
+                        {format(weekStart, "MMM d")} - {format(weekEnd, "MMM d, yyyy")}
+                    </CardDescription>
+                </div>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant={"outline"} size={"sm"} className="text-xs">
+                            <CalendarIcon className="mr-1.5 h-3.5 w-3.5" />
+                            {format(selectedDate, "MMM d, yyyy")}
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                        <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={(day) => day && onDateChange(day)}
+                            initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
             </div>
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button variant={"outline"} size={"sm"} className="text-xs">
-                        <CalendarIcon className="mr-1.5 h-3.5 w-3.5" />
-                        {format(selectedDate, "MMM d, yyyy")}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                    <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={(day) => day && onDateChange(day)}
-                        initialFocus
-                    />
-                </PopoverContent>
-            </Popover>
-      </div>
-      <div className="flex-1 min-h-0">
+      </CardHeader>
+      <CardContent className="flex-1 min-h-0">
             {currentWeekData.some(d => d.totalHours > 0) || previousWeekData.some(d => d.totalHours > 0) ? (
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={combinedData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                    <AreaChart data={combinedData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
@@ -122,7 +124,7 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
                     No study hours logged for this week.
                 </div>
             )}
-        </div>
-    </div>
+        </CardContent>
+    </Card>
   );
 }

@@ -26,6 +26,7 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
   const [selectedSubject, setSelectedSubject] = useState<string>("chemistry");
   const [hoursToAdd, setHoursToAdd] = useState("");
   const [newTodo, setNewTodo] = useState("");
+  const [taskHours, setTaskHours] = useState("");
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
@@ -65,17 +66,28 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
         onUpdate(selectedSubject, {
           todos: [...currentSubject.todos, newTodoItem],
         });
+        
+        let toastDescription = `New task for ${currentSubject.name}: "${newTodo.trim()}"`;
+
+        const hours = parseFloat(taskHours);
+        if (!isNaN(hours) && hours > 0) {
+          onLogHours(selectedSubject, hours);
+          toastDescription += ` and logged ${hours} hour(s).`;
+        }
+        
         setNewTodo("");
+        setTaskHours("");
+
         toast({
-            title: "Task Added",
-            description: `New task for ${currentSubject.name}: "${newTodo.trim()}"`,
+            title: "Activity Logged",
+            description: toastDescription,
         })
       });
     } else {
         toast({
             variant: "destructive",
             title: "Invalid Input",
-            description: "Please select a subject and enter a task.",
+            description: "Please select a subject and enter a task description.",
         });
     }
   };
@@ -142,19 +154,29 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="todo-input" className="flex items-center gap-2"><ListTodo /> 3. Add a Task</Label>
+                <Label htmlFor="todo-input" className="flex items-center gap-2"><ListTodo /> 3. Add Task & Log Hours</Label>
                 <div className="flex gap-2">
                     <Input
-                    id="todo-input"
-                    type="text"
-                    value={newTodo}
-                    onChange={(e) => setNewTodo(e.target.value)}
-                    placeholder="New task description..."
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
-                    disabled={!selectedSubject}
+                      id="todo-input"
+                      type="text"
+                      value={newTodo}
+                      onChange={(e) => setNewTodo(e.target.value)}
+                      placeholder="New task description..."
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
+                      disabled={!selectedSubject}
+                      className="flex-grow"
+                    />
+                    <Input
+                      type="number"
+                      value={taskHours}
+                      onChange={(e) => setTaskHours(e.target.value)}
+                      placeholder="Hrs"
+                      className="w-20"
+                      disabled={!selectedSubject}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
                     />
                     <Button onClick={handleAddTodo} variant="outline" size="icon" disabled={isPending || !selectedSubject || !newTodo}>
-                    <Plus className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

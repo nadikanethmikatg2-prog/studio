@@ -34,9 +34,9 @@ export function SubjectDetailsCard({ subjects, onUpdate }: SubjectDetailsCardPro
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
             {Object.entries(subjects).map(([key, subject]) => (
               <TabsTrigger key={key} value={key}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2 w-full">
                     <subject.icon className="h-4 w-4" />
-                    <span className="hidden md:inline">{subject.name}</span>
+                    <span className="truncate">{subject.name}</span>
                 </div>
               </TabsTrigger>
             ))}

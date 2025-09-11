@@ -4,6 +4,7 @@ import { Pie, PieChart, ResponsiveContainer, Cell, Tooltip, Legend } from "recha
 import type { Subjects } from "@/app/page";
 import { PieChart as PieChartIcon } from "lucide-react";
 import React from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 interface SubjectPieChartProps {
   subjects: Subjects;
@@ -35,17 +36,17 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
     }));
 
   return (
-    <div className="h-full flex flex-col">
-        <div className="p-4 pb-0">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
+    <Card className="h-full flex flex-col">
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2">
                 <PieChartIcon className="h-5 w-5 text-primary" />
                 Subject Distribution
-            </h3>
-            <p className="text-sm text-muted-foreground">
+            </CardTitle>
+            <CardDescription>
                 Your study time distribution.
-            </p>
-        </div>
-        <div className="flex-1 min-h-0">
+            </CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 min-h-0">
           {chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -82,7 +83,7 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
               Log some hours to see the chart.
             </div>
           )}
-        </div>
-    </div>
+        </CardContent>
+    </Card>
   );
 }
