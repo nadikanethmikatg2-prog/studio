@@ -44,7 +44,7 @@ export async function generateStudyGoalsAction(
 
 export async function chatWithBotAction(
   prompt: string
-): Promise<{ success: boolean; response: string | null; message: string; }> {
+): Promise<{ success: boolean; response: string | null; message: string }> {
   try {
     const result = await chatWithBot(prompt);
     return { success: true, response: result, message: "Success" };

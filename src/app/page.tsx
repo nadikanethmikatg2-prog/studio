@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  Atom,
-  Combine,
-  FlaskConical,
-  Sigma,
-} from "lucide-react";
+import { Atom, Combine, FlaskConical, Sigma } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
@@ -14,7 +9,13 @@ import { SubjectPieChart } from "@/components/dashboard/subject-pie-chart";
 import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card";
 import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
 import { WeeklyProgressChart } from "@/components/dashboard/weekly-progress-chart";
-import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks } from "date-fns";
+import {
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  format,
+  subWeeks,
+} from "date-fns";
 import { ChatCard } from "@/components/dashboard/chat-card";
 
 export type Todo = {
@@ -84,7 +85,6 @@ const initialSubjects: Subjects = {
   },
 };
 
-
 export default function Home() {
   const [subjects, setSubjects] = useState<Subjects>(initialSubjects);
   const [dailyLogs, setDailyLogs] = useState<DailyLog>({});
@@ -98,7 +98,7 @@ export default function Home() {
       if (savedData) {
         const parsedData = JSON.parse(savedData);
         // Re-assign icons because they don't survive stringification
-        Object.keys(parsedData.subjects).forEach(key => {
+        Object.keys(parsedData.subjects).forEach((key) => {
           if (iconMap[key]) {
             parsedData.subjects[key].icon = iconMap[key];
           }
@@ -121,7 +121,7 @@ export default function Home() {
             pureMaths: { ...subjects.pureMaths, icon: undefined },
             appliedMaths: { ...subjects.appliedMaths, icon: undefined },
           },
-          dailyLogs
+          dailyLogs,
         };
         localStorage.setItem("alTrailblazerData", JSON.stringify(dataToSave));
       } catch (error) {
@@ -131,75 +131,108 @@ export default function Home() {
   }, [subjects, dailyLogs, isClient]);
 
   const handleLogHours = useCallback((subjectKey: string, hours: number) => {
-    const today = format(new Date(), 'yyyy-MM-dd');
+    const today = format(new Date(), "yyyy-MM-dd");
 
     setSubjects((prev) => ({
       ...prev,
       [subjectKey]: {
         ...prev[subjectKey],
         totalHours: (prev[subjectKey]?.totalHours || 0) + hours,
-       },
+      },
     }));
 
     setDailyLogs((prevLogs) => {
-        const newLogs = {...prevLogs};
-        if (!newLogs[today]) {
-            newLogs[today] = {};
-        }
-        newLogs[today][subjectKey] = (newLogs[today][subjectKey] || 0) + hours;
-        return newLogs;
+      const newLogs = { ...prevLogs };
+      if (!newLogs[today]) {
+        newLogs[today] = {};
+      }
+      newLogs[today][subjectKey] = (newLogs[today][subjectKey] || 0) + hours;
+      return newLogs;
     });
-
   }, []);
 
-  const handleUpdate = useCallback((key: string, updatedData: Partial<Subject> | ((prevTodos: Todo[]) => Todo[])) => {
-    setSubjects((prev) => {
+  const handleUpdate = useCallback(
+    (
+      key: string,
+      updatedData: Partial<Subject> | ((prevTodos: Todo[]) => Todo[])
+    ) => {
+      setSubjects((prev) => {
         const currentSubject = prev[key];
-        const newSubjectData = typeof updatedData === 'function' 
+        const newSubjectData =
+          typeof updatedData === "function"
             ? { ...currentSubject, todos: updatedData(currentSubject.todos) }
             : { ...currentSubject, ...updatedData };
 
         return {
-            ...prev,
-            [key]: newSubjectData,
+          ...prev,
+          [key]: newSubjectData,
         };
-    });
-  }, []);
-  
-  const handleBulkUpdateGoals = useCallback((newGoals: { [key: string]: number }) => {
-    setSubjects((prev) => {
-      const newSubjects = {...prev};
-      Object.keys(newGoals).forEach(key => {
-        if (newSubjects[key]) {
-          newSubjects[key].goalHours = newGoals[key];
-        }
       });
+    },
+    []
+  );
+
+  const handleAddTodo = useCallback((subjectKey: string, task: string) => {
+    setSubjects((prev) => {
+      const newTodo: Todo = {
+        id: Date.now(),
+        text: task,
+        completed: false,
+      };
+      const newSubjects = { ...prev };
+      newSubjects[subjectKey] = {
+        ...newSubjects[subjectKey],
+        todos: [...newSubjects[subjectKey].todos, newTodo],
+      };
       return newSubjects;
     });
   }, []);
 
-  const getWeekData = useCallback((date: Date) => {
-    const weekStart = startOfWeek(date, { weekStartsOn: 1 });
-    const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
-    const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
+  const handleBulkUpdateGoals = useCallback(
+    (newGoals: { [key: string]: number }) => {
+      setSubjects((prev) => {
+        const newSubjects = { ...prev };
+        Object.keys(newGoals).forEach((key) => {
+          if (newSubjects[key]) {
+            newSubjects[key].goalHours = newGoals[key];
+          }
+        });
+        return newSubjects;
+      });
+    },
+    []
+  );
 
-    return weekDays.map(day => {
-        const dateKey = format(day, 'yyyy-MM-dd');
+  const getWeekData = useCallback(
+    (date: Date) => {
+      const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
+      const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
+
+      return weekDays.map((day) => {
+        const dateKey = format(day, "yyyy-MM-dd");
         const dayLog = dailyLogs[dateKey] || {};
-        const totalHours = Object.values(dayLog).reduce((sum, hours) => sum + hours, 0);
+        const totalHours = Object.values(dayLog).reduce(
+          (sum, hours) => sum + hours,
+          0
+        );
 
         return {
-            date: format(day, 'EEE'),
-            totalHours: totalHours,
-            ...Object.keys(subjects).reduce((acc, key) => ({...acc, [key]: dayLog[key] || 0 }), {})
+          date: format(day, "EEE"),
+          totalHours: totalHours,
+          ...Object.keys(subjects).reduce(
+            (acc, key) => ({ ...acc, [key]: dayLog[key] || 0 }),
+            {}
+          ),
         };
-    });
-  }, [dailyLogs, subjects]);
-  
+      });
+    },
+    [dailyLogs, subjects]
+  );
+
   const currentWeekData = getWeekData(selectedDate);
   const lastWeekDate = subWeeks(selectedDate, 1);
   const previousWeekData = getWeekData(lastWeekDate);
-
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background">
@@ -210,15 +243,19 @@ export default function Home() {
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
             <MotivationCard subjects={subjects} />
             <WeeklyProgressChart
-                currentWeekData={currentWeekData}
-                previousWeekData={previousWeekData}
-                subjects={subjects}
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
+              currentWeekData={currentWeekData}
+              previousWeekData={previousWeekData}
+              subjects={subjects}
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
             />
-             <ChatCard />
-            <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} onUpdate={handleUpdate} />
-             <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} onLogHours={handleLogHours} />
+            <ChatCard onTaskAdded={handleAddTodo} />
+            <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} />
+            <SubjectDetailsCard
+              subjects={subjects}
+              onUpdate={handleUpdate}
+              onLogHours={handleLogHours}
+            />
           </div>
 
           {/* Right Column */}

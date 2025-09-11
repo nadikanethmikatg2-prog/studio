@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, Clock, ListTodo, Activity } from "lucide-react";
-import type { Subject, Subjects } from "@/app/page";
+import { Clock, Activity } from "lucide-react";
+import type { Subjects } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 

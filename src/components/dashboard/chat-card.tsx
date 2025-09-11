@@ -22,42 +22,60 @@ type Message = {
   content: string;
 };
 
-export function ChatCard() {
+interface ChatCardProps {
+  onTaskAdded: (subjectKey: string, task: string) => void;
+}
+
+export function ChatCard({ onTaskAdded }: ChatCardProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Scroll to the bottom when new messages are added
+  const scrollToBottom = () => {
     if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div');
-        if (viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
-        }
+      const viewport = scrollAreaRef.current.querySelector("div[data-radix-scroll-area-viewport]");
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
     }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messages, isPending]);
 
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
     const currentInput = input;
-    const newMessages: Message[] = [
-      ...messages,
-      { role: "user", content: currentInput },
-    ];
-    setMessages(newMessages);
+    setMessages((prev) => [...prev, { role: "user", content: currentInput }]);
     setInput("");
 
     startTransition(async () => {
       const result = await chatWithBotAction(currentInput);
 
       if (result.success && result.response) {
-        setMessages([
-          ...newMessages,
-          { role: "model", content: result.response },
+        setMessages((prev) => [
+          ...prev,
+          { role: "model", content: result.response! },
         ]);
+        
+        // This is a temporary solution to update the UI.
+        // A more robust solution would involve the tool returning structured data.
+        const lowerCaseResponse = result.response.toLowerCase();
+        if (lowerCaseResponse.includes("added") && lowerCaseResponse.includes("to-do")) {
+            const subjectMatch = lowerCaseResponse.match(/(chemistry|physics|pure maths|applied maths)/);
+            const taskMatch = currentInput.match(/add(?:s)?\s*(?:'|")?(.*?)(?:'|")?\s*to/i);
+            
+            if (subjectMatch && taskMatch && taskMatch[1]) {
+                const subjectKey = subjectMatch[1].replace(' ', '').toLowerCase();
+                const task = taskMatch[1].trim();
+                onTaskAdded(subjectKey, task);
+            }
+        }
+
       } else {
         toast({
           variant: "destructive",
@@ -65,7 +83,7 @@ export function ChatCard() {
           description: result.message,
         });
         // On error, remove the user's last message to allow them to try again
-        setMessages(messages);
+        setMessages((prev) => prev.slice(0, -1));
       }
     });
   };
@@ -78,13 +96,16 @@ export function ChatCard() {
           Chat with your AI Assistant
         </CardTitle>
         <CardDescription>
-          Ask me questions about your study plan or for some motivation!
+          Try saying: "Add 'review kinematics' to my physics to-do list."
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-64 w-full rounded-md border p-4 mb-4" ref={scrollAreaRef}>
+        <ScrollArea
+          className="h-64 w-full rounded-md border p-4 mb-4"
+          ref={scrollAreaRef}
+        >
           {messages.length > 0 ? (
-             <div className="space-y-4">
+            <div className="space-y-4">
               {messages.map((message, index) => (
                 <div
                   key={index}
@@ -114,16 +135,25 @@ export function ChatCard() {
               ))}
               {isPending && (
                 <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        <Bot className="h-5 w-5" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="bg-muted px-3 py-2 rounded-lg text-sm flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" style={{animationDelay: '0s'}}/>
-                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" style={{animationDelay: '0.2s'}}/>
-                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" style={{animationDelay: '0.4s'}}/>
-                    </div>
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      <Bot className="h-5 w-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="bg-muted px-3 py-2 rounded-lg text-sm flex items-center gap-2">
+                    <span
+                      className="h-2 w-2 rounded-full bg-primary animate-pulse"
+                      style={{ animationDelay: "0s" }}
+                    />
+                    <span
+                      className="h-2 w-2 rounded-full bg-primary animate-pulse"
+                      style={{ animationDelay: "0.2s" }}
+                    />
+                    <span
+                      className="h-2 w-2 rounded-full bg-primary animate-pulse"
+                      style={{ animationDelay: "0.4s" }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
