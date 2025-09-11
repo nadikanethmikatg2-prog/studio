@@ -26,7 +26,6 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
   const [selectedSubject, setSelectedSubject] = useState<string>("chemistry");
   const [hoursToAdd, setHoursToAdd] = useState("");
   const [newTodo, setNewTodo] = useState("");
-  const [taskHours, setTaskHours] = useState("");
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
@@ -68,18 +67,11 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
         });
         
         let toastDescription = `New task for ${currentSubject.name}: "${newTodo.trim()}"`;
-
-        const hours = parseFloat(taskHours);
-        if (!isNaN(hours) && hours > 0) {
-          onLogHours(selectedSubject, hours);
-          toastDescription += ` and logged ${hours} hour(s).`;
-        }
         
         setNewTodo("");
-        setTaskHours("");
 
         toast({
-            title: "Activity Logged",
+            title: "Task Added",
             description: toastDescription,
         })
       });
@@ -154,7 +146,7 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="todo-input" className="flex items-center gap-2"><ListTodo /> 3. Add Task & Log Hours</Label>
+                <Label htmlFor="todo-input" className="flex items-center gap-2"><ListTodo /> 3. Add a New Task</Label>
                 <div className="flex gap-2">
                     <Input
                       id="todo-input"
@@ -165,15 +157,6 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
                       onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
                       disabled={!selectedSubject}
                       className="flex-grow"
-                    />
-                    <Input
-                      type="number"
-                      value={taskHours}
-                      onChange={(e) => setTaskHours(e.target.value)}
-                      placeholder="Hrs"
-                      className="w-20"
-                      disabled={!selectedSubject}
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
                     />
                     <Button onClick={handleAddTodo} variant="outline" size="icon" disabled={isPending || !selectedSubject || !newTodo}>
                       <Plus className="h-4 w-4" />

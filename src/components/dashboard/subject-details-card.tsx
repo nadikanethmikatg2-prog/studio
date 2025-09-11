@@ -15,9 +15,10 @@ import { BookCopy } from "lucide-react";
 interface SubjectDetailsCardProps {
   subjects: Subjects;
   onUpdate: (key: string, updatedData: Partial<Subject>) => void;
+  onLogHours: (subjectKey: string, hours: number) => void;
 }
 
-export function SubjectDetailsCard({ subjects, onUpdate }: SubjectDetailsCardProps) {
+export function SubjectDetailsCard({ subjects, onUpdate, onLogHours }: SubjectDetailsCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -51,6 +52,7 @@ export function SubjectDetailsCard({ subjects, onUpdate }: SubjectDetailsCardPro
                 subjectKey={key}
                 subject={subject}
                 onUpdate={onUpdate}
+                onLogHours={onLogHours}
               />
             </TabsContent>
           ))}

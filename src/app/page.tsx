@@ -15,10 +15,6 @@ import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card"
 import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
 import { WeeklyProgressChart } from "@/components/dashboard/weekly-progress-chart";
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks } from "date-fns";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
 
 export type Todo = {
   id: number;
@@ -213,11 +209,11 @@ export default function Home() {
                 onDateChange={setSelectedDate}
             />
             <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} onUpdate={handleUpdate} />
-             <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
+             <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} onLogHours={handleLogHours} />
           </div>
 
           {/* Right Column */}
-          <div className="lg:col-span-1 grid gap-6 md:gap-8">
+          <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
             <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
             <SubjectPieChart subjects={subjects} />
           </div>

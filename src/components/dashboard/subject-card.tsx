@@ -16,43 +16,87 @@ import { Plus, Trash2 } from "lucide-react";
 import type { Subject, Todo } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SubjectCardProps {
   subjectKey: string;
   subject: Subject;
   onUpdate: (key: string, updatedData: Partial<Subject>) => void;
+  onLogHours: (subjectKey: string, hours: number) => void;
 }
 
 export function SubjectCard({
   subjectKey,
   subject,
   onUpdate,
+  onLogHours,
 }: SubjectCardProps) {
-  const [newTodo, setNewTodo] = useState("");
-  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
-
-
-  const handleAddTodo = () => {
-    if (newTodo.trim() !== "") {
-      startTransition(() => {
-        const newTodoItem: Todo = {
-          id: Date.now(),
-          text: newTodo.trim(),
-          completed: false,
-        };
-        onUpdate(subjectKey, { todos: [...subject.todos, newTodoItem] });
-        setNewTodo("");
-      });
-    }
-  };
+  const [isLogHoursDialogOpen, setIsLogHoursDialogOpen] = useState(false);
+  const [completedTodo, setCompletedTodo] = useState<Todo | null>(null);
+  const [hoursSpent, setHoursSpent] = useState("");
+  const { toast } = useToast();
 
   const handleToggleTodo = (id: number) => {
     startTransition(() => {
-      const updatedTodos = subject.todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      const todo = subject.todos.find((t) => t.id === id);
+      if (!todo) return;
+
+      if (!todo.completed) {
+        // If marking as complete, open dialog
+        setCompletedTodo(todo);
+        setIsLogHoursDialogOpen(true);
+      } else {
+        // If un-marking, just update the state
+        const updatedTodos = subject.todos.map((t) =>
+          t.id === id ? { ...t, completed: false } : t
+        );
+        onUpdate(subjectKey, { todos: updatedTodos });
+      }
+    });
+  };
+
+  const handleLogHoursForTodo = () => {
+    if (!completedTodo) return;
+
+    const hours = parseFloat(hoursSpent);
+    if (isNaN(hours) || hours <= 0) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Input",
+        description: "Please enter a positive number for hours.",
+      });
+      return;
+    }
+
+    startTransition(() => {
+      // Log the hours
+      onLogHours(subjectKey, hours);
+
+      // Mark todo as complete
+      const updatedTodos = subject.todos.map((t) =>
+        t.id === completedTodo.id ? { ...t, completed: true } : t
       );
       onUpdate(subjectKey, { todos: updatedTodos });
+
+      toast({
+        title: "Task Completed!",
+        description: `You logged ${hours} hour(s) for "${completedTodo.text}".`,
+      });
+
+      // Reset and close dialog
+      setIsLogHoursDialogOpen(false);
+      setCompletedTodo(null);
+      setHoursSpent("");
     });
   };
 
@@ -62,8 +106,6 @@ export function SubjectCard({
       onUpdate(subjectKey, { todos: updatedTodos });
     });
   };
-
-  const Icon = subject.icon;
 
   return (
     <div className="space-y-4">
@@ -78,6 +120,7 @@ export function SubjectCard({
                       id={`todo-${subjectKey}-${todo.id}`}
                       checked={todo.completed}
                       onCheckedChange={() => handleToggleTodo(todo.id)}
+                      disabled={isPending}
                     />
                     <Label
                       htmlFor={`todo-${subjectKey}-${todo.id}`}
@@ -100,12 +143,40 @@ export function SubjectCard({
                 ))
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  No tasks yet. Add one above!
+                  No tasks yet. Add one in the logger!
                 </p>
               )}
             </div>
           </ScrollArea>
         </div>
+
+        <AlertDialog open={isLogHoursDialogOpen} onOpenChange={setIsLogHoursDialogOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Log Hours for Task</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        How many hours did you spend on "{completedTodo?.text}"?
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="py-4">
+                    <Label htmlFor="hours-spent">Hours Spent</Label>
+                    <Input
+                        id="hours-spent"
+                        type="number"
+                        value={hoursSpent}
+                        onChange={(e) => setHoursSpent(e.target.value)}
+                        placeholder="e.g., 2.5"
+                        autoFocus
+                    />
+                </div>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setHoursSpent('')}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLogHoursForTodo} disabled={isPending || !hoursSpent}>
+                        {isPending ? "Logging..." : "Log & Complete"}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
   );
 }
