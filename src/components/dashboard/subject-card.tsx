@@ -85,7 +85,7 @@ export function SubjectCard({
   };
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col bg-card hover:bg-card/90 transition-colors">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <subject.icon

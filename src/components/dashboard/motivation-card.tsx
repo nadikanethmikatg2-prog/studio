@@ -74,7 +74,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
         <Button
           onClick={handleGenerateMessage}
           disabled={isPending}
-          className="w-full bg-accent hover:bg-accent/90"
+          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
         >
           {isPending ? "Generating..." : "Get Motivated"}
         </Button>
@@ -86,8 +86,8 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
           </div>
         )}
         {message && (
-          <Alert className="bg-blue-50 border-blue-200">
-             <BrainCircuit className="h-4 w-4" />
+          <Alert className="bg-primary/10 border-primary/20">
+             <BrainCircuit className="h-4 w-4 text-primary" />
             <AlertTitle className="text-primary">Your Daily Boost!</AlertTitle>
             <AlertDescription className="text-primary/80">{message}</AlertDescription>
           </Alert>

@@ -6,7 +6,6 @@ import {
   Combine,
   FlaskConical,
   Sigma,
-  BookOpen,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SubjectCard } from "@/components/dashboard/subject-card";
@@ -14,6 +13,7 @@ import { ProgressChart } from "@/components/dashboard/progress-chart";
 import { CountdownCard } from "@/components/dashboard/countdown-card";
 import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
+import { SubjectPieChart } from "@/components/dashboard/subject-pie-chart";
 
 export type Todo = {
   id: number;
@@ -103,7 +103,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col">
+    <div className="relative flex min-h-screen w-full flex-col bg-background">
       <SiteHeader />
       <main className="flex-1 p-4 md:p-8">
         <div className="grid gap-8 lg:grid-cols-3">
@@ -121,6 +121,7 @@ export default function Home() {
           </div>
           <div className="space-y-8">
             <CountdownCard />
+            <SubjectPieChart subjects={subjects} />
             <ProgressChart subjects={subjects} />
             <GoalsCard subjects={subjects} onUpdate={handleUpdate} />
             <MotivationCard subjects={subjects} />
