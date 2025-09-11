@@ -8,26 +8,26 @@
 
 import { ai } from "@/ai/genkit";
 import { addTodoTool } from "@/ai/tools/todo-tools";
+import { MessageData, Part } from "genkit";
+import { z } from "zod";
 
-const chatPrompt = ai.definePrompt({
-  name: "chatPrompt",
-  system: `You are a helpful assistant for the A/L Study Buddy app.
+const systemInstruction = `You are a helpful assistant for the A/L Study Buddy app.
 Your goal is to assist the user with managing their study tasks.
 You can add tasks to their to-do list.
 Be friendly and confirm when you have completed an action.
 If the user asks for something you cannot do, politely decline.
 The subjects are Chemistry, Physics, Pure Maths, and Applied Maths. Their keys are 'chemistry', 'physics', 'pureMaths', 'appliedMaths'.
-`,
-  tools: [addTodoTool],
-});
+`;
 
 export async function chatWithBot(
   prompt: string
 ): Promise<{ response: string | null; toolRan: boolean; updatedTodos?: { subjectKey: string, task: string } }> {
+
   const llmResponse = await ai.generate({
     model: "googleai/gemini-2.5-flash",
     prompt: [{ role: "user", content: [{ text: prompt }] }],
-    tools: [chatPrompt],
+    system: systemInstruction,
+    tools: [addTodoTool],
   });
 
   const toolRequest = llmResponse.toolRequest();
@@ -38,7 +38,6 @@ export async function chatWithBot(
     const toolOutput = await toolRequest.run();
     
     // This is a temporary way to pass back what was added.
-    // In a real app, this might be handled via a database and re-fetching.
     const inputArgs = toolRequest.input();
     if (inputArgs.toolName === 'addTodo' && inputArgs.input) {
       updatedTodos = {
@@ -49,7 +48,8 @@ export async function chatWithBot(
     
     const finalResponse = await ai.generate({
         prompt: [{ role: "user", content: [{ text: prompt }] }, toolRequest, { role: "tool", content: toolOutput}],
-        tools: [chatPrompt],
+        system: systemInstruction,
+        tools: [addTodoTool],
     });
     toolResponse = finalResponse.text ?? "";
   }
