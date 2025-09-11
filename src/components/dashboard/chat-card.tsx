@@ -64,6 +64,8 @@ export function ChatCard({ subjects, onTaskAdded }: ChatCardProps) {
           {
             name: value.name,
             todos: value.todos.map(t => t.text),
+            totalHours: value.totalHours,
+            goalHours: value.goalHours,
           },
         ])
       );

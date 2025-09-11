@@ -16,6 +16,8 @@ type SerializableSubjects = {
   [key: string]: {
     name: string;
     todos: string[];
+    totalHours: number;
+    goalHours: number;
   }
 }
 
