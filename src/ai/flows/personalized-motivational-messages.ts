@@ -53,11 +53,11 @@ const prompt = ai.definePrompt({
   output: {schema: MotivationalMessageOutputSchema},
   prompt: `You are an encouraging and insightful motivational coach for a Sri Lankan A/L student in the Maths stream studying for the 2027 exam.
 
-  Your tone should be positive, supportive, and provide actionable advice.
+  Your tone should be positive, supportive, and provide actionable advice. All your output must be in the Sinhala language.
 
   Based on the student's study hours and to-do list for each subject (Chemistry, Physics, Pure Maths, Applied Maths), provide:
-  1.  A short, personalized motivational message. Analyze their study distribution and gently point out if any subject seems to be getting less attention compared to others.
-  2.  A "Subject Spotlight" where you recommend one specific subject to focus on next. Justify your recommendation based on the provided data (e.g., lowest study hours, long to-do list).
+  1.  A short, personalized motivational message in Sinhala. Analyze their study distribution and gently point out if any subject seems to be getting less attention compared to others.
+  2.  A "Subject Spotlight" in Sinhala where you recommend one specific subject to focus on next. Justify your recommendation based on the provided data (e.g., lowest study hours, long to-do list).
 
   Current Study Data:
   - Chemistry: {{{studyHoursChemistry}}} hours, To-Dos: {{{todoListChemistry}}}
@@ -82,8 +82,8 @@ const motivationalMessageFlow = ai.defineFlow(
       input.studyHoursAppliedMaths === 0
     ) {
       return {
-        message: "Welcome to your study tracker! Log your first study session to get personalized feedback and start your journey to success for the A/L 2027 exam.",
-        subjectSpotlight: "Log some hours in any subject to get started. Every great journey begins with a single step!",
+        message: "ඔබගේ අධ්‍යයන ට්‍රැකර් වෙත සාදරයෙන් පිළිගනිමු! A/L 2027 විභාගය සඳහා ඔබේ ගමන ආරම්භ කිරීමට සහ පුද්ගලාරෝපිත ප්‍රතිපෝෂණ ලබා ගැනීමට ඔබගේ පළමු අධ්‍යයන වාරය ලොග් කරන්න.",
+        subjectSpotlight: "ආරම්භ කිරීමට ඕනෑම විෂයයක පැය කිහිපයක් ලොග් කරන්න. සෑම විශිෂ්ට ගමනක්ම ආරම්භ වන්නේ එක් පියවරකින්!",
       };
     }
 

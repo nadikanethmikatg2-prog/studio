@@ -1,6 +1,6 @@
 "use client";
 
-import { Pie, PieChart, ResponsiveContainer, Cell, Tooltip } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts";
 import {
   Card,
   CardContent,
@@ -10,10 +10,25 @@ import {
 } from "@/components/ui/card";
 import type { Subjects } from "@/app/page";
 import { BrainCircuit } from "lucide-react";
+import React from "react";
 
 interface SubjectPieChartProps {
   subjects: Subjects;
 }
+
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name }: any) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
+
 
 export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
   const chartData = Object.values(subjects)
@@ -45,6 +60,7 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
                   backgroundColor: "hsl(var(--background))",
                   borderColor: "hsl(var(--border))",
                 }}
+                formatter={(value: number, name: string) => [`${value.toFixed(1)} hrs`, name]}
               />
               <Pie
                 data={chartData}
@@ -52,13 +68,15 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={80}
-                label={(entry) => `${entry.name.split(" ")[0]}`}
+                outerRadius={100}
+                labelLine={false}
+                label={renderCustomizedLabel}
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                  <Cell key={`cell-${index}`} fill={entry.fill} stroke={entry.fill} />
                 ))}
               </Pie>
+              <Legend iconSize={10} />
             </PieChart>
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">

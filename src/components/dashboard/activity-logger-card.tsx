@@ -25,9 +25,10 @@ import {
 interface ActivityLoggerCardProps {
   subjects: Subjects;
   onUpdate: (key: string, updatedData: Partial<Subject>) => void;
+  onLogHours: (subjectKey: string, hours: number) => void;
 }
 
-export function ActivityLoggerCard({ subjects, onUpdate }: ActivityLoggerCardProps) {
+export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityLoggerCardProps) {
   const [selectedSubject, setSelectedSubject] = useState<string>("chemistry");
   const [hoursToAdd, setHoursToAdd] = useState("");
   const [newTodo, setNewTodo] = useState("");
@@ -37,14 +38,11 @@ export function ActivityLoggerCard({ subjects, onUpdate }: ActivityLoggerCardPro
   const handleAddHours = (hours: number) => {
     if (selectedSubject && !isNaN(hours) && hours > 0) {
       startTransition(() => {
-        const currentSubject = subjects[selectedSubject];
-        onUpdate(selectedSubject, {
-          totalHours: currentSubject.totalHours + hours,
-        });
+        onLogHours(selectedSubject, hours);
         setHoursToAdd("");
         toast({
           title: "Success",
-          description: `${hours} hour(s) added to ${currentSubject.name}.`,
+          description: `${hours} hour(s) added to ${subjects[selectedSubject].name}.`,
         });
       });
     } else {

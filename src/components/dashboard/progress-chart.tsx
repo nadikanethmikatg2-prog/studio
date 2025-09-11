@@ -24,7 +24,7 @@ export function ProgressChart({ subjects }: ProgressChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Study Progress</CardTitle>
+        <CardTitle>Overall Study Progress</CardTitle>
         <CardDescription>Total hours spent on each subject.</CardDescription>
       </CardHeader>
       <CardContent>
