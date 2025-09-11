@@ -8,7 +8,6 @@
 
 import { ai } from "@/ai/genkit";
 import { addTodoTool } from "@/ai/tools/todo-tools";
-import { z } from "genkit";
 
 const chatPrompt = ai.definePrompt({
   name: "chatPrompt",
@@ -26,7 +25,6 @@ export async function chatWithBot(
   prompt: string
 ): Promise<{ response: string | null; toolRan: boolean }> {
   const llmResponse = await ai.generate({
-    prompt: prompt,
     model: "googleai/gemini-2.5-flash",
     history: [
       // You can add chat history here if needed
@@ -34,7 +32,7 @@ export async function chatWithBot(
     prompt: [chatPrompt, {text: prompt}],
   });
 
-  const toolRan = llmResponse.output!.tools?.length > 0;
+  const toolRan = llmResponse.output?.tools?.length > 0;
   
   return {
     response: llmResponse.text,
