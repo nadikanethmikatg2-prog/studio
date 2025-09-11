@@ -8,7 +8,6 @@ import {
   Sigma,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { CountdownCard } from "@/components/dashboard/countdown-card";
 import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
 import { SubjectPieChart } from "@/components/dashboard/subject-pie-chart";
@@ -205,20 +204,19 @@ export default function Home() {
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           {/* Left Column */}
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-                <MotivationCard subjects={subjects} />
-                <CountdownCard />
-            </div>
-             <Card>
+            <MotivationCard subjects={subjects} />
+            <Card>
                 <CardContent className="p-2 md:p-4">
-                    <div className="grid gap-6 md:gap-8 md:grid-cols-2 min-h-[420px]">
-                        <WeeklyProgressChart
-                            currentWeekData={currentWeekData}
-                            previousWeekData={previousWeekData}
-                            subjects={subjects}
-                            selectedDate={selectedDate}
-                            onDateChange={setSelectedDate}
-                        />
+                    <div className="grid gap-6 md:gap-8 lg:grid-cols-3 min-h-[420px]">
+                        <div className="lg:col-span-2">
+                            <WeeklyProgressChart
+                                currentWeekData={currentWeekData}
+                                previousWeekData={previousWeekData}
+                                subjects={subjects}
+                                selectedDate={selectedDate}
+                                onDateChange={setSelectedDate}
+                            />
+                        </div>
                         <SubjectPieChart subjects={subjects} />
                     </div>
                 </CardContent>

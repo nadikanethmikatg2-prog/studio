@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Subjects, Subject } from "@/app/page";
-import { SubjectCard } from "./subject-card"; // Re-using the content of the old subject card
+import { SubjectCard } from "./subject-card";
 import { BookCopy } from "lucide-react";
 
 interface SubjectDetailsCardProps {
@@ -31,12 +31,12 @@ export function SubjectDetailsCard({ subjects, onUpdate }: SubjectDetailsCardPro
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="chemistry" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
             {Object.entries(subjects).map(([key, subject]) => (
               <TabsTrigger key={key} value={key}>
                 <div className="flex items-center gap-2">
                     <subject.icon className="h-4 w-4" />
-                    {subject.name}
+                    <span className="hidden md:inline">{subject.name}</span>
                 </div>
               </TabsTrigger>
             ))}

@@ -1,12 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Timer } from "lucide-react";
 
 const examDate = new Date("2027-08-01T00:00:00");
@@ -20,6 +14,12 @@ export function CountdownCard() {
   });
 
   useEffect(() => {
+    // This check is to avoid "Text content does not match server-rendered HTML" error
+    // by ensuring the countdown only runs on the client.
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     const calculateTimeLeft = () => {
       const difference = +examDate - +new Date();
       let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -49,25 +49,21 @@ export function CountdownCard() {
     { label: "Days", value: timeLeft.days },
     { label: "Hours", value: timeLeft.hours },
     { label: "Mins", value: timeLeft.minutes },
-    { label: "Secs", value: timeLeft.seconds },
   ];
 
   return (
-    <Card className="bg-primary/10 border-primary/20 text-primary-foreground">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center text-base gap-2 text-primary">
-          <Timer className="h-5 w-5" />
-          Countdown to A/L 2027
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-4 gap-2 text-center">
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 text-primary text-sm">
+        <Timer className="h-4 w-4" />
+        <span>A/L 2027</span>
+      </div>
+      <div className="flex gap-2 text-center">
           {timeParts.map((part) => (
             <div
               key={part.label}
-              className="flex flex-col items-center justify-center p-2 rounded-lg bg-primary/20"
+              className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-2 py-1"
             >
-              <div className="text-2xl font-bold text-primary-foreground">
+              <div className="text-sm font-bold text-primary-foreground">
                 {String(part.value).padStart(2, "0")}
               </div>
               <div className="text-xs uppercase tracking-wider text-primary-foreground/80">
@@ -76,7 +72,6 @@ export function CountdownCard() {
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
