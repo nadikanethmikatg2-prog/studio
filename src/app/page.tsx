@@ -8,12 +8,13 @@ import {
   Sigma,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { SubjectCard } from "@/components/dashboard/subject-card";
 import { ProgressChart } from "@/components/dashboard/progress-chart";
 import { CountdownCard } from "@/components/dashboard/countdown-card";
 import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
 import { SubjectPieChart } from "@/components/dashboard/subject-pie-chart";
+import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card";
+import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
 
 export type Todo = {
   id: number;
@@ -121,17 +122,9 @@ export default function Home() {
       <SiteHeader />
       <main className="flex-1 p-4 md:p-8">
         <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="grid gap-6 md:grid-cols-2">
-              {Object.entries(subjects).map(([key, subject]) => (
-                <SubjectCard
-                  key={key}
-                  subjectKey={key}
-                  subject={subject}
-                  onUpdate={handleUpdate}
-                />
-              ))}
-            </div>
+          <div className="lg:col-span-2 grid gap-8">
+            <ActivityLoggerCard subjects={subjects} onUpdate={handleUpdate} />
+            <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} />
           </div>
           <div className="space-y-8">
             <MotivationCard subjects={subjects} />
