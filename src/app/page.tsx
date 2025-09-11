@@ -216,8 +216,8 @@ export default function Home() {
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
             />
-             <ChatCard onUpdate={handleUpdate}/>
-            <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} />
+             <ChatCard />
+            <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} onUpdate={handleUpdate} />
              <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} onLogHours={handleLogHours} />
           </div>
 

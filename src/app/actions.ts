@@ -46,16 +46,15 @@ export async function generateStudyGoalsAction(
 export async function chatWithBotAction(
   history: MessageData[],
   prompt: string
-): Promise<{ success: boolean; response: string | null; toolRan: boolean; message: string; updatedTodos?: { subjectKey: string, task: string } }> {
+): Promise<{ success: boolean; response: string | null; message: string; }> {
   try {
     const result = await chatWithBot(history, prompt);
-    return { success: true, response: result.response, toolRan: result.toolRan, message: "Success", updatedTodos: result.updatedTodos };
+    return { success: true, response: result.response, message: "Success" };
   } catch (error) {
     console.error(error);
     return {
       success: false,
       response: null,
-      toolRan: false,
       message: "Failed to get response from AI. Please try again.",
     };
   }

@@ -11,23 +11,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Bot, Send } from "lucide-react";
-import type { Subject, Todo } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { chatWithBotAction } from "@/app/actions";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { MessageData } from "genkit";
 
-interface ChatCardProps {
-  onUpdate: (key: string, updatedData: Partial<Subject>) => void;
-}
-
 type Message = {
   role: "user" | "bot";
   content: string;
 };
 
-export function ChatCard({ onUpdate }: ChatCardProps) {
+export function ChatCard() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
@@ -53,20 +48,6 @@ export function ChatCard({ onUpdate }: ChatCardProps) {
 
       if (result.success && result.response) {
         setMessages([...newMessages, { role: "bot", content: result.response }]);
-        
-        if (result.toolRan && result.updatedTodos) {
-            const { subjectKey, task } = result.updatedTodos;
-            // This is a temporary client-side update. In a real app,
-            // you'd likely refetch data or use a more robust state management.
-            onUpdate(subjectKey, { 
-                todos: (prevTodos: Todo[]) => [...prevTodos, { id: Date.now(), text: task, completed: false }]
-             });
-
-            toast({
-                title: "AI Task Added",
-                description: `"${task}" was added to ${subjectKey}.`,
-            });
-        }
       } else {
         toast({
           variant: "destructive",
@@ -86,7 +67,7 @@ export function ChatCard({ onUpdate }: ChatCardProps) {
           Chat with your AI Assistant
         </CardTitle>
         <CardDescription>
-          Ask me to add tasks, like "add 'Revise Thermodynamics' to my Physics to-do list".
+          Ask me questions about your study plan or for some motivation!
         </CardDescription>
       </CardHeader>
       <CardContent>
