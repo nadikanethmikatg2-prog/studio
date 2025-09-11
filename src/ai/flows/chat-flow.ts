@@ -17,17 +17,13 @@ The subjects are Chemistry, Physics, Pure Maths, and Applied Maths.
 `;
 
 export async function chatWithBot(
-  history: MessageData[],
-  prompt: string
-): Promise<{ response: string | null; }> {
-
+  history: MessageData[]
+): Promise<string> {
   const llmResponse = await ai.generate({
     model: "googleai/gemini-2.5-flash",
-    prompt: [...history, { role: "user", content: [{ text: prompt }] }],
+    prompt: history,
     system: systemInstruction,
   });
 
-  return {
-    response: llmResponse.text,
-  };
+  return llmResponse.text;
 }

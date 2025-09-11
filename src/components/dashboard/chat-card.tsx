@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useRef, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -17,44 +17,51 @@ import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { MessageData } from "genkit";
 
-type Message = {
-  role: "user" | "bot";
-  content: string;
-};
-
 export function ChatCard() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Scroll to the bottom when new messages are added
+    if (scrollAreaRef.current) {
+        const viewport = scrollAreaRef.current.querySelector('div');
+        if (viewport) {
+            viewport.scrollTop = viewport.scrollHeight;
+        }
+    }
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
-    const userMessage: Message = { role: "user", content: input };
-    const newMessages: Message[] = [...messages, userMessage];
-    setMessages(newMessages);
     const currentInput = input;
     setInput("");
 
-    startTransition(async () => {
-      // Convert message history to MessageData format for the AI
-      const history: MessageData[] = messages.map(m => ({
-        role: m.role,
-        content: [{ text: m.content }]
-      }));
+    const newMessages: MessageData[] = [
+      ...messages,
+      { role: "user", content: [{ text: currentInput }] },
+    ];
+    setMessages(newMessages);
 
-      const result = await chatWithBotAction(history, currentInput);
+    startTransition(async () => {
+      const result = await chatWithBotAction(newMessages);
 
       if (result.success && result.response) {
-        setMessages([...newMessages, { role: "bot", content: result.response }]);
+        setMessages([
+          ...newMessages,
+          { role: "model", content: [{ text: result.response }] },
+        ]);
       } else {
         toast({
           variant: "destructive",
           title: "AI Chat Error",
           description: result.message,
         });
-        setMessages(messages); // Revert messages on error
+        // Revert to previous messages on error
+        setMessages(messages);
       }
     });
   };
@@ -71,29 +78,33 @@ export function ChatCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-48 w-full rounded-md border p-4 mb-4">
-            {messages.length > 0 ? (
-                <div className="space-y-4">
-                    {messages.map((message, index) => (
-                        <div
-                        key={index}
-                        className={cn(
-                            "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
-                            message.role === "user"
-                            ? "ml-auto bg-primary text-primary-foreground"
-                            : "bg-muted"
-                        )}
-                        >
-                        {message.content}
-                        </div>
-                    ))}
-                    {isPending && <div className="text-sm text-muted-foreground">Bot is thinking...</div>}
+        <ScrollArea className="h-48 w-full rounded-md border p-4 mb-4" ref={scrollAreaRef}>
+          {messages.length > 0 ? (
+            <div className="space-y-4">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                    message.role === "user"
+                      ? "ml-auto bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  )}
+                >
+                  {message.content[0].text}
                 </div>
-            ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                    No messages yet. Start the conversation!
+              ))}
+              {isPending && (
+                <div className="text-sm text-muted-foreground">
+                  Bot is thinking...
                 </div>
-            )}
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+              No messages yet. Start the conversation!
+            </div>
+          )}
         </ScrollArea>
         <div className="flex gap-2">
           <Input
