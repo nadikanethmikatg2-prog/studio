@@ -16,7 +16,7 @@ import {
   format,
   subWeeks,
 } from "date-fns";
-import { ChatCard } from "@/components/dashboard/chat-card";
+import { FloatingChat } from "@/components/dashboard/floating-chat";
 
 export type Todo = {
   id: number;
@@ -249,7 +249,6 @@ export default function Home() {
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
             />
-            <ChatCard onTaskAdded={handleAddTodo} />
             <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} />
             <SubjectDetailsCard
               subjects={subjects}
@@ -265,6 +264,7 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <FloatingChat onTaskAdded={handleAddTodo} />
     </div>
   );
 }

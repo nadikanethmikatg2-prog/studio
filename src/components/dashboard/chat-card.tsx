@@ -89,7 +89,7 @@ export function ChatCard({ onTaskAdded }: ChatCardProps) {
   };
 
   return (
-    <Card>
+    <Card className="flex flex-col h-[60vh] max-h-[700px] shadow-none border-none">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bot className="text-primary" />
@@ -99,13 +99,14 @@ export function ChatCard({ onTaskAdded }: ChatCardProps) {
           Try saying: "Add 'review kinematics' to my physics to-do list."
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
         <ScrollArea
-          className="h-64 w-full rounded-md border p-4 mb-4"
+          className="flex-1 -m-4"
           ref={scrollAreaRef}
         >
+        <div className="p-4 space-y-4">
           {messages.length > 0 ? (
-            <div className="space-y-4">
+            <>
               {messages.map((message, index) => (
                 <div
                   key={index}
@@ -156,12 +157,13 @@ export function ChatCard({ onTaskAdded }: ChatCardProps) {
                   </div>
                 </div>
               )}
-            </div>
+            </>
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
               No messages yet. Start the conversation!
             </div>
           )}
+          </div>
         </ScrollArea>
         <div className="flex gap-2">
           <Input
