@@ -9,12 +9,14 @@ import {
 } from "@/components/ui/popover";
 import { Bot, X } from "lucide-react";
 import { ChatCard } from "./chat-card";
+import type { Subjects } from "@/app/page";
 
 interface FloatingChatProps {
+  subjects: Subjects;
   onTaskAdded: (subjectKey: string, task: string) => void;
 }
 
-export function FloatingChat({ onTaskAdded }: FloatingChatProps) {
+export function FloatingChat({ subjects, onTaskAdded }: FloatingChatProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -36,7 +38,7 @@ export function FloatingChat({ onTaskAdded }: FloatingChatProps) {
         // Prevent content from stealing focus and closing popover
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <ChatCard onTaskAdded={onTaskAdded} />
+        <ChatCard subjects={subjects} onTaskAdded={onTaskAdded} />
       </PopoverContent>
     </Popover>
   );

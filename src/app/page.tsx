@@ -264,7 +264,7 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <FloatingChat onTaskAdded={handleAddTodo} />
+      <FloatingChat subjects={subjects} onTaskAdded={handleAddTodo} />
     </div>
   );
 }
