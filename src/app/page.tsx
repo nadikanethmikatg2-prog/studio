@@ -134,11 +134,11 @@ export default function Home() {
             </div>
           </div>
           <div className="space-y-8">
+            <MotivationCard subjects={subjects} />
             <CountdownCard />
             <SubjectPieChart subjects={subjects} />
             <ProgressChart subjects={subjects} />
             <GoalsCard subjects={subjects} onUpdate={handleUpdate} />
-            <MotivationCard subjects={subjects} />
           </div>
         </div>
       </main>

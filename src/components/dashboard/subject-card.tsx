@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -13,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { Plus, Trash2, Clock } from "lucide-react";
 import type { Subject, Todo } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
@@ -34,8 +33,7 @@ export function SubjectCard({
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const handleAddHours = () => {
-    const hours = parseFloat(hoursToAdd);
+  const handleAddHours = (hours: number) => {
     if (!isNaN(hours) && hours > 0) {
       startTransition(() => {
         onUpdate(subjectKey, { totalHours: subject.totalHours + hours });
@@ -52,6 +50,11 @@ export function SubjectCard({
         description: "Please enter a positive number for hours.",
       });
     }
+  };
+
+  const handleLogHoursFromInput = () => {
+    const hours = parseFloat(hoursToAdd);
+    handleAddHours(hours);
   };
 
   const handleAddTodo = () => {
@@ -89,37 +92,58 @@ export function SubjectCard({
   return (
     <Card className="flex flex-col bg-card hover:bg-card/90 transition-colors">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Icon
-            className="h-6 w-6"
-            style={{ color: subject.color }}
-          />
-          {subject.name}
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Icon
+              className="h-6 w-6"
+              style={{ color: subject.color }}
+            />
+            {subject.name}
+          </div>
+           <span className="text-sm text-muted-foreground font-medium">
+             {subject.totalHours.toFixed(1)}h
+           </span>
         </CardTitle>
-        <CardDescription>
-          Total hours studied: {subject.totalHours.toFixed(1)}
-        </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
         <div className="space-y-2">
           <Label htmlFor={`hours-${subjectKey}`}>Log Study Hours</Label>
-          <div className="flex gap-2">
-            <Input
+          <div className="flex gap-2 items-center">
+             <Input
               id={`hours-${subjectKey}`}
               type="number"
               value={hoursToAdd}
               onChange={(e) => setHoursToAdd(e.target.value)}
               placeholder="e.g., 1.5"
+              onKeyDown={(e) => e.key === 'Enter' && handleLogHoursFromInput()}
             />
-            <Button onClick={handleAddHours} disabled={isPending}>
+            <Button onClick={handleLogHoursFromInput} disabled={isPending}>
               Log
             </Button>
           </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => handleAddHours(0.5)}>+30m</Button>
+            <Button variant="outline" size="sm" onClick={() => handleAddHours(1)}>+1h</Button>
+            <Button variant="outline" size="sm" onClick={() => handleAddHours(2)}>+2h</Button>
+          </div>
         </div>
+        
         <div className="space-y-2">
           <Label>To-Do List</Label>
-          <ScrollArea className="h-40 w-full rounded-md border p-2">
-            <div className="space-y-2">
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="Add a new task..."
+              onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
+            />
+            <Button onClick={handleAddTodo} variant="outline" size="icon" disabled={isPending}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+           <ScrollArea className="h-32 w-full rounded-md border mt-2">
+            <div className="p-2 space-y-2">
               {subject.todos.length > 0 ? (
                 subject.todos.map((todo) => (
                   <div key={todo.id} className="flex items-center gap-2 group">
@@ -148,27 +172,13 @@ export function SubjectCard({
                 ))
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  No tasks yet.
+                  No tasks yet. Add one!
                 </p>
               )}
             </div>
           </ScrollArea>
         </div>
       </CardContent>
-      <CardFooter>
-        <div className="flex gap-2 w-full">
-          <Input
-            type="text"
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            placeholder="Add a new task"
-            onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
-          />
-          <Button onClick={handleAddTodo} variant="outline" size="icon" disabled={isPending}>
-            <PlusCircle className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardFooter>
     </Card>
   );
 }
