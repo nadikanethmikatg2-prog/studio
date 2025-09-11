@@ -10,7 +10,6 @@ import {
 } from "@/ai/flows/generate-study-goals";
 import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-schemas";
 import { chatWithBot } from "@/ai/flows/chat-flow";
-import { MessageData } from "genkit";
 
 
 export async function getMotivationalMessageAction(
@@ -44,10 +43,10 @@ export async function generateStudyGoalsAction(
 }
 
 export async function chatWithBotAction(
-  history: MessageData[]
+  prompt: string
 ): Promise<{ success: boolean; response: string | null; message: string; }> {
   try {
-    const result = await chatWithBot(history);
+    const result = await chatWithBot(prompt);
     return { success: true, response: result, message: "Success" };
   } catch (error) {
     console.error(error);

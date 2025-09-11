@@ -15,10 +15,14 @@ import { useToast } from "@/hooks/use-toast";
 import { chatWithBotAction } from "@/app/actions";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { MessageData } from "genkit";
+
+type Message = {
+  role: "user" | "model";
+  content: string;
+};
 
 export function ChatCard() {
-  const [messages, setMessages] = useState<MessageData[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -38,21 +42,20 @@ export function ChatCard() {
     if (input.trim() === "") return;
 
     const currentInput = input;
-    setInput("");
-
-    const newMessages: MessageData[] = [
+    const newMessages: Message[] = [
       ...messages,
-      { role: "user", content: [{ text: currentInput }] },
+      { role: "user", content: currentInput },
     ];
     setMessages(newMessages);
+    setInput("");
 
     startTransition(async () => {
-      const result = await chatWithBotAction(newMessages);
+      const result = await chatWithBotAction(currentInput);
 
       if (result.success && result.response) {
         setMessages([
           ...newMessages,
-          { role: "model", content: [{ text: result.response }] },
+          { role: "model", content: result.response },
         ]);
       } else {
         toast({
@@ -60,8 +63,8 @@ export function ChatCard() {
           title: "AI Chat Error",
           description: result.message,
         });
-        // Revert to previous messages on error
-        setMessages(messages);
+        // Revert to user message only on error
+        setMessages(newMessages);
       }
     });
   };
@@ -91,7 +94,7 @@ export function ChatCard() {
                       : "bg-muted"
                   )}
                 >
-                  {message.content[0].text}
+                  {message.content}
                 </div>
               ))}
               {isPending && (
