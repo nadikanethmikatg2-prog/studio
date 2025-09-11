@@ -34,6 +34,13 @@ export type Subjects = {
   [key: string]: Subject;
 };
 
+const iconMap: { [key: string]: React.ElementType } = {
+  chemistry: FlaskConical,
+  physics: Atom,
+  pureMaths: Sigma,
+  appliedMaths: Combine,
+};
+
 const initialSubjects: Subjects = {
   chemistry: {
     name: "Chemistry",
@@ -78,7 +85,14 @@ export default function Home() {
     try {
       const savedData = localStorage.getItem("alTrailblazerData");
       if (savedData) {
-        setSubjects(JSON.parse(savedData));
+        const parsedData = JSON.parse(savedData);
+        // Re-assign icons because they don't survive stringification
+        Object.keys(parsedData).forEach(key => {
+          if (iconMap[key]) {
+            parsedData[key].icon = iconMap[key];
+          }
+        });
+        setSubjects(parsedData);
       }
     } catch (error) {
       console.error("Failed to parse from localStorage", error);
