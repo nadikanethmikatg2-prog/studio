@@ -51,7 +51,7 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
   }))
 
   return (
-    <Card className="min-h-[420px] flex flex-col">
+    <Card>
         <CardHeader>
             <div className="flex flex-row items-start justify-between">
                 <div className="space-y-1.5">
@@ -81,7 +81,7 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
                 </Popover>
             </div>
       </CardHeader>
-      <CardContent className="flex-1 min-h-0">
+      <CardContent className="h-[300px]">
             {currentWeekData.some(d => d.totalHours > 0) || previousWeekData.some(d => d.totalHours > 0) ? (
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={combinedData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
