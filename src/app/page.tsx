@@ -15,6 +15,7 @@ import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card"
 import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
 import { WeeklyProgressChart } from "@/components/dashboard/weekly-progress-chart";
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks } from "date-fns";
+import { ChatCard } from "@/components/dashboard/chat-card";
 
 export type Todo = {
   id: number;
@@ -208,7 +209,8 @@ export default function Home() {
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
             />
-            <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} onUpdate={handleUpdate} />
+             <ChatCard onUpdate={handleUpdate}/>
+            <ActivityLoggerCard subjects={subjects} onLogHours={handleLogHours} />
              <SubjectDetailsCard subjects={subjects} onUpdate={handleUpdate} onLogHours={handleLogHours} />
           </div>
 

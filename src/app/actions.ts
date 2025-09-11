@@ -9,6 +9,7 @@ import {
   generateStudyGoals, 
 } from "@/ai/flows/generate-study-goals";
 import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-schemas";
+import { chatWithBot } from "@/ai/flows/chat-flow";
 
 
 export async function getMotivationalMessageAction(
@@ -37,6 +38,23 @@ export async function generateStudyGoalsAction(
     return {
       success: false,
       message: "Failed to generate AI goals. Please try again.",
+    };
+  }
+}
+
+export async function chatWithBotAction(
+  prompt: string
+): Promise<{ success: boolean; response: string | null; toolRan: boolean; message: string }> {
+  try {
+    const result = await chatWithBot(prompt);
+    return { success: true, response: result.response, toolRan: result.toolRan, message: "Success" };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      response: null,
+      toolRan: false,
+      message: "Failed to get response from AI. Please try again.",
     };
   }
 }

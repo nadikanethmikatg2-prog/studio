@@ -36,7 +36,7 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
     }));
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col min-h-[300px]">
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <PieChartIcon className="h-5 w-5 text-primary" />
@@ -46,7 +46,7 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
                 Your study time distribution.
             </CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 min-h-0">
+        <CardContent className="flex-1 flex items-center justify-center">
           {chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>

@@ -12,20 +12,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus, Clock, ListTodo, Activity } from "lucide-react";
-import type { Subject, Todo, Subjects } from "@/app/page";
+import type { Subject, Subjects } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 interface ActivityLoggerCardProps {
   subjects: Subjects;
-  onUpdate: (key: string, updatedData: Partial<Subject>) => void;
   onLogHours: (subjectKey: string, hours: number) => void;
 }
 
-export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityLoggerCardProps) {
+export function ActivityLoggerCard({ subjects, onLogHours }: ActivityLoggerCardProps) {
   const [selectedSubject, setSelectedSubject] = useState<string>("chemistry");
   const [hoursToAdd, setHoursToAdd] = useState("");
-  const [newTodo, setNewTodo] = useState("");
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
@@ -53,46 +51,16 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
     handleAddHours(hours);
   };
 
-  const handleAddTodo = () => {
-    if (selectedSubject && newTodo.trim() !== "") {
-      startTransition(() => {
-        const currentSubject = subjects[selectedSubject];
-        const newTodoItem: Todo = {
-          id: Date.now(),
-          text: newTodo.trim(),
-          completed: false,
-        };
-        onUpdate(selectedSubject, {
-          todos: [...currentSubject.todos, newTodoItem],
-        });
-        
-        let toastDescription = `New task for ${currentSubject.name}: "${newTodo.trim()}"`;
-        
-        setNewTodo("");
-
-        toast({
-            title: "Task Added",
-            description: toastDescription,
-        })
-      });
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Invalid Input",
-            description: "Please select a subject and enter a task description.",
-        });
-    }
-  };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <Activity className="text-primary"/>
-            Log Your Activity
+            Log Your Study Hours
         </CardTitle>
         <CardDescription>
-          Select a subject, then log study hours or add new tasks.
+          Select a subject, then log your study time. Use the chat to add tasks.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -121,47 +89,26 @@ export function ActivityLoggerCard({ subjects, onUpdate, onLogHours }: ActivityL
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-                <Label htmlFor={`hours-input`} className="flex items-center gap-2"><Clock /> 2. Log Study Hours</Label>
-                <div className="flex gap-2 items-center">
-                    <Input
-                    id={`hours-input`}
-                    type="number"
-                    value={hoursToAdd}
-                    onChange={(e) => setHoursToAdd(e.target.value)}
-                    placeholder="e.g., 1.5"
-                    onKeyDown={(e) => e.key === 'Enter' && handleLogHoursFromInput()}
-                    disabled={!selectedSubject}
-                    />
-                    <Button onClick={handleLogHoursFromInput} disabled={isPending || !selectedSubject || !hoursToAdd}>
-                    Log
-                    </Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    <Button variant="outline" size="sm" onClick={() => handleAddHours(0.5)} disabled={!selectedSubject}>+30m</Button>
-                    <Button variant="outline" size="sm" onClick={() => handleAddHours(1)} disabled={!selectedSubject}>+1h</Button>
-                    <Button variant="outline" size="sm" onClick={() => handleAddHours(2)} disabled={!selectedSubject}>+2h</Button>
-                </div>
+        <div className="space-y-2">
+            <Label htmlFor={`hours-input`} className="flex items-center gap-2"><Clock /> 2. Log Study Hours</Label>
+            <div className="flex gap-2 items-center">
+                <Input
+                id={`hours-input`}
+                type="number"
+                value={hoursToAdd}
+                onChange={(e) => setHoursToAdd(e.target.value)}
+                placeholder="e.g., 1.5"
+                onKeyDown={(e) => e.key === 'Enter' && handleLogHoursFromInput()}
+                disabled={!selectedSubject}
+                />
+                <Button onClick={handleLogHoursFromInput} disabled={isPending || !selectedSubject || !hoursToAdd}>
+                Log
+                </Button>
             </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="todo-input" className="flex items-center gap-2"><ListTodo /> 3. Add a New Task</Label>
-                <div className="flex gap-2">
-                    <Input
-                      id="todo-input"
-                      type="text"
-                      value={newTodo}
-                      onChange={(e) => setNewTodo(e.target.value)}
-                      placeholder="New task description..."
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddTodo()}
-                      disabled={!selectedSubject}
-                      className="flex-grow"
-                    />
-                    <Button onClick={handleAddTodo} variant="outline" size="icon" disabled={isPending || !selectedSubject || !newTodo}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                </div>
+            <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => handleAddHours(0.5)} disabled={!selectedSubject}>+30m</Button>
+                <Button variant="outline" size="sm" onClick={() => handleAddHours(1)} disabled={!selectedSubject}>+1h</Button>
+                <Button variant="outline" size="sm" onClick={() => handleAddHours(2)} disabled={!selectedSubject}>+2h</Button>
             </div>
         </div>
       </CardContent>
