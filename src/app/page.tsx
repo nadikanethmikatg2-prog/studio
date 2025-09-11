@@ -217,7 +217,7 @@ export default function Home() {
           </div>
 
           {/* Right Column */}
-          <div className="lg:col-span-1 grid grid-rows-2 gap-6 md:gap-8">
+          <div className="lg:col-span-1 grid gap-6 md:gap-8">
             <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
             <SubjectPieChart subjects={subjects} />
           </div>
