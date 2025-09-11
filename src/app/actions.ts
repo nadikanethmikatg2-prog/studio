@@ -44,10 +44,10 @@ export async function generateStudyGoalsAction(
 
 export async function chatWithBotAction(
   prompt: string
-): Promise<{ success: boolean; response: string | null; toolRan: boolean; message: string }> {
+): Promise<{ success: boolean; response: string | null; toolRan: boolean; message: string; updatedTodos?: { subjectKey: string, task: string } }> {
   try {
     const result = await chatWithBot(prompt);
-    return { success: true, response: result.response, toolRan: result.toolRan, message: "Success" };
+    return { success: true, response: result.response, toolRan: result.toolRan, message: "Success", updatedTodos: result.updatedTodos };
   } catch (error) {
     console.error(error);
     return {

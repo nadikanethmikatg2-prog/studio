@@ -23,19 +23,44 @@ The subjects are Chemistry, Physics, Pure Maths, and Applied Maths. Their keys a
 
 export async function chatWithBot(
   prompt: string
-): Promise<{ response: string | null; toolRan: boolean }> {
+): Promise<{ response: string | null; toolRan: boolean; updatedTodos?: { subjectKey: string, task: string } }> {
   const llmResponse = await ai.generate({
     model: "googleai/gemini-2.5-flash",
-    history: [
-      // You can add chat history here if needed
-    ],
-    prompt: [chatPrompt, {text: prompt}],
+    prompt: [{ role: "user", content: [{ text: prompt }] }],
+    tools: [chatPrompt],
   });
 
-  const toolRan = llmResponse.output?.tools?.length > 0;
+  const toolRequest = llmResponse.toolRequest();
+  let toolResponse = "";
+  let updatedTodos;
+
+  if (toolRequest) {
+    const toolOutput = await toolRequest.run();
+    
+    // This is a temporary way to pass back what was added.
+    // In a real app, this might be handled via a database and re-fetching.
+    const inputArgs = toolRequest.input();
+    if (inputArgs.toolName === 'addTodo' && inputArgs.input) {
+      updatedTodos = {
+        subjectKey: inputArgs.input.subjectKey,
+        task: inputArgs.input.task,
+      };
+    }
+    
+    const finalResponse = await ai.generate({
+        prompt: [{ role: "user", content: [{ text: prompt }] }, toolRequest, { role: "tool", content: toolOutput}],
+        tools: [chatPrompt],
+    });
+    toolResponse = finalResponse.text ?? "";
+  }
   
+  const textResponse = llmResponse.text;
+  const toolRan = !!toolRequest;
+  const finalBotResponse = toolResponse || textResponse;
+
   return {
-    response: llmResponse.text,
-    toolRan
+    response: finalBotResponse,
+    toolRan: toolRan,
+    updatedTodos,
   };
 }

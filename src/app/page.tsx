@@ -152,11 +152,18 @@ export default function Home() {
 
   }, []);
 
-  const handleUpdate = useCallback((key: string, updatedData: Partial<Subject>) => {
-    setSubjects((prev) => ({
-      ...prev,
-      [key]: { ...prev[key], ...updatedData },
-    }));
+  const handleUpdate = useCallback((key: string, updatedData: Partial<Subject> | ((prevTodos: Todo[]) => Todo[])) => {
+    setSubjects((prev) => {
+        const currentSubject = prev[key];
+        const newSubjectData = typeof updatedData === 'function' 
+            ? { ...currentSubject, todos: updatedData(currentSubject.todos) }
+            : { ...currentSubject, ...updatedData };
+
+        return {
+            ...prev,
+            [key]: newSubjectData,
+        };
+    });
   }, []);
   
   const handleBulkUpdateGoals = useCallback((newGoals: { [key: string]: number }) => {

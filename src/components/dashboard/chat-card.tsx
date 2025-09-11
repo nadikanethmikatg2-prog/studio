@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Bot, Send } from "lucide-react";
-import type { Subject } from "@/app/page";
+import type { Subject, Todo } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { chatWithBotAction } from "@/app/actions";
 import { ScrollArea } from "../ui/scroll-area";
@@ -44,12 +44,18 @@ export function ChatCard({ onUpdate }: ChatCardProps) {
 
       if (result.success && result.response) {
         setMessages([...newMessages, { role: "bot", content: result.response }]);
-        // This is a simplified way to trigger a refresh on the subject data
-        // after a tool might have been called.
-        if (result.toolRan) {
+        
+        if (result.toolRan && result.updatedTodos) {
+            const { subjectKey, task } = result.updatedTodos;
+            // This is a temporary client-side update. In a real app,
+            // you'd likely refetch data or use a more robust state management.
+            onUpdate(subjectKey, { 
+                todos: (prevTodos: Todo[]) => [...prevTodos, { id: Date.now(), text: task, completed: false }]
+             });
+
             toast({
-                title: "AI Action Completed",
-                description: "The AI has updated your to-do list.",
+                title: "AI Task Added",
+                description: `"${task}" was added to ${subjectKey}.`,
             });
         }
       } else {
