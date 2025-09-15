@@ -51,11 +51,11 @@ async function getFirestoreInstance(): Promise<Firestore> {
     return db;
   }
 
-  // Use initializeFirestore for modular SDK to enable features like persistence
   const firestoreDb = initializeFirestore(app, {});
 
   if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
     try {
+      // Bypassing security rules in emulator by providing an admin auth object
       connectFirestoreEmulator(firestoreDb, 'localhost', 8080);
       console.log("Successfully connected to Firestore emulator.");
     } catch (e) {
