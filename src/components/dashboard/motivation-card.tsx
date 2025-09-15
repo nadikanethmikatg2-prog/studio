@@ -30,16 +30,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
   const hasFetched = useRef(false);
 
   useEffect(() => {
-    // Debounce function
-    const debounce = (func: (...args: any[]) => void, delay: number) => {
-      let timeout: NodeJS.Timeout;
-      return (...args: any[]) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(...args), delay);
-      };
-    };
-
-    const generateAnalysis = async () => {
+    const generateAnalysis = () => {
       startTransition(async () => {
         const input = {
           studyHoursChemistry: subjects.chemistry.totalHours,
@@ -76,7 +67,6 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
       });
     };
     
-    // We use a debounce to prevent excessive API calls while the user is actively logging hours.
     if (subjects) {
       generateAnalysis();
     }

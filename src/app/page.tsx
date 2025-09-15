@@ -312,6 +312,7 @@ export default function Home() {
             <ActivityLoggerCard
               subjects={subjects}
               onLogHours={handleLogHours}
+              onAddTask={handleAddTodo}
             />
             <SubjectDetailsCard
               subjects={subjects}
