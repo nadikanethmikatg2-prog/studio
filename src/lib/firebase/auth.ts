@@ -12,6 +12,8 @@ import { setInitialUserData } from "./firestore";
 
 export const handleSignUp = async (email: string, pass: string) => {
   try {
+    // Set persistence to keep the user logged in across sessions
+    await setPersistence(auth, browserLocalPersistence);
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
