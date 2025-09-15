@@ -3,6 +3,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  setPersistence,
+  browserSessionPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { auth } from "./firebase";
 import { setInitialUserData } from "./firestore";
@@ -22,8 +25,9 @@ export const handleSignUp = async (email: string, pass: string) => {
   }
 };
 
-export const handleSignIn = async (email: string, pass: string) => {
+export const handleSignIn = async (email: string, pass: string, keepLoggedIn: boolean) => {
   try {
+    await setPersistence(auth, keepLoggedIn ? browserLocalPersistence : browserSessionPersistence);
     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
     return { user: userCredential.user, error: null };
   } catch (error: any) {
