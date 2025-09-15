@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, collection, getDocs, writeBatch } from "firebase/firestore";
-import { db } from "./firebase";
+import { getFirestoreInstance } from "./firebase";
 import type { Subjects, DailyLog } from "@/app/page";
 
 const initialSubjectsData = {
@@ -35,12 +35,14 @@ const initialSubjectsData = {
 
 // Set initial user data on sign up
 export const setInitialUserData = async (userId: string) => {
+  const db = await getFirestoreInstance();
   const userDocRef = doc(db, "users", userId);
   await setDoc(userDocRef, { subjects: initialSubjectsData });
 };
 
 // Get initial subjects for a user
 export const getInitialSubjects = async (userId: string): Promise<Subjects> => {
+  const db = await getFirestoreInstance();
   const userDocRef = doc(db, "users", userId);
   const docSnap = await getDoc(userDocRef);
 
@@ -68,12 +70,14 @@ export const getInitialSubjects = async (userId: string): Promise<Subjects> => {
 
 // Save subjects to Firestore
 export const saveSubjects = async (userId: string, subjects: any) => {
+  const db = await getFirestoreInstance();
   const userDocRef = doc(db, "users", userId);
   await setDoc(userDocRef, { subjects }, { merge: true });
 };
 
 // Get daily logs for a user
 export const getDailyLogs = async (userId: string): Promise<DailyLog> => {
+  const db = await getFirestoreInstance();
   const logsCollectionRef = collection(db, `users/${userId}/dailyLogs`);
   const querySnapshot = await getDocs(logsCollectionRef);
   const logs: DailyLog = {};
@@ -86,6 +90,7 @@ export const getDailyLogs = async (userId: string): Promise<DailyLog> => {
 // Save daily logs to Firestore
 export const saveDailyLogs = async (userId: string, dailyLogs: DailyLog) => {
   if (Object.keys(dailyLogs).length === 0) return;
+  const db = await getFirestoreInstance();
   const batch = writeBatch(db);
   for (const date in dailyLogs) {
     const logDocRef = doc(db, `users/${userId}/dailyLogs`, date);

@@ -18,35 +18,55 @@ const firebaseConfig = {
   appId: "1:680938869975:web:fe28e2865bf8ac09394c92"
 };
 
-const app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const auth: Auth = getAuth(app);
-const db: Firestore = initializeFirestore(app, {});
+let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
+let persistenceEnabled = false;
 
-if (typeof window !== 'undefined') {
-  enableIndexedDbPersistence(db)
-  .catch((err) => {
-    if (err.code == 'failed-precondition') {
-      console.warn(
-        'Multiple tabs open, persistence can only be enabled in one tab at a time.'
-      );
-    } else if (err.code == 'unimplemented') {
-      console.warn(
-        'The current browser does not support all of the features required to enable persistence.'
-      );
+function initializeFirebase() {
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = initializeFirestore(app, {});
+
+    if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
+      try {
+        console.log("Connecting to Firebase emulators...");
+        connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
+        connectFirestoreEmulator(db, 'localhost', 8080);
+        console.log("Successfully connected to Firebase emulators.");
+      } catch (e) {
+        console.error("Error connecting to Firebase emulators:", e);
+      }
     }
-  });
-}
-
-
-if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
-  try {
-    console.log("Connecting to Firebase emulators...");
-    connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
-    connectFirestoreEmulator(db, 'localhost', 8080);
-    console.log("Successfully connected to Firebase emulators.");
-  } catch (e) {
-    console.error("Error connecting to Firebase emulators:", e);
+  } else {
+    app = getApp();
+    auth = getAuth(app);
+    db = getFirestore(app);
   }
 }
 
-export { app, auth, db };
+initializeFirebase();
+
+async function getFirestoreInstance(): Promise<Firestore> {
+  if (persistenceEnabled) {
+    return db;
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      await enableIndexedDbPersistence(db);
+      persistenceEnabled = true;
+    } catch (err: any) {
+      if (err.code === 'failed-precondition') {
+        console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+      } else if (err.code === 'unimplemented') {
+        console.warn('The current browser does not support all of the features required to enable persistence.');
+      }
+    }
+  }
+  return db;
+}
+
+
+export { app, auth, db, getFirestoreInstance };
