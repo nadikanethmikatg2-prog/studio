@@ -22,7 +22,7 @@ export default function SignupPage() {
     if (user) {
       toast({
         title: "Account Created",
-        description: "Welcome! You have been successfully signed up and logged in.",
+        description: "Welcome! You'll be redirected to your dashboard.",
       });
       router.push("/");
     } else {
