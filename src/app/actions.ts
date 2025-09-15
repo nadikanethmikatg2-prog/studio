@@ -12,7 +12,8 @@ import {
 } from "@/ai/flows/generate-study-goals";
 import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-schemas";
 import { chatWithBot } from "@/ai/flows/chat-flow";
-import { auth } from "@/lib/firebase/firebase";
+import { getFirestoreInstance } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 
 // Define a type for the serializable subjects data
@@ -26,17 +27,22 @@ type SerializableSubjects = {
 }
 
 export async function getMotivationalMessageAction(
+  userId: string,
   subjects: SerializableSubjects
 ): Promise<{ success: boolean; analysis?: MotivationalMessageOutput; message: string }> {
   try {
-    const user = auth.currentUser;
-    if (!user) {
+    if (!userId) {
       throw new Error("User not authenticated");
     }
+    
+    const db = await getFirestoreInstance();
+    const userDocRef = doc(db, "users", userId);
+    const userDocSnap = await getDoc(userDocRef);
 
-    // This is a placeholder for getting the stream from the user's data
-    // In a real app, you would fetch this from your database.
-    const stream = "maths"; // Assuming 'maths' for now
+    if (!userDocSnap.exists()) {
+        throw new Error("User data not found.");
+    }
+    const stream = userDocSnap.data().stream || 'maths';
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
       `- ${value.name}: ${value.totalHours} hours, To-Dos: ${value.todos.join(', ') || 'none'}`
@@ -49,25 +55,32 @@ export async function getMotivationalMessageAction(
 
     const result = await generateMotivationalMessage(input);
     return { success: true, analysis: result, message: "Success" };
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     return {
       success: false,
-      message: "Failed to generate AI analysis. Please try again.",
+      message: `Failed to generate AI analysis. Details: ${error.message}`,
     };
   }
 }
 
 export async function generateStudyGoalsAction(
+    userId: string,
     subjects: SerializableSubjects
 ): Promise<{ success: boolean; goals?: StudyGoalOutput; message: string }> {
   try {
-    const user = auth.currentUser;
-    if (!user) {
+    if (!userId) {
         throw new Error("User not authenticated");
     }
-    // This is a placeholder for getting the stream from the user's data
-    const stream = 'maths'; // Assuming 'maths' for now
+
+    const db = await getFirestoreInstance();
+    const userDocRef = doc(db, "users", userId);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (!userDocSnap.exists()) {
+        throw new Error("User data not found.");
+    }
+    const stream = userDocSnap.data().stream || 'maths';
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
         `- ${value.name}: ${value.totalHours} hours`
@@ -81,11 +94,11 @@ export async function generateStudyGoalsAction(
 
     const result = await generateStudyGoals(input);
     return { success: true, goals: result, message: "Success" };
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     return {
       success: false,
-      message: "Failed to generate AI goals. Please try again.",
+      message: `Failed to generate AI goals. Details: ${error.message}`,
     };
   }
 }

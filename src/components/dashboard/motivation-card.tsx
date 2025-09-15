@@ -15,23 +15,14 @@ import { useToast } from "@/hooks/use-toast";
 import type { Subjects } from "@/app/page";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "../ui/skeleton";
-import { Badge } from "../ui/badge";
+import { useAuth } from "@/hooks/use-auth";
 
 interface MotivationCardProps {
   subjects: Subjects;
 }
 
-type SerializableSubjects = {
-  [key: string]: {
-    name: string;
-    todos: string[]; // Updated to string array
-    totalHours: number;
-    goalHours: number;
-  }
-}
-
-
 export function MotivationCard({ subjects }: MotivationCardProps) {
+  const { user } = useAuth();
   const [analysis, setAnalysis] = useState<{
     message: string;
     subjectSpotlight: string;
@@ -42,6 +33,8 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
 
   useEffect(() => {
     const generateAnalysis = () => {
+      if (!user) return; // Don't run if user is not available
+
       startTransition(async () => {
 
         const serializableSubjects = Object.fromEntries(
@@ -56,7 +49,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
           ])
         );
 
-        const result = await getMotivationalMessageAction(serializableSubjects);
+        const result = await getMotivationalMessageAction(user.uid, serializableSubjects);
         
         if (result.success && result.analysis) {
           setAnalysis(result.analysis);
@@ -66,6 +59,8 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
             title: "AI Analysis Error",
             description: result.message,
           });
+          // Clear analysis on failure to show skeleton again if needed
+          setAnalysis(null);
         }
       });
     };
@@ -74,10 +69,12 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
     // This prevents generating a message on first load with no data.
     const hasActivity = Object.values(subjects).some(s => s.totalHours > 0 || s.todos.length > 0);
     
-    if (subjects && Object.keys(subjects).length > 0 && hasActivity) {
+    if (user && subjects && Object.keys(subjects).length > 0 && hasActivity) {
         if (debounceTimeout.current) {
             clearTimeout(debounceTimeout.current);
         }
+        // Set analysis to null to show skeleton loader
+        setAnalysis(null); 
         debounceTimeout.current = setTimeout(generateAnalysis, 1500);
     } else if (!hasActivity) {
       // Set a default initial message if there's no activity yet
@@ -93,7 +90,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
         }
     }
     
-  }, [subjects, toast]);
+  }, [subjects, toast, user]);
 
   return (
     <Card>
@@ -107,7 +104,12 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {analysis ? (
+        {isPending || !analysis ? (
+          <div className="space-y-4">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        ) : (
           <div className="space-y-4">
             <Alert className="bg-primary/10 border-primary/20">
               <BrainCircuit className="h-4 w-4 text-primary" />
@@ -125,11 +127,6 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
                  {analysis.subjectSpotlight}
               </AlertDescription>
             </Alert>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
           </div>
         )}
       </CardContent>
