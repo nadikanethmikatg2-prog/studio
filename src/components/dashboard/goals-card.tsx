@@ -102,7 +102,7 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
         )}
          <Button onClick={handleGenerateGoals} disabled={isPending} className="w-full">
             <Wand2 className="h-4 w-4 mr-2" />
-            {isPending ? "Generating..." : "Generate with AI"}
+            {isPending ? "Generating..." : "Generate Goals with AI"}
         </Button>
       </CardContent>
     </Card>
