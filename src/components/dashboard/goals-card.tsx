@@ -17,7 +17,6 @@ import type { Subjects } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { generateStudyGoalsAction } from "@/app/actions";
 import { Skeleton } from "../ui/skeleton";
-import { useAuth } from "@/hooks/use-auth";
 
 interface GoalsCardProps {
   subjects: Subjects;
@@ -35,19 +34,10 @@ type SerializableSubjects = {
 
 export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
   const { toast } = useToast();
-  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
   const totalGoalHours = Object.values(subjects).reduce((sum, s) => sum + s.goalHours, 0);
 
   const handleGenerateGoals = () => {
-    if (!user) {
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "You must be logged in to generate goals.",
-        });
-        return;
-    }
     startTransition(async () => {
         const serializableSubjects = Object.fromEntries(
             Object.entries(subjects).map(([key, value]) => [
@@ -61,7 +51,7 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
             ])
           );
 
-      const result = await generateStudyGoalsAction(user.uid, serializableSubjects);
+      const result = await generateStudyGoalsAction(serializableSubjects);
 
       if (result.success && result.goals) {
         onUpdate(result.goals);
@@ -82,15 +72,13 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
   return (
     <Card>
       <CardHeader>
-        <div className="space-y-1.5">
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-6 w-6 text-primary" />
-            Weekly Goals
-          </CardTitle>
-          <CardDescription>
-            Your AI-powered weekly study hour goals.
-          </CardDescription>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <Target className="h-6 w-6 text-primary" />
+          Weekly Goals
+        </CardTitle>
+        <CardDescription>
+          Track your progress towards your weekly study hour goals.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-3 rounded-lg bg-muted">
@@ -129,7 +117,7 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
         )}
          <Button onClick={handleGenerateGoals} disabled={isPending} className="w-full">
             <Wand2 className="h-4 w-4 mr-2" />
-            {isPending ? "Generating..." : "Generate Goals with AI"}
+            {isPending ? "Generating..." : "Generate with AI"}
         </Button>
       </CardContent>
     </Card>

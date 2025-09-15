@@ -16,7 +16,6 @@ import type { Subjects } from "@/app/page";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
-import { useAuth } from "@/hooks/use-auth";
 
 interface MotivationCardProps {
   subjects: Subjects;
@@ -39,13 +38,10 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
   } | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
-  const { user } = useAuth();
-  const hasFetched = useRef(false);
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const generateAnalysis = () => {
-      if (!user) return;
-
       startTransition(async () => {
 
         const serializableSubjects = Object.fromEntries(
@@ -60,21 +56,17 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
           ])
         );
 
-        const result = await getMotivationalMessageAction(user.uid, serializableSubjects);
+        const result = await getMotivationalMessageAction(serializableSubjects);
         
         if (result.success && result.analysis) {
           setAnalysis(result.analysis);
         } else {
-          // Only show toast on subsequent errors, not on initial load error
-          if(hasFetched.current) {
-            toast({
-              variant: "destructive",
-              title: "AI Analysis Error",
-              description: result.message,
-            });
-          }
+          toast({
+            variant: "destructive",
+            title: "AI Analysis Error",
+            description: result.message,
+          });
         }
-        hasFetched.current = true;
       });
     };
     
@@ -83,7 +75,10 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
     const hasActivity = Object.values(subjects).some(s => s.totalHours > 0 || s.todos.length > 0);
     
     if (subjects && Object.keys(subjects).length > 0 && hasActivity) {
-      generateAnalysis();
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+        debounceTimeout.current = setTimeout(generateAnalysis, 1500);
     } else if (!hasActivity) {
       // Set a default initial message if there's no activity yet
       setAnalysis({
@@ -91,8 +86,14 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
         subjectSpotlight: "Select a subject in the 'Log Your Study Activity' card to get started."
       });
     }
+
+    return () => {
+        if(debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+    }
     
-  }, [subjects, toast, user]);
+  }, [subjects, toast]);
 
   return (
     <Card>
@@ -106,27 +107,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isPending && (
-          <div className="space-y-4">
-             <Alert className="bg-primary/10 border-primary/20">
-               <BrainCircuit className="h-4 w-4 text-primary" />
-               <AlertTitle className="text-primary">Analysis</AlertTitle>
-               <AlertDescription className="space-y-2 pt-2">
-                 <Skeleton className="h-4 w-full" />
-                 <Skeleton className="h-4 w-3/4" />
-               </AlertDescription>
-             </Alert>
-             <Alert variant="default" className="bg-accent/10 border-accent/20">
-               <Activity className="h-4 w-4 text-accent" />
-               <AlertTitle className="text-accent">Subject Spotlight</AlertTitle>
-               <AlertDescription className="space-y-2 pt-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-1/2" />
-               </AlertDescription>
-             </Alert>
-           </div>
-        )}
-        {!isPending && analysis && (
+        {analysis ? (
           <div className="space-y-4">
             <Alert className="bg-primary/10 border-primary/20">
               <BrainCircuit className="h-4 w-4 text-primary" />
@@ -144,6 +125,11 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
                  {analysis.subjectSpotlight}
               </AlertDescription>
             </Alert>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
           </div>
         )}
       </CardContent>

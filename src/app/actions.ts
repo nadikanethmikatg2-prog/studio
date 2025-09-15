@@ -3,16 +3,16 @@
 
 import {
   generateMotivationalMessage,
+  type MotivationalMessageOutput,
 } from "@/ai/flows/personalized-motivational-messages";
-import type { MotivationalMessageInput, MotivationalMessageOutput } from "@/ai/schemas/motivational-message-schemas";
+import type { MotivationalMessageInput } from "@/ai/schemas/motivational-message-schemas";
 
 import { 
   generateStudyGoals, 
 } from "@/ai/flows/generate-study-goals";
 import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-schemas";
 import { chatWithBot } from "@/ai/flows/chat-flow";
-import { getDoc, doc } from "firebase/firestore";
-import { getFirestoreInstance } from "@/lib/firebase/firebase";
+import { auth } from "@/lib/firebase/firebase";
 
 
 // Define a type for the serializable subjects data
@@ -26,16 +26,17 @@ type SerializableSubjects = {
 }
 
 export async function getMotivationalMessageAction(
-  userId: string,
   subjects: SerializableSubjects
 ): Promise<{ success: boolean; analysis?: MotivationalMessageOutput; message: string }> {
   try {
-    if (!userId) {
+    const user = auth.currentUser;
+    if (!user) {
       throw new Error("User not authenticated");
     }
-    const db = await getFirestoreInstance();
-    const userDoc = await getDoc(doc(db, "users", userId));
-    const stream = userDoc.data()?.stream || 'maths';
+
+    // This is a placeholder for getting the stream from the user's data
+    // In a real app, you would fetch this from your database.
+    const stream = "maths"; // Assuming 'maths' for now
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
       `- ${value.name}: ${value.totalHours} hours, To-Dos: ${value.todos.join(', ') || 'none'}`
@@ -58,16 +59,15 @@ export async function getMotivationalMessageAction(
 }
 
 export async function generateStudyGoalsAction(
-    userId: string,
     subjects: SerializableSubjects
 ): Promise<{ success: boolean; goals?: StudyGoalOutput; message: string }> {
   try {
-    if (!userId) {
+    const user = auth.currentUser;
+    if (!user) {
         throw new Error("User not authenticated");
     }
-    const db = await getFirestoreInstance();
-    const userDoc = await getDoc(doc(db, "users", userId));
-    const stream = userDoc.data()?.stream || 'maths';
+    // This is a placeholder for getting the stream from the user's data
+    const stream = 'maths'; // Assuming 'maths' for now
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
         `- ${value.name}: ${value.totalHours} hours`
