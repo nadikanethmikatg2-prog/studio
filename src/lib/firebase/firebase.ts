@@ -12,26 +12,25 @@ const firebaseConfig = {
   appId: "1:680938869975:web:fe28e2865bf8ac09394c92"
 };
 
-// Initialize Firebase
-let app: FirebaseApp;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApp();
+function initializeFirebaseApp() {
+  if (getApps().length > 0) {
+    return getApp();
+  }
+  return initializeApp(firebaseConfig);
 }
 
+const app: FirebaseApp = initializeFirebaseApp();
 const auth: Auth = getAuth(app);
 const db: Firestore = getFirestore(app);
 
-// Connect to emulators in development
-if (process.env.NODE_ENV === "development") {
-  // Point to the emulators running on localhost.
-  // NOTE: Make sure you have the emulators running!
+if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
   try {
+    console.log("Connecting to Firebase emulators...");
     connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
     connectFirestoreEmulator(db, 'localhost', 8080);
+    console.log("Successfully connected to Firebase emulators.");
   } catch (e) {
-    console.error(e);
+    console.error("Error connecting to Firebase emulators:", e);
   }
 }
 
