@@ -1,3 +1,4 @@
+
 "use server";
 
 /**
@@ -20,9 +21,9 @@ const prompt = ai.definePrompt({
   name: 'studyGoalPrompt',
   input: {schema: StudyGoalInputSchema},
   output: {schema: StudyGoalOutputSchema},
-  prompt: `You are an expert study planner for a Sri Lankan A/L student in the Maths stream studying for the 2027 exam.
+  prompt: `You are an expert study planner for a Sri Lankan A/L student studying for the 2027 exam in the {{stream}} stream.
 
-  Your task is to generate a realistic and balanced set of weekly study hour goals for the four subjects: Chemistry, Physics, Pure Maths, and Applied Maths.
+  Your task is to generate a realistic and balanced set of weekly study hour goals for their subjects.
 
   The total weekly study goal should be around 22 hours.
 
@@ -30,11 +31,10 @@ const prompt = ai.definePrompt({
 
   The goals should be round numbers or to the nearest 0.5 hour (e.g., 5, 5.5, 6).
 
+  The student's subjects are: {{#each subjectKeys}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
+
   Current Total Study Hours:
-  - Chemistry: {{{studyHoursChemistry}}} hours
-  - Physics: {{{studyHoursPhysics}}} hours
-  - Pure Maths: {{{studyHoursPureMaths}}} hours
-  - Applied Maths: {{{studyHoursAppliedMaths}}} hours
+  {{subjectData}}
   `,
 });
 

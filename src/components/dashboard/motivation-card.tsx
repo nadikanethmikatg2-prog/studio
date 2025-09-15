@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useTransition, useEffect, useRef } from "react";
@@ -20,6 +21,16 @@ interface MotivationCardProps {
   subjects: Subjects;
 }
 
+type SerializableSubjects = {
+  [key: string]: {
+    name: string;
+    todos: string[]; // Updated to string array
+    totalHours: number;
+    goalHours: number;
+  }
+}
+
+
 export function MotivationCard({ subjects }: MotivationCardProps) {
   const [analysis, setAnalysis] = useState<{
     message: string;
@@ -32,24 +43,20 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
   useEffect(() => {
     const generateAnalysis = () => {
       startTransition(async () => {
-        const input = {
-          studyHoursChemistry: subjects.chemistry.totalHours,
-          studyHoursPhysics: subjects.physics.totalHours,
-          studyHoursPureMaths: subjects.pureMaths.totalHours,
-          studyHoursAppliedMaths: subjects.appliedMaths.totalHours,
-          todoListChemistry: subjects.chemistry.todos
-            .map((t) => t.text)
-            .join(", "),
-          todoListPhysics: subjects.physics.todos.map((t) => t.text).join(", "),
-          todoListPureMaths: subjects.pureMaths.todos
-            .map((t) => t.text)
-            .join(", "),
-          todoListAppliedMaths: subjects.appliedMaths.todos
-            .map((t) => t.text)
-            .join(", "),
-        };
 
-        const result = await getMotivationalMessageAction(input);
+        const serializableSubjects = Object.fromEntries(
+          Object.entries(subjects).map(([key, value]) => [
+            key,
+            {
+              name: value.name,
+              todos: value.todos.map((t) => t.text),
+              totalHours: value.totalHours,
+              goalHours: value.goalHours,
+            },
+          ])
+        );
+
+        const result = await getMotivationalMessageAction(serializableSubjects);
         
         if (result.success && result.analysis) {
           setAnalysis(result.analysis);
@@ -67,7 +74,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
       });
     };
     
-    if (subjects) {
+    if (subjects && Object.keys(subjects).length > 0) {
       generateAnalysis();
     }
     

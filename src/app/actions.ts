@@ -1,3 +1,4 @@
+
 "use server";
 
 import {
@@ -10,6 +11,10 @@ import {
 } from "@/ai/flows/generate-study-goals";
 import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-schemas";
 import { chatWithBot } from "@/ai/flows/chat-flow";
+import { getDoc, doc } from "firebase/firestore";
+import { getFirestoreInstance } from "@/lib/firebase/firebase";
+import { auth } from "@/lib/firebase/firebase";
+
 
 // Define a type for the serializable subjects data
 type SerializableSubjects = {
@@ -22,9 +27,26 @@ type SerializableSubjects = {
 }
 
 export async function getMotivationalMessageAction(
-  input: MotivationalMessageInput
+  subjects: SerializableSubjects
 ): Promise<{ success: boolean; analysis?: MotivationalMessageOutput; message: string }> {
   try {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+    const db = await getFirestoreInstance();
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const stream = userDoc.data()?.stream || 'maths';
+
+    const subjectData = Object.entries(subjects).map(([key, value]) => 
+      `- ${value.name}: ${value.totalHours} hours, To-Dos: ${value.todos.join(', ') || 'none'}`
+    ).join('\n');
+    
+    const input: MotivationalMessageInput = {
+        stream,
+        subjectData
+    };
+
     const result = await generateMotivationalMessage(input);
     return { success: true, analysis: result, message: "Success" };
   } catch (error) {
@@ -37,9 +59,27 @@ export async function getMotivationalMessageAction(
 }
 
 export async function generateStudyGoalsAction(
-  input: StudyGoalInput
+    subjects: SerializableSubjects
 ): Promise<{ success: boolean; goals?: StudyGoalOutput; message: string }> {
   try {
+    const user = auth.currentUser;
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+    const db = await getFirestoreInstance();
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const stream = userDoc.data()?.stream || 'maths';
+
+    const subjectData = Object.entries(subjects).map(([key, value]) => 
+        `- ${value.name}: ${value.totalHours} hours`
+    ).join('\n');
+
+    const input: StudyGoalInput = {
+        stream,
+        subjectData,
+        subjectKeys: Object.keys(subjects)
+    };
+
     const result = await generateStudyGoals(input);
     return { success: true, goals: result, message: "Success" };
   } catch (error) {

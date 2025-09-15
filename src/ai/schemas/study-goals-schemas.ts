@@ -1,25 +1,13 @@
+
 import {z} from 'genkit';
 
 export const StudyGoalInputSchema = z.object({
-  studyHoursChemistry: z
-    .number()
-    .describe('Current total study hours for Chemistry.'),
-  studyHoursPhysics: z
-    .number()
-    .describe('Current total study hours for Physics.'),
-  studyHoursPureMaths: z
-    .number()
-    .describe('Current total study hours for Pure Maths.'),
-  studyHoursAppliedMaths: z
-    .number()
-    .describe('Current total study hours for Applied Maths.'),
+  stream: z.string().describe("The student's study stream (e.g., Maths, Bio)."),
+  subjectData: z.string().describe("A list of the student's subjects and their current total study hours."),
+  subjectKeys: z.array(z.string()).describe("An array of the subject keys (e.g., ['chemistry', 'physics', 'biology']).")
 });
 export type StudyGoalInput = z.infer<typeof StudyGoalInputSchema>;
 
-export const StudyGoalOutputSchema = z.object({
-  chemistry: z.number().describe('Suggested weekly goal hours for Chemistry.'),
-  physics: z.number().describe('Suggested weekly goal hours for Physics.'),
-  pureMaths: z.number().describe('Suggested weekly goal hours for Pure Maths.'),
-  appliedMaths: z.number().describe('Suggested weekly goal hours for Applied Maths.'),
-});
+// This output schema is dynamic. The keys will be the subject keys from the input.
+export const StudyGoalOutputSchema = z.record(z.number().describe('Suggested weekly goal hours for the subject.'));
 export type StudyGoalOutput = z.infer<typeof StudyGoalOutputSchema>;

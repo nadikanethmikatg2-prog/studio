@@ -1,26 +1,9 @@
+
 import {z} from 'genkit';
 
 export const MotivationalMessageInputSchema = z.object({
-  studyHoursChemistry: z
-    .number()
-    .describe('Number of study hours for Chemistry.'),
-  studyHoursPhysics: z.number().describe('Number of study hours for Physics.'),
-  studyHoursPureMaths: z
-    .number()
-    .describe('Number of study hours for Pure Maths.'),
-  studyHoursAppliedMaths: z
-    .number()
-    .describe('Number of study hours for Applied Maths.'),
-  todoListChemistry: z
-    .string()
-    .describe('To-do list for Chemistry, comma separated.'),
-  todoListPhysics: z.string().describe('To-do list for Physics, comma separated.'),
-  todoListPureMaths: z
-    .string()
-    .describe('To-do list for Pure Maths, comma separated.'),
-  todoListAppliedMaths: z
-    .string()
-    .describe('To-do list for Applied Maths, comma separated.'),
+  stream: z.string().describe("The student's study stream (e.g., Maths, Bio)."),
+  subjectData: z.string().describe("A JSON string of the student's subjects, including hours and to-do lists."),
 });
 export type MotivationalMessageInput = z.infer<typeof MotivationalMessageInputSchema>;
 

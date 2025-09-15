@@ -1,8 +1,9 @@
+
 import { doc, setDoc, getDoc, collection, getDocs, writeBatch } from "firebase/firestore";
 import { getFirestoreInstance } from "./firebase";
 import type { Subjects, DailyLog } from "@/app/page";
 
-const initialSubjectsData = {
+const mathsSubjects = {
   chemistry: {
     name: "Chemistry",
     totalHours: 0,
@@ -33,11 +34,36 @@ const initialSubjectsData = {
   },
 };
 
+const bioSubjects = {
+    chemistry: {
+      name: "Chemistry",
+      totalHours: 0,
+      goalHours: 7,
+      todos: [],
+      color: "hsl(var(--chart-1))",
+    },
+    physics: {
+      name: "Physics",
+      totalHours: 0,
+      goalHours: 7,
+      todos: [],
+      color: "hsl(var(--chart-2))",
+    },
+    biology: {
+      name: "Biology",
+      totalHours: 0,
+      goalHours: 8,
+      todos: [],
+      color: "hsl(var(--chart-5))",
+    },
+}
+
 // Set initial user data on sign up
-export const setInitialUserData = async (userId: string) => {
+export const setInitialUserData = async (userId: string, stream: string) => {
   const db = await getFirestoreInstance();
   const userDocRef = doc(db, "users", userId);
-  await setDoc(userDocRef, { subjects: initialSubjectsData });
+  const initialData = stream === 'bio' ? bioSubjects : mathsSubjects;
+  await setDoc(userDocRef, { stream, subjects: initialData });
 };
 
 // Get initial subjects for a user
@@ -48,7 +74,11 @@ export const getInitialSubjects = async (userId: string): Promise<Subjects> => {
 
   if (docSnap.exists()) {
     const data = docSnap.data();
-    // Ensure todos is an array, handle potential old data structure
+    if (!data.stream || !data.subjects) {
+        // Handle legacy users who don't have a stream
+        await setInitialUserData(userId, 'maths');
+        return mathsSubjects;
+    }
     const subjects = data.subjects as Subjects;
     for (const key in subjects) {
       if (subjects[key] && !Array.isArray(subjects[key].todos)) {
@@ -57,14 +87,9 @@ export const getInitialSubjects = async (userId: string): Promise<Subjects> => {
     }
     return subjects;
   } else {
-    // If no document, create one
-    await setInitialUserData(userId);
-    const subjectsWithEmptyTodos = { ...initialSubjectsData };
-    for (const key in subjectsWithEmptyTodos) {
-      // @ts-ignore
-      subjectsWithEmptyTodos[key].todos = [];
-    }
-    return subjectsWithEmptyTodos as Subjects;
+    // This case should ideally not be hit if sign-up flow is correct, but as a fallback:
+    await setInitialUserData(userId, 'maths');
+    return mathsSubjects;
   }
 };
 

@@ -1,3 +1,4 @@
+
 "use server";
 import { ai } from "@/ai/genkit";
 import { z } from "genkit";
@@ -13,8 +14,8 @@ export const addTodoTool = ai.defineTool(
     description: "Adds a to-do item to a subject's to-do list.",
     inputSchema: z.object({
       subjectKey: z
-        .enum(["chemistry", "physics", "pureMaths", "appliedMaths"])
-        .describe("The key for the subject."),
+        .string()
+        .describe("The key for the subject (e.g., 'chemistry', 'physics', 'biology')."),
       task: z.string().describe("The description of the task to add."),
     }),
     outputSchema: z.object({
@@ -55,8 +56,8 @@ export const deleteSubjectTodosTool = ai.defineTool(
     description: "Deletes all to-do items for a specific subject.",
     inputSchema: z.object({
       subjectKey: z
-        .enum(["chemistry", "physics", "pureMaths", "appliedMaths"])
-        .describe("The key for the subject."),
+        .string()
+        .describe("The key for the subject (e.g., 'chemistry', 'physics', 'biology')."),
     }),
     outputSchema: z.string(),
   },

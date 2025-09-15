@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useTransition } from "react";
@@ -27,7 +28,7 @@ export function ActivityLoggerCard({
   onLogHours,
   onAddTask,
 }: ActivityLoggerCardProps) {
-  const [selectedSubject, setSelectedSubject] = useState<string>("chemistry");
+  const [selectedSubject, setSelectedSubject] = useState<string>(Object.keys(subjects)[0]);
   const [hoursToAdd, setHoursToAdd] = useState("");
   const [taskToAdd, setTaskToAdd] = useState("");
   const { toast } = useToast();

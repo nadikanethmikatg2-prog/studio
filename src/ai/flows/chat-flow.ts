@@ -1,3 +1,4 @@
+
 "use server";
 
 /**
@@ -29,7 +30,8 @@ If the user asks to delete all tasks, use the deleteAllTodosTool.
 If the user asks to delete tasks for a specific subject, use the deleteSubjectTodosTool.
 If the user asks about their to-do items, study hours, or goals, answer based on the provided JSON data. Do not use a tool to view this data.
 
-The subjects are Chemistry, Physics, Pure Maths, and Applied Maths.
+The user's subjects can be determined from the JSON data provided.
+
 Do not ask for confirmation before adding or deleting a task. Just perform the action and confirm it has been done.
 
 Here is the user's current study data:

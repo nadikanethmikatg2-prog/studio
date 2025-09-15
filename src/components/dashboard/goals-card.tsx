@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useTransition } from "react";
@@ -22,6 +23,15 @@ interface GoalsCardProps {
   onUpdate: (newGoals: { [key: string]: number }) => void;
 }
 
+type SerializableSubjects = {
+  [key: string]: {
+    name: string;
+    todos: string[];
+    totalHours: number;
+    goalHours: number;
+  }
+}
+
 export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -29,12 +39,19 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
 
   const handleGenerateGoals = () => {
     startTransition(async () => {
-      const result = await generateStudyGoalsAction({
-        studyHoursChemistry: subjects.chemistry.totalHours,
-        studyHoursPhysics: subjects.physics.totalHours,
-        studyHoursPureMaths: subjects.pureMaths.totalHours,
-        studyHoursAppliedMaths: subjects.appliedMaths.totalHours,
-      });
+        const serializableSubjects = Object.fromEntries(
+            Object.entries(subjects).map(([key, value]) => [
+              key,
+              {
+                name: value.name,
+                todos: value.todos.map((t) => t.text),
+                totalHours: value.totalHours,
+                goalHours: value.goalHours,
+              },
+            ])
+          );
+
+      const result = await generateStudyGoalsAction(serializableSubjects);
 
       if (result.success && result.goals) {
         onUpdate(result.goals);

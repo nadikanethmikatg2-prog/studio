@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -19,6 +20,7 @@ interface SubjectDetailsCardProps {
 }
 
 export function SubjectDetailsCard({ subjects, onUpdate, onLogHours }: SubjectDetailsCardProps) {
+  const subjectKeys = Object.keys(subjects);
   return (
     <Card>
       <CardHeader>
@@ -31,8 +33,8 @@ export function SubjectDetailsCard({ subjects, onUpdate, onLogHours }: SubjectDe
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="chemistry" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <Tabs defaultValue={subjectKeys[0]} className="w-full">
+          <TabsList className={`grid w-full grid-cols-${subjectKeys.length}`}>
             {Object.entries(subjects).map(([key, subject]) => (
               <TabsTrigger key={key} value={key}>
                 <div className="flex items-center justify-center gap-2 w-full">

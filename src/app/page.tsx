@@ -1,7 +1,8 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Atom, Combine, FlaskConical, Sigma } from "lucide-react";
+import { Atom, Combine, FlaskConical, Sigma, Leaf } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
@@ -57,6 +58,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   physics: Atom,
   pureMaths: Sigma,
   appliedMaths: Combine,
+  biology: Leaf,
 };
 
 export default function Home() {

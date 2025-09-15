@@ -1,3 +1,4 @@
+
 "use client";
 import {
   createUserWithEmailAndPassword,
@@ -10,7 +11,7 @@ import {
 import { auth } from "./firebase";
 import { setInitialUserData } from "./firestore";
 
-export const handleSignUp = async (email: string, pass: string) => {
+export const handleSignUp = async (email: string, pass: string, stream: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -18,10 +19,10 @@ export const handleSignUp = async (email: string, pass: string) => {
       pass
     );
     const user = userCredential.user;
-    // IMPORTANT: Await the database operation to ensure it completes
-    await setInitialUserData(user.uid);
     // Set persistence to keep the user logged in across sessions after sign-up
     await setPersistence(auth, browserLocalPersistence);
+    // IMPORTANT: Await the database operation to ensure it completes
+    await setInitialUserData(user.uid, stream);
     return { user, error: null };
   } catch (error: any) {
     return { user: null, error: error.message };
