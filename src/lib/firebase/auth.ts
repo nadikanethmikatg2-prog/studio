@@ -20,7 +20,8 @@ export const handleSignUp = async (email: string, pass: string) => {
       pass
     );
     const user = userCredential.user;
-    await setInitialUserData(user.uid);
+    // IMPORTANT: Await the database operation to ensure it completes
+    await setInitialUserData(user.uid); 
     return { user, error: null };
   } catch (error: any) {
     return { user: null, error: error.message };
