@@ -65,11 +65,9 @@ export default function Home() {
   const [subjects, setSubjects] = useState<Subjects | null>(null);
   const [dailyLogs, setDailyLogs] = useState<DailyLog>({});
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isClient, setIsClient] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
     if (!loading && !user) {
       router.push("/login");
     }
@@ -96,7 +94,7 @@ export default function Home() {
   }, [user]);
 
   useEffect(() => {
-    if (isClient && user && subjects && dataLoaded) {
+    if (user && subjects && dataLoaded) {
       const dataToSave = {
         chemistry: { ...subjects.chemistry, icon: undefined },
         physics: { ...subjects.physics, icon: undefined },
@@ -105,13 +103,13 @@ export default function Home() {
       };
       saveSubjects(user.uid, dataToSave);
     }
-  }, [subjects, user, isClient, dataLoaded]);
+  }, [subjects, user, dataLoaded]);
 
   useEffect(() => {
-    if (isClient && user && Object.keys(dailyLogs).length > 0 && dataLoaded) {
+    if (user && Object.keys(dailyLogs).length > 0 && dataLoaded) {
       saveDailyLogs(user.uid, dailyLogs);
     }
-  }, [dailyLogs, user, isClient, dataLoaded]);
+  }, [dailyLogs, user, dataLoaded]);
 
   const handleLogHours = useCallback(
     (subjectKey: string, hours: number) => {
@@ -248,7 +246,7 @@ export default function Home() {
     [dailyLogs, subjects]
   );
 
-  if (loading || !subjects || !dataLoaded) {
+  if (loading || !dataLoaded) {
     return (
       <div className="flex flex-col min-h-screen">
         <SiteHeader />
@@ -280,33 +278,33 @@ export default function Home() {
       <main className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
-            <MotivationCard subjects={subjects} />
+            <MotivationCard subjects={subjects!} />
             <WeeklyProgressChart
               currentWeekData={currentWeekData}
               previousWeekData={previousWeekData}
-              subjects={subjects}
+              subjects={subjects!}
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
             />
             <ActivityLoggerCard
-              subjects={subjects}
+              subjects={subjects!}
               onLogHours={handleLogHours}
             />
             <SubjectDetailsCard
-              subjects={subjects}
+              subjects={subjects!}
               onUpdate={handleUpdate}
               onLogHours={handleLogHours}
             />
           </div>
 
           <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
-            <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
-            <SubjectPieChart subjects={subjects} />
+            <GoalsCard subjects={subjects!} onUpdate={handleBulkUpdateGoals} />
+            <SubjectPieChart subjects={subjects!} />
           </div>
         </div>
       </main>
       <FloatingChat
-        subjects={subjects}
+        subjects={subjects!}
         onTaskAdded={handleAddTodo}
         onDeleteAllTodos={handleDeleteAllTodos}
         onDeleteSubjectTodos={handleDeleteSubjectTodos}

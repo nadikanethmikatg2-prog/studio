@@ -77,8 +77,10 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
     };
     
     // We use a debounce to prevent excessive API calls while the user is actively logging hours.
-    const debouncedGenerateAnalysis = debounce(generateAnalysis, 1500);
-    debouncedGenerateAnalysis();
+    if (subjects) {
+      const debouncedGenerateAnalysis = debounce(generateAnalysis, 1500);
+      debouncedGenerateAnalysis();
+    }
     
   }, [subjects, toast]);
 
