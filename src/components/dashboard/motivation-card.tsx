@@ -74,8 +74,18 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
       });
     };
     
-    if (subjects && Object.keys(subjects).length > 0) {
+    // Check if there are subjects and at least one has some study hours logged.
+    // This prevents generating a message on first load with no data.
+    const hasActivity = Object.values(subjects).some(s => s.totalHours > 0 || s.todos.length > 0);
+    
+    if (subjects && Object.keys(subjects).length > 0 && hasActivity) {
       generateAnalysis();
+    } else if (!hasActivity) {
+      // Set a default initial message if there's no activity yet
+      setAnalysis({
+        message: "Log some study hours or add a to-do task to get your first analysis from the AI Study Coach!",
+        subjectSpotlight: "Select a subject in the 'Log Your Study Activity' card to get started."
+      });
     }
     
   }, [subjects, toast]);
@@ -92,21 +102,34 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isPending && !analysis && (
-          <div className="space-y-2 pt-2">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-          </div>
+        {isPending && (
+          <div className="space-y-4">
+             <Alert className="bg-primary/10 border-primary/20">
+               <BrainCircuit className="h-4 w-4 text-primary" />
+               <AlertTitle className="text-primary">Analysis</AlertTitle>
+               <AlertDescription className="space-y-2 pt-2">
+                 <Skeleton className="h-4 w-full" />
+                 <Skeleton className="h-4 w-3/4" />
+               </AlertDescription>
+             </Alert>
+             <Alert variant="default" className="bg-accent/10 border-accent/20">
+               <Activity className="h-4 w-4 text-accent" />
+               <AlertTitle className="text-accent">Subject Spotlight</AlertTitle>
+               <AlertDescription className="space-y-2 pt-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-1/2" />
+               </AlertDescription>
+             </Alert>
+           </div>
         )}
-        {analysis && (
+        {!isPending && analysis && (
           <div className="space-y-4">
             <Alert className="bg-primary/10 border-primary/20">
               <BrainCircuit className="h-4 w-4 text-primary" />
               <AlertTitle className="text-primary">Analysis</AlertTitle>
 
               <AlertDescription className="text-primary/80">
-                {isPending ? 'Generating new analysis...' : analysis.message}
+                {analysis.message}
               </AlertDescription>
             </Alert>
             
@@ -114,7 +137,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
               <Activity className="h-4 w-4 text-accent" />
               <AlertTitle className="text-accent">Subject Spotlight</AlertTitle>
               <AlertDescription className="text-accent/80">
-                 {isPending ? '...' : analysis.subjectSpotlight}
+                 {analysis.subjectSpotlight}
               </AlertDescription>
             </Alert>
           </div>
