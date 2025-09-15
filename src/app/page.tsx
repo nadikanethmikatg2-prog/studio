@@ -77,6 +77,7 @@ export default function Home() {
     if (user) {
       const fetchData = async () => {
         try {
+          setDataLoaded(false); // Start loading
           const [subjectsData, logsData] = await Promise.all([
             getInitialSubjects(user.uid),
             getDailyLogs(user.uid),
@@ -92,7 +93,7 @@ export default function Home() {
           console.error("Failed to fetch initial data:", error);
           // Optionally, show a toast to the user
         } finally {
-          setDataLoaded(true);
+          setDataLoaded(true); // Finish loading
         }
       };
       fetchData();
