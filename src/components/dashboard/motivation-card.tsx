@@ -78,8 +78,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
     
     // We use a debounce to prevent excessive API calls while the user is actively logging hours.
     if (subjects) {
-      const debouncedGenerateAnalysis = debounce(generateAnalysis, 1500);
-      debouncedGenerateAnalysis();
+      generateAnalysis();
     }
     
   }, [subjects, toast]);
@@ -108,8 +107,9 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
             <Alert className="bg-primary/10 border-primary/20">
               <BrainCircuit className="h-4 w-4 text-primary" />
               <AlertTitle className="text-primary">Analysis</AlertTitle>
+
               <AlertDescription className="text-primary/80">
-                {analysis.message}
+                {isPending ? 'Generating new analysis...' : analysis.message}
               </AlertDescription>
             </Alert>
             
@@ -117,7 +117,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
               <Activity className="h-4 w-4 text-accent" />
               <AlertTitle className="text-accent">Subject Spotlight</AlertTitle>
               <AlertDescription className="text-accent/80">
-                 {analysis.subjectSpotlight}
+                 {isPending ? '...' : analysis.subjectSpotlight}
               </AlertDescription>
             </Alert>
           </div>

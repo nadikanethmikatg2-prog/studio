@@ -10,16 +10,19 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keepLoggedIn, setKeepLoggedIn] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
   const onSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const { user, error } = await handleSignIn(email, password, keepLoggedIn);
     if (user) {
       router.push("/");
@@ -30,6 +33,7 @@ export default function LoginPage() {
         description: error,
       });
     }
+    setIsLoading(false);
   };
 
   return (
@@ -50,6 +54,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -60,6 +65,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className="flex items-center space-x-2">
@@ -67,6 +73,7 @@ export default function LoginPage() {
                 id="keep-logged-in" 
                 checked={keepLoggedIn}
                 onCheckedChange={(checked) => setKeepLoggedIn(checked as boolean)}
+                disabled={isLoading}
               />
               <label
                 htmlFor="keep-logged-in"
@@ -75,8 +82,9 @@ export default function LoginPage() {
                 Keep me logged in
               </label>
             </div>
-            <Button type="submit" className="w-full">
-              Sign In
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
         </CardContent>
