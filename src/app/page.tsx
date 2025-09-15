@@ -102,13 +102,15 @@ export default function Home() {
 
   useEffect(() => {
     if (user && subjects && dataLoaded) {
-      const dataToSave = {
-        chemistry: { ...subjects.chemistry, icon: undefined },
-        physics: { ...subjects.physics, icon: undefined },
-        pureMaths: { ...subjects.pureMaths, icon: undefined },
-        appliedMaths: { ...subjects.appliedMaths, icon: undefined },
-      };
-      saveSubjects(user.uid, dataToSave);
+      // Create a deep copy to avoid modifying the original state object.
+      const subjectsToSave = JSON.parse(JSON.stringify(subjects));
+      
+      // Remove the non-serializable 'icon' property before saving.
+      for (const key in subjectsToSave) {
+        delete subjectsToSave[key].icon;
+      }
+      
+      saveSubjects(user.uid, subjectsToSave);
     }
   }, [subjects, user, dataLoaded]);
 
