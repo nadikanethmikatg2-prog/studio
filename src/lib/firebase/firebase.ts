@@ -20,53 +20,65 @@ const firebaseConfig = {
 
 let app: FirebaseApp;
 let auth: Auth;
-let db: Firestore;
+let db: Firestore | null = null;
 let persistenceEnabled = false;
 
 function initializeFirebase() {
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
-    db = initializeFirestore(app, {});
 
     if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
       try {
         console.log("Connecting to Firebase emulators...");
         connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
-        connectFirestoreEmulator(db, 'localhost', 8080);
-        console.log("Successfully connected to Firebase emulators.");
+        
+        // Don't initialize firestore here for emulator, it will be handled in getFirestoreInstance
       } catch (e) {
-        console.error("Error connecting to Firebase emulators:", e);
+        console.error("Error connecting to Firebase auth emulator:", e);
       }
     }
   } else {
     app = getApp();
     auth = getAuth(app);
-    db = getFirestore(app);
   }
 }
 
 initializeFirebase();
 
 async function getFirestoreInstance(): Promise<Firestore> {
-  if (persistenceEnabled) {
+  if (db) {
     return db;
   }
 
-  if (typeof window !== 'undefined') {
+  const firestoreDb = initializeFirestore(app, {});
+
+  if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
     try {
-      await enableIndexedDbPersistence(db);
+      connectFirestoreEmulator(firestoreDb, 'localhost', 8080);
+      console.log("Successfully connected to Firestore emulator.");
+    } catch (e) {
+      console.error("Error connecting to Firestore emulator:", e);
+    }
+  }
+
+  if (typeof window !== 'undefined' && !persistenceEnabled) {
+    try {
+      await enableIndexedDbPersistence(firestoreDb);
       persistenceEnabled = true;
+      console.log("Firestore offline persistence enabled.");
     } catch (err: any) {
       if (err.code === 'failed-precondition') {
-        console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+        console.warn('Firestore offline persistence failed: Multiple tabs open.');
       } else if (err.code === 'unimplemented') {
-        console.warn('The current browser does not support all of the features required to enable persistence.');
+        console.warn('Firestore offline persistence failed: Browser does not support it.');
       }
     }
   }
+  
+  db = firestoreDb;
   return db;
 }
 
 
-export { app, auth, db, getFirestoreInstance };
+export { app, auth, getFirestoreInstance };
