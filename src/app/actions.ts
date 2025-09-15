@@ -13,7 +13,6 @@ import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-s
 import { chatWithBot } from "@/ai/flows/chat-flow";
 import { getDoc, doc } from "firebase/firestore";
 import { getFirestoreInstance } from "@/lib/firebase/firebase";
-import { auth } from "@/lib/firebase/firebase";
 
 
 // Define a type for the serializable subjects data
@@ -27,15 +26,15 @@ type SerializableSubjects = {
 }
 
 export async function getMotivationalMessageAction(
+  userId: string,
   subjects: SerializableSubjects
 ): Promise<{ success: boolean; analysis?: MotivationalMessageOutput; message: string }> {
   try {
-    const user = auth.currentUser;
-    if (!user) {
+    if (!userId) {
       throw new Error("User not authenticated");
     }
     const db = await getFirestoreInstance();
-    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const userDoc = await getDoc(doc(db, "users", userId));
     const stream = userDoc.data()?.stream || 'maths';
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
@@ -59,15 +58,15 @@ export async function getMotivationalMessageAction(
 }
 
 export async function generateStudyGoalsAction(
+    userId: string,
     subjects: SerializableSubjects
 ): Promise<{ success: boolean; goals?: StudyGoalOutput; message: string }> {
   try {
-    const user = auth.currentUser;
-    if (!user) {
+    if (!userId) {
         throw new Error("User not authenticated");
     }
     const db = await getFirestoreInstance();
-    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const userDoc = await getDoc(doc(db, "users", userId));
     const stream = userDoc.data()?.stream || 'maths';
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 

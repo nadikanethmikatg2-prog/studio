@@ -17,6 +17,7 @@ import type { Subjects } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { generateStudyGoalsAction } from "@/app/actions";
 import { Skeleton } from "../ui/skeleton";
+import { useAuth } from "@/hooks/use-auth";
 
 interface GoalsCardProps {
   subjects: Subjects;
@@ -34,10 +35,19 @@ type SerializableSubjects = {
 
 export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
   const totalGoalHours = Object.values(subjects).reduce((sum, s) => sum + s.goalHours, 0);
 
   const handleGenerateGoals = () => {
+    if (!user) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "You must be logged in to generate goals.",
+        });
+        return;
+    }
     startTransition(async () => {
         const serializableSubjects = Object.fromEntries(
             Object.entries(subjects).map(([key, value]) => [
@@ -51,7 +61,7 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
             ])
           );
 
-      const result = await generateStudyGoalsAction(serializableSubjects);
+      const result = await generateStudyGoalsAction(user.uid, serializableSubjects);
 
       if (result.success && result.goals) {
         onUpdate(result.goals);

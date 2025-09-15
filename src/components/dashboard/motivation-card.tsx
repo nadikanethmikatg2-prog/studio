@@ -16,6 +16,7 @@ import type { Subjects } from "@/app/page";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
+import { useAuth } from "@/hooks/use-auth";
 
 interface MotivationCardProps {
   subjects: Subjects;
@@ -38,10 +39,13 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
   } | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const { user } = useAuth();
   const hasFetched = useRef(false);
 
   useEffect(() => {
     const generateAnalysis = () => {
+      if (!user) return;
+
       startTransition(async () => {
 
         const serializableSubjects = Object.fromEntries(
@@ -56,7 +60,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
           ])
         );
 
-        const result = await getMotivationalMessageAction(serializableSubjects);
+        const result = await getMotivationalMessageAction(user.uid, serializableSubjects);
         
         if (result.success && result.analysis) {
           setAnalysis(result.analysis);
@@ -88,7 +92,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
       });
     }
     
-  }, [subjects, toast]);
+  }, [subjects, toast, user]);
 
   return (
     <Card>
