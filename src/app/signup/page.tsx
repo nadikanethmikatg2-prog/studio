@@ -20,6 +20,10 @@ export default function SignupPage() {
     e.preventDefault();
     const { user, error } = await handleSignUp(email, password);
     if (user) {
+      toast({
+        title: "Account Created",
+        description: "Welcome! You have been successfully signed up.",
+      });
       router.push("/");
     } else {
         toast({
