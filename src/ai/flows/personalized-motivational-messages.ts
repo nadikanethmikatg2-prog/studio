@@ -43,19 +43,6 @@ const motivationalMessageFlow = ai.defineFlow(
     outputSchema: MotivationalMessageOutputSchema,
   },
   async input => {
-    // If all study hours are 0, return a default inspirational message.
-    if (
-      input.studyHoursChemistry === 0 &&
-      input.studyHoursPhysics === 0 &&
-      input.studyHoursPureMaths === 0 &&
-      input.studyHoursAppliedMaths === 0
-    ) {
-      return {
-        message: "ඔබගේ අධ්‍යයන ට්‍රැකර් වෙත සාදරයෙන් පිළිගනිමු! A/L 2027 විභාගය සඳහා ඔබේ ගමන ආරම්භ කිරීමට සහ පුද්ගලාරෝපිත ප්‍රතිපෝෂණ ලබා ගැනීමට ඔබගේ පළමු අධ්‍යයන වාරය ලොග් කරන්න.",
-        subjectSpotlight: "ආරම්භ කිරීමට ඕනෑම විෂයයක පැය කිහිපයක් ලොග් කරන්න. සෑම විශිෂ්ට ගමනක්ම ආරම්භ වන්නේ එක් පියවරකින්!",
-      };
-    }
-
     const {output} = await prompt(input);
     return output!;
   }
