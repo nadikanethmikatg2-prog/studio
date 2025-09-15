@@ -76,18 +76,24 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       const fetchData = async () => {
-        const [subjectsData, logsData] = await Promise.all([
-          getInitialSubjects(user.uid),
-          getDailyLogs(user.uid),
-        ]);
-        Object.keys(subjectsData).forEach((key) => {
-          if (iconMap[key]) {
-            subjectsData[key].icon = iconMap[key];
-          }
-        });
-        setSubjects(subjectsData);
-        setDailyLogs(logsData);
-        setDataLoaded(true);
+        try {
+          const [subjectsData, logsData] = await Promise.all([
+            getInitialSubjects(user.uid),
+            getDailyLogs(user.uid),
+          ]);
+          Object.keys(subjectsData).forEach((key) => {
+            if (iconMap[key]) {
+              subjectsData[key].icon = iconMap[key];
+            }
+          });
+          setSubjects(subjectsData);
+          setDailyLogs(logsData);
+        } catch (error) {
+          console.error("Failed to fetch initial data:", error);
+          // Optionally, show a toast to the user
+        } finally {
+          setDataLoaded(true);
+        }
       };
       fetchData();
     }
@@ -267,6 +273,20 @@ export default function Home() {
       </div>
     );
   }
+  
+  if (!subjects) {
+    // This can happen if data loading failed but dataLoaded is true.
+    return (
+       <div className="flex flex-col min-h-screen">
+        <SiteHeader />
+        <main className="flex-1 p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center h-full">
+            <p className="text-destructive">Could not load study data. Please try refreshing the page.</p>
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   const currentWeekData = getWeekData(selectedDate);
   const lastWeekDate = subWeeks(selectedDate, 1);
@@ -278,33 +298,33 @@ export default function Home() {
       <main className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
-            <MotivationCard subjects={subjects!} />
+            <MotivationCard subjects={subjects} />
             <WeeklyProgressChart
               currentWeekData={currentWeekData}
               previousWeekData={previousWeekData}
-              subjects={subjects!}
+              subjects={subjects}
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
             />
             <ActivityLoggerCard
-              subjects={subjects!}
+              subjects={subjects}
               onLogHours={handleLogHours}
             />
             <SubjectDetailsCard
-              subjects={subjects!}
+              subjects={subjects}
               onUpdate={handleUpdate}
               onLogHours={handleLogHours}
             />
           </div>
 
           <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
-            <GoalsCard subjects={subjects!} onUpdate={handleBulkUpdateGoals} />
-            <SubjectPieChart subjects={subjects!} />
+            <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
+            <SubjectPieChart subjects={subjects} />
           </div>
         </div>
       </main>
       <FloatingChat
-        subjects={subjects!}
+        subjects={subjects}
         onTaskAdded={handleAddTodo}
         onDeleteAllTodos={handleDeleteAllTodos}
         onDeleteSubjectTodos={handleDeleteSubjectTodos}

@@ -33,7 +33,7 @@ function initializeFirebase() {
         console.log("Connecting to Firebase emulators...");
         connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
         
-        // Don't initialize firestore here for emulator, it will be handled in getFirestoreInstance
+        // Firestore emulator connection is handled in getFirestoreInstance
       } catch (e) {
         console.error("Error connecting to Firebase auth emulator:", e);
       }
@@ -51,6 +51,7 @@ async function getFirestoreInstance(): Promise<Firestore> {
     return db;
   }
 
+  // Use initializeFirestore for modular SDK to enable features like persistence
   const firestoreDb = initializeFirestore(app, {});
 
   if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
@@ -69,8 +70,10 @@ async function getFirestoreInstance(): Promise<Firestore> {
       console.log("Firestore offline persistence enabled.");
     } catch (err: any) {
       if (err.code === 'failed-precondition') {
+        // This can happen if multiple tabs are open.
         console.warn('Firestore offline persistence failed: Multiple tabs open.');
       } else if (err.code === 'unimplemented') {
+        // This can happen in environments where IndexedDB is not supported.
         console.warn('Firestore offline persistence failed: Browser does not support it.');
       }
     }
