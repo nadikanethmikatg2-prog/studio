@@ -53,6 +53,11 @@ export type Subjects = {
   [key: string]: Subject;
 };
 
+export type Message = {
+  role: "user" | "model";
+  content: string;
+};
+
 const iconMap: { [key: string]: React.ElementType } = {
   chemistry: FlaskConical,
   physics: Atom,
@@ -68,6 +73,7 @@ export default function Home() {
   const [dailyLogs, setDailyLogs] = useState<DailyLog>({});
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -331,6 +337,8 @@ export default function Home() {
       </main>
       <FloatingChat
         subjects={subjects}
+        messages={chatMessages}
+        setMessages={setChatMessages}
         onTaskAdded={handleAddTodo}
         onDeleteAllTodos={handleDeleteAllTodos}
         onDeleteSubjectTodos={handleDeleteSubjectTodos}

@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -9,16 +10,18 @@ import {
 } from "@/components/ui/popover";
 import { Bot, X } from "lucide-react";
 import { ChatCard } from "./chat-card";
-import type { Subjects } from "@/app/page";
+import type { Subjects, Message } from "@/app/page";
 
 interface FloatingChatProps {
   subjects: Subjects;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   onTaskAdded: (subjectKey: string, task: string) => void;
   onDeleteAllTodos: () => void;
   onDeleteSubjectTodos: (subjectKey: string) => void;
 }
 
-export function FloatingChat({ subjects, onTaskAdded, onDeleteAllTodos, onDeleteSubjectTodos }: FloatingChatProps) {
+export function FloatingChat({ subjects, messages, setMessages, onTaskAdded, onDeleteAllTodos, onDeleteSubjectTodos }: FloatingChatProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -42,6 +45,8 @@ export function FloatingChat({ subjects, onTaskAdded, onDeleteAllTodos, onDelete
       >
         <ChatCard 
           subjects={subjects} 
+          messages={messages}
+          setMessages={setMessages}
           onTaskAdded={onTaskAdded}
           onDeleteAllTodos={onDeleteAllTodos}
           onDeleteSubjectTodos={onDeleteSubjectTodos}

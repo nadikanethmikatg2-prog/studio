@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useTransition, useRef, useEffect } from "react";
@@ -16,15 +17,12 @@ import { chatWithBotAction } from "@/app/actions";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import type { Subjects } from "@/app/page";
-
-type Message = {
-  role: "user" | "model";
-  content: string;
-};
+import type { Subjects, Message } from "@/app/page";
 
 interface ChatCardProps {
   subjects: Subjects;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   onTaskAdded: (subjectKey: string, task: string) => void;
   onDeleteAllTodos: () => void;
   onDeleteSubjectTodos: (subjectKey: string) => void;
@@ -47,11 +45,12 @@ function extractJsonFromString(text: string): any | null {
 
 export function ChatCard({
   subjects,
+  messages,
+  setMessages,
   onTaskAdded,
   onDeleteAllTodos,
   onDeleteSubjectTodos,
 }: ChatCardProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
