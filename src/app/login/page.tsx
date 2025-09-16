@@ -102,8 +102,8 @@ export default function LoginPage() {
             </blockquote>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <div className="mx-auto grid w-[350px] gap-6">
+        <div className="flex items-center justify-center p-6 sm:p-12">
+          <div className="mx-auto w-full max-w-sm space-y-6">
             <div className="grid gap-2 text-center">
               <h1 className="text-3xl font-bold">Welcome Back</h1>
               <p className="text-balance text-muted-foreground">
