@@ -1,3 +1,11 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "auth-background",
+      "description": "A visually appealing background for the login and signup pages, showing a person studying.",
+      "imageUrl": "https://picsum.photos/seed/auth/1200/1800",
+      "imageHint": "study desk"
+    }
+  ]
 }

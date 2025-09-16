@@ -2,17 +2,19 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Loader2, User, BookHeart } from "lucide-react";
+
 import { handleSignIn, handleGuestSignIn } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, User } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -59,15 +61,40 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <CardDescription>Sign in to continue to your dashboard</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onSignIn} className="space-y-4">
-            <div className="space-y-2">
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
+      <div className="hidden bg-muted lg:block relative">
+      <Image
+          src={PlaceHolderImages[0].imageUrl}
+          alt="A studious person at a desk"
+          width={1200}
+          height={1800}
+          className="h-full w-full object-cover"
+          data-ai-hint={PlaceHolderImages[0].imageHint}
+        />
+        <div className="absolute inset-0 bg-primary/40" />
+        <div className="absolute top-8 left-8 flex items-center gap-2 text-primary-foreground">
+          <BookHeart className="h-8 w-8" />
+          <h1 className="text-3xl font-bold tracking-tight">
+            A/L Study Buddy
+          </h1>
+        </div>
+        <div className="absolute bottom-8 left-8 text-lg text-primary-foreground">
+            <blockquote className="space-y-2">
+                <p className="font-bold">&ldquo;The beautiful thing about learning is that no one can take it away from you.&rdquo;</p>
+                <footer className="text-sm">- B.B. King</footer>
+            </blockquote>
+        </div>
+      </div>
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Welcome Back</h1>
+            <p className="text-balance text-muted-foreground">
+              Enter your email below to login to your account
+            </p>
+          </div>
+          <form onSubmit={onSignIn} className="grid gap-4">
+            <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -79,18 +106,20 @@ export default function LoginPage() {
                 disabled={isLoading || isGuestLoading}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+              </div>
+              <Input 
+                id="password" 
+                type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading || isGuestLoading}
               />
             </div>
-            <div className="flex items-center space-x-2">
+             <div className="flex items-center space-x-2">
               <Checkbox 
                 id="keep-logged-in" 
                 checked={keepLoggedIn}
@@ -108,15 +137,6 @@ export default function LoginPage() {
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
-          </form>
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-            </div>
-          </div>
             <Button 
                 variant="outline" 
                 className="w-full" 
@@ -130,16 +150,15 @@ export default function LoginPage() {
                 )}
                 Continue as Guest
             </Button>
-        </CardContent>
-        <CardFooter className="flex justify-center text-sm">
-          <p>
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline">
+          </form>
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="underline text-primary">
               Sign up
             </Link>
-          </p>
-        </CardFooter>
-      </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
