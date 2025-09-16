@@ -12,15 +12,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Subjects, Subject } from "@/app/page";
 import { SubjectCard } from "./subject-card";
 import { BookCopy } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SubjectDetailsCardProps {
   subjects: Subjects;
-  onUpdate: (key: string, updatedData: Partial<Subject>) => void;
+  onUpdate: (key: string, updatedData: Partial<Subject> | ((prevTodos: any[]) => any[])) => void;
   onLogHours: (subjectKey: string, hours: number) => void;
 }
 
 export function SubjectDetailsCard({ subjects, onUpdate, onLogHours }: SubjectDetailsCardProps) {
   const subjectKeys = Object.keys(subjects);
+  const gridColsClass = subjectKeys.length === 3 ? 'grid-cols-3' : 'grid-cols-4';
+
   return (
     <Card>
       <CardHeader>
@@ -34,7 +37,7 @@ export function SubjectDetailsCard({ subjects, onUpdate, onLogHours }: SubjectDe
       </CardHeader>
       <CardContent>
         <Tabs defaultValue={subjectKeys[0]} className="w-full">
-          <TabsList className={`grid w-full grid-cols-${subjectKeys.length}`}>
+          <TabsList className={cn("grid w-full", gridColsClass)}>
             {Object.entries(subjects).map(([key, subject]) => (
               <TabsTrigger key={key} value={key}>
                 <div className="flex items-center justify-center gap-2 w-full">
