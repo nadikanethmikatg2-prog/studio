@@ -74,7 +74,7 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <div className="h-full">
       <div className="w-full lg:grid lg:grid-cols-2 h-full">
         <div className="hidden bg-muted lg:block relative">
           <Image
@@ -241,6 +241,6 @@ export default function LoginPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }
