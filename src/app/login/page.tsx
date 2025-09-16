@@ -52,7 +52,7 @@ export default function LoginPage() {
       toast({
         variant: "destructive",
         title: "Guest Sign In Failed",
-        description: error,
+        description: "Please enable Anonymous sign-in in your Firebase console.",
       });
     }
     setIsGuestLoading(false);
@@ -117,13 +117,19 @@ export default function LoginPage() {
                 <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
-            <Button variant="outline" className="w-full" onClick={onGuestSignIn} disabled={isLoading || isGuestLoading}>
+            <Button 
+                variant="outline" 
+                className="w-full" 
+                onClick={onGuestSignIn} 
+                disabled={true || isLoading || isGuestLoading}
+                data-ai-hint="Enable Anonymous Auth in Firebase Console to enable this button"
+            >
                 {isGuestLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                     <User className="mr-2 h-4 w-4" />
                 )}
-                Continue as Guest
+                Continue as Guest (Disabled)
             </Button>
         </CardContent>
         <CardFooter className="flex justify-center text-sm">
