@@ -121,15 +121,14 @@ export default function LoginPage() {
                 variant="outline" 
                 className="w-full" 
                 onClick={onGuestSignIn} 
-                disabled={true || isLoading || isGuestLoading}
-                data-ai-hint="Enable Anonymous Auth in Firebase Console to enable this button"
+                disabled={isLoading || isGuestLoading}
             >
                 {isGuestLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                     <User className="mr-2 h-4 w-4" />
                 )}
-                Continue as Guest (Disabled)
+                Continue as Guest
             </Button>
         </CardContent>
         <CardFooter className="flex justify-center text-sm">
