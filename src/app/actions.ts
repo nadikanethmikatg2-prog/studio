@@ -95,7 +95,16 @@ export async function chatWithBotAction(
   subjects: SerializableSubjects
 ): Promise<{ success: boolean; response: string | null; message: string }> {
   try {
-    const todosString = JSON.stringify(subjects, null, 2);
+    // Re-structure the data for the chat bot to be cleaner
+    const structuredSubjects = Object.entries(subjects).map(([key, value]) => ({
+      subject: value.name,
+      subjectKey: key,
+      totalHours: value.totalHours,
+      goalHours: value.goalHours,
+      todos: value.todos,
+    }));
+
+    const todosString = JSON.stringify(structuredSubjects, null, 2);
 
     const result = await chatWithBot(prompt, todosString);
     return { success: true, response: result, message: "Success" };
@@ -108,4 +117,3 @@ export async function chatWithBotAction(
     };
   }
 }
-
