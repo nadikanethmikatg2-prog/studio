@@ -28,7 +28,7 @@ IMPORTANT: After you call the addTodoTool, you MUST include the JSON output from
 
 If the user asks to delete all tasks, use the deleteAllTodosTool.
 If the user asks to delete tasks for a specific subject, use the deleteSubjectTodosTool.
-If the user asks about their to-do items, study hours, or goals, answer based on the provided JSON data. Do not use a tool to view this data.
+If the user asks about their to-do items, study hours, or goals, answer based on the provided JSON data. Do not use a tool to view this data. If no JSON data is provided, you MUST state that there is no data available and you cannot answer the question. Do not invent any information.
 
 The user's subjects can be determined from the JSON data provided.
 
