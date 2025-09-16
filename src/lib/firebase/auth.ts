@@ -50,7 +50,7 @@ export const handleSignOut = async () => {
   }
 };
 
-export const handleGuestSignIn = async () => {
+export const handleGuestSignIn = async (stream: string) => {
   try {
     // Guest sessions are persisted locally by default.
     const userCredential = await signInAnonymously(auth);
@@ -62,8 +62,8 @@ export const handleGuestSignIn = async () => {
     const userDocSnap = await getDoc(userDocRef);
 
     if (!userDocSnap.exists()) {
-      // If no data exists, it's a new guest. Create their initial data.
-      await setInitialUserData(user.uid, "maths"); // Default to 'maths' stream
+      // If no data exists, it's a new guest. Create their initial data with the selected stream.
+      await setInitialUserData(user.uid, stream);
     }
 
     return { user, error: null };
