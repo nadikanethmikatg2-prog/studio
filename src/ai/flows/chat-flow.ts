@@ -15,7 +15,7 @@ import {
 } from "@/ai/tools/todo-tools";
 import { z } from "genkit";
 
-const systemInstruction = `You are a helpful assistant for the A/L Study Buddy app.
+const baseSystemInstruction = `You are a helpful assistant for the A/L Study Buddy app.
 Your goal is to assist the user with managing their study tasks and providing information about their progress.
 Be friendly and answer questions.
 
@@ -32,24 +32,20 @@ If the user asks about their to-do items, study hours, or goals, answer based on
 
 The user's subjects can be determined from the JSON data provided.
 
-Do not ask for confirmation before adding or deleting a task. Just perform the action and confirm it has been done.
-
-Here is the user's current study data:
-{{{todos}}}
-`;
+Here is the user's current study data:`;
 
 export async function chatWithBot(
   prompt: string,
   todos: string
 ): Promise<string> {
+
+  const systemInstruction = `${baseSystemInstruction}\n${todos}`;
+
   const llmResponse = await ai.generate({
     model: "googleai/gemini-2.5-flash",
     prompt: prompt,
     system: systemInstruction,
     tools: [addTodoTool, deleteAllTodosTool, deleteSubjectTodosTool],
-    input: {
-      todos,
-    },
   });
 
   return llmResponse.text;
