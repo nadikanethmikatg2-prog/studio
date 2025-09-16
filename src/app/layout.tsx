@@ -26,13 +26,16 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased'
+          'min-h-screen bg-background font-sans antialiased flex flex-col'
         )}
       >
         <AuthProvider>
-          {children}
+          <div className="flex-1">{children}</div>
         </AuthProvider>
         <Toaster />
+        <footer className="py-4 px-6 text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} Nadika Nethmika. All rights reserved.
+        </footer>
       </body>
     </html>
   );
