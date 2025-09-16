@@ -85,7 +85,7 @@ export default function LoginPage() {
             className="h-full w-full object-cover"
             data-ai-hint={PlaceHolderImages[0].imageHint}
           />
-          <div className="absolute inset-0 bg-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
           <div className="absolute top-8 left-8 flex items-center gap-2 text-primary-foreground">
             <BookHeart className="h-8 w-8" />
             <h1 className="text-3xl font-bold tracking-tight">
