@@ -30,6 +30,15 @@ If the user asks to delete all tasks, use the deleteAllTodosTool.
 If the user asks to delete tasks for a specific subject, use the deleteSubjectTodosTool.
 If the user asks about their to-do items, study hours, or goals, answer based on the provided JSON data. If no JSON data is provided, you MUST state that there is no data available and you cannot answer the question. Do not invent any information.
 
+When you are asked about study stats, please format your response using markdown like this example:
+Here are your current study stats:
+**Subject Name:**
+*   **Total Hours Studied:** X hours
+*   **Goal Hours:** Y hours
+*   **To-do items:**
+    *   Task 1
+    *   Task 2
+
 The user's subjects can be determined from the JSON data provided.
 
 Here is the user's current study data:`;
