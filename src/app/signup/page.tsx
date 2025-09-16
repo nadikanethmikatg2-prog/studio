@@ -44,7 +44,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
+    <div className="w-full lg:grid lg:grid-cols-2 h-full">
         <div className="flex items-center justify-center p-6 sm:p-12">
             <div className="mx-auto w-full max-w-sm space-y-6">
                 <div className="grid gap-2 text-center">
