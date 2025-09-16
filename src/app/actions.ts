@@ -27,23 +27,10 @@ type SerializableSubjects = {
 }
 
 export async function getMotivationalMessageAction(
-  userId: string,
+  stream: string,
   subjects: SerializableSubjects
 ): Promise<{ success: boolean; analysis?: MotivationalMessageOutput; message: string }> {
   try {
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
-    
-    const db = await getFirestoreInstance();
-    const userDocRef = doc(db, "users", userId);
-    const userDocSnap = await getDoc(userDocRef);
-
-    if (!userDocSnap.exists()) {
-        throw new Error("User data not found.");
-    }
-    const stream = userDocSnap.data().stream || 'maths';
-
     const subjectData = Object.entries(subjects).map(([key, value]) => 
       `- ${value.name}: ${value.totalHours} hours, To-Dos: ${value.todos.join(', ') || 'none'}`
     ).join('\n');
@@ -121,3 +108,4 @@ export async function chatWithBotAction(
     };
   }
 }
+

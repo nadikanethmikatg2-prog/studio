@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useTransition, useEffect, useRef } from "react";
+import React, { useState, useTransition, useEffect, useRef, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -16,6 +16,8 @@ import type { Subjects } from "@/app/page";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
+import { getFirestoreInstance } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 interface MotivationCardProps {
   subjects: Subjects;
@@ -27,70 +29,94 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
     message: string;
     subjectSpotlight: string;
   } | null>(null);
+  const [stream, setStream] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const generateAnalysis = () => {
-      if (!user) return; // Don't run if user is not available
-
-      startTransition(async () => {
-
-        const serializableSubjects = Object.fromEntries(
-          Object.entries(subjects).map(([key, value]) => [
-            key,
-            {
-              name: value.name,
-              todos: value.todos.map((t) => t.text),
-              totalHours: value.totalHours,
-              goalHours: value.goalHours,
-            },
-          ])
-        );
-
-        const result = await getMotivationalMessageAction(user.uid, serializableSubjects);
-        
-        if (result.success && result.analysis) {
-          setAnalysis(result.analysis);
-        } else {
+    const fetchUserStream = async () => {
+      if (user) {
+        try {
+          const db = await getFirestoreInstance();
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            setStream(userDocSnap.data().stream || "maths");
+          }
+        } catch (error) {
+          console.error("Failed to fetch user stream:", error);
           toast({
             variant: "destructive",
-            title: "AI Analysis Error",
-            description: result.message,
+            title: "Error",
+            description: "Could not load user data for AI analysis.",
           });
-          // Clear analysis on failure to show skeleton again if needed
-          setAnalysis(null);
         }
-      });
+      }
     };
-    
-    // Check if there are subjects and at least one has some study hours logged.
-    // This prevents generating a message on first load with no data.
-    const hasActivity = Object.values(subjects).some(s => s.totalHours > 0 || s.todos.length > 0);
-    
-    if (user && subjects && Object.keys(subjects).length > 0 && hasActivity) {
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-        // Set analysis to null to show skeleton loader
-        setAnalysis(null); 
-        debounceTimeout.current = setTimeout(generateAnalysis, 1500);
+    fetchUserStream();
+  }, [user, toast]);
+
+  const generateAnalysis = useCallback(() => {
+    if (!user || !stream) return;
+
+    startTransition(async () => {
+      const serializableSubjects = Object.fromEntries(
+        Object.entries(subjects).map(([key, value]) => [
+          key,
+          {
+            name: value.name,
+            todos: value.todos.map((t) => t.text),
+            totalHours: value.totalHours,
+            goalHours: value.goalHours,
+          },
+        ])
+      );
+
+      const result = await getMotivationalMessageAction(
+        stream,
+        serializableSubjects
+      );
+
+      if (result.success && result.analysis) {
+        setAnalysis(result.analysis);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "AI Analysis Error",
+          description: result.message,
+        });
+        setAnalysis(null);
+      }
+    });
+  }, [user, stream, subjects, toast]);
+
+  useEffect(() => {
+    const hasActivity = Object.values(subjects).some(
+      (s) => s.totalHours > 0 || s.todos.length > 0
+    );
+
+    if (user && stream && hasActivity) {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+      setAnalysis(null);
+      debounceTimeout.current = setTimeout(generateAnalysis, 1500);
     } else if (!hasActivity) {
-      // Set a default initial message if there's no activity yet
       setAnalysis({
-        message: "Log some study hours or add a to-do task to get your first analysis from the AI Study Coach!",
-        subjectSpotlight: "Select a subject in the 'Log Your Study Activity' card to get started."
+        message:
+          "Log some study hours or add a to-do task to get your first analysis from the AI Study Coach!",
+        subjectSpotlight:
+          "Select a subject in the 'Log Your Study Activity' card to get started.",
       });
     }
 
     return () => {
-        if(debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-    }
-    
-  }, [subjects, toast, user]);
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [subjects, user, stream, generateAnalysis]);
 
   return (
     <Card>
@@ -119,12 +145,12 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
                 {analysis.message}
               </AlertDescription>
             </Alert>
-            
+
             <Alert variant="default" className="bg-accent/10 border-accent/20">
               <Activity className="h-4 w-4 text-accent" />
               <AlertTitle className="text-accent">Subject Spotlight</AlertTitle>
               <AlertDescription className="text-accent/80">
-                 {analysis.subjectSpotlight}
+                {analysis.subjectSpotlight}
               </AlertDescription>
             </Alert>
           </div>
