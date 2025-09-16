@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { handleSignIn } from "@/lib/firebase/auth";
+import { handleSignIn, handleGuestSignIn } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +11,15 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2 } from "lucide-react";
+import { Loader2, User } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keepLoggedIn, setKeepLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -36,6 +39,25 @@ export default function LoginPage() {
     setIsLoading(false);
   };
 
+  const onGuestSignIn = async () => {
+    setIsGuestLoading(true);
+    const { user, error } = await handleGuestSignIn();
+    if (user) {
+        toast({
+            title: "Welcome, Guest!",
+            description: "You're now using a temporary guest account.",
+        });
+      router.push("/");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Guest Sign In Failed",
+        description: error,
+      });
+    }
+    setIsGuestLoading(false);
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-sm">
@@ -54,7 +76,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={isLoading}
+                disabled={isLoading || isGuestLoading}
               />
             </div>
             <div className="space-y-2">
@@ -65,7 +87,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={isLoading}
+                disabled={isLoading || isGuestLoading}
               />
             </div>
             <div className="flex items-center space-x-2">
@@ -73,7 +95,7 @@ export default function LoginPage() {
                 id="keep-logged-in" 
                 checked={keepLoggedIn}
                 onCheckedChange={(checked) => setKeepLoggedIn(checked as boolean)}
-                disabled={isLoading}
+                disabled={isLoading || isGuestLoading}
               />
               <label
                 htmlFor="keep-logged-in"
@@ -82,11 +104,27 @@ export default function LoginPage() {
                 Keep me logged in
               </label>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || isGuestLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
           </form>
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+            <Button variant="outline" className="w-full" onClick={onGuestSignIn} disabled={isLoading || isGuestLoading}>
+                {isGuestLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <User className="mr-2 h-4 w-4" />
+                )}
+                Continue as Guest
+            </Button>
         </CardContent>
         <CardFooter className="flex justify-center text-sm">
           <p>

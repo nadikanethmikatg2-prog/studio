@@ -7,9 +7,12 @@ import {
   setPersistence,
   browserSessionPersistence,
   browserLocalPersistence,
+  signInAnonymously,
 } from "firebase/auth";
 import { auth } from "./firebase";
-import { setInitialUserData } from "./firestore";
+import { setInitialUserData, getInitialSubjects } from "./firestore";
+import { doc, getDoc } from "firebase/firestore";
+import { getFirestoreInstance } from "./firebase";
 
 export const handleSignUp = async (email: string, pass: string, stream: string) => {
   try {
@@ -44,5 +47,28 @@ export const handleSignOut = async () => {
     await signOut(auth);
   } catch (error: any) {
     console.error("Error signing out: ", error);
+  }
+};
+
+export const handleGuestSignIn = async () => {
+  try {
+    // Guest sessions are persisted locally by default.
+    const userCredential = await signInAnonymously(auth);
+    const user = userCredential.user;
+
+    // Check if the user data already exists in Firestore.
+    const db = await getFirestoreInstance();
+    const userDocRef = doc(db, "users", user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (!userDocSnap.exists()) {
+      // If no data exists, it's a new guest. Create their initial data.
+      await setInitialUserData(user.uid, "maths"); // Default to 'maths' stream
+    }
+
+    return { user, error: null };
+  } catch (error: any) {
+    console.error("Error signing in as guest: ", error);
+    return { user: null, error: error.message };
   }
 };
