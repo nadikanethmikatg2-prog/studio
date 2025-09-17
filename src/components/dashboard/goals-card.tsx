@@ -22,9 +22,10 @@ import { useAuth } from "@/hooks/use-auth";
 interface GoalsCardProps {
   subjects: Subjects;
   onUpdate: (newGoals: { [key: string]: number }) => void;
+  stream: string | null;
 }
 
-export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
+export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -38,6 +39,14 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
             description: "You must be logged in to generate goals.",
         });
         return;
+    }
+     if (!stream) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not determine study stream. Please refresh.",
+      });
+      return;
     }
 
     startTransition(async () => {
@@ -53,7 +62,7 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
             ])
           );
 
-      const result = await generateStudyGoalsAction(user.uid, serializableSubjects);
+      const result = await generateStudyGoalsAction(stream, serializableSubjects);
 
       if (result.success && result.goals) {
         onUpdate(result.goals);

@@ -334,7 +334,7 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
-            <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
+            <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} stream={stream} />
             <SubjectPieChart subjects={subjects} />
           </div>
         </div>
