@@ -4,7 +4,7 @@ import {z} from 'genkit';
 export const StudyGoalInputSchema = z.object({
   stream: z.string().describe("The student's study stream (e.g., Maths, Bio)."),
   subjectData: z.string().describe("A list of the student's subjects and their current total study hours."),
-  subjectKeys: z.array(z.string()).describe("An array of the subject keys (e.g., ['chemistry', 'physics', 'biology']).")
+  subjectNames: z.string().describe("A comma-separated string of the subject names (e.g., 'Chemistry, Physics, Biology').")
 });
 export type StudyGoalInput = z.infer<typeof StudyGoalInputSchema>;
 

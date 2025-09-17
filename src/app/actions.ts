@@ -72,11 +72,13 @@ export async function generateStudyGoalsAction(
     const subjectData = Object.entries(subjects).map(([key, value]) => 
         `- ${value.name}: ${value.totalHours} hours`
     ).join('\n');
+    
+    const subjectNames = Object.values(subjects).map(s => s.name).join(', ');
 
     const input: StudyGoalInput = {
         stream,
         subjectData,
-        subjectKeys: Object.keys(subjects)
+        subjectNames
     };
 
     const result = await generateStudyGoals(input);
