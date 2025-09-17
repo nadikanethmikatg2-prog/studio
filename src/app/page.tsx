@@ -25,6 +25,7 @@ import {
   saveSubjects,
   saveDailyLogs,
   getUserStream,
+  getDailyLogs,
 } from "@/lib/firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 
