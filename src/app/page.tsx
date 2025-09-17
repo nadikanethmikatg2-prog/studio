@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Atom, Combine, FlaskConical, Sigma, Leaf } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { GoalsCard } from "@/components/dashboard/goals-card";
@@ -24,7 +24,6 @@ import {
   getInitialSubjects,
   saveSubjects,
   saveDailyLogs,
-  getDailyLogs,
   getUserStream,
 } from "@/lib/firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -77,6 +76,8 @@ export default function Home() {
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [stream, setStream] = useState<string | null>(null);
 
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
@@ -112,25 +113,34 @@ export default function Home() {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (user && subjects && dataLoaded) {
-      // Create a deep copy to avoid modifying the original state object.
-      const subjectsToSave = JSON.parse(JSON.stringify(subjects));
-      
-      // Remove the non-serializable 'icon' property before saving.
-      for (const key in subjectsToSave) {
-        delete subjectsToSave[key].icon;
-      }
-      
-      saveSubjects(user.uid, subjectsToSave);
+  const debouncedSave = useCallback(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
-  }, [subjects, user, dataLoaded]);
+    debounceTimeoutRef.current = setTimeout(() => {
+      if (user && subjects && dataLoaded) {
+        const subjectsToSave = JSON.parse(JSON.stringify(subjects));
+        for (const key in subjectsToSave) {
+          delete subjectsToSave[key].icon;
+        }
+        saveSubjects(user.uid, subjectsToSave);
+      }
+      if (user && Object.keys(dailyLogs).length > 0 && dataLoaded) {
+        saveDailyLogs(user.uid, dailyLogs);
+      }
+    }, 1500); // Wait 1.5 seconds after the last change
+  }, [user, subjects, dailyLogs, dataLoaded]);
 
   useEffect(() => {
-    if (user && Object.keys(dailyLogs).length > 0 && dataLoaded) {
-      saveDailyLogs(user.uid, dailyLogs);
+    if(dataLoaded) {
+      debouncedSave();
     }
-  }, [dailyLogs, user, dataLoaded]);
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [subjects, dailyLogs, dataLoaded, debouncedSave]);
 
   const handleLogHours = useCallback(
     (subjectKey: string, hours: number) => {
