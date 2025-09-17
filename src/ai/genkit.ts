@@ -9,7 +9,7 @@ function getApiKey(): string {
 export const ai = genkit({
   plugins: [
     googleAI({
-      apiKey: getApiKey(),
+      apiKey: getApiKey,
     }),
   ],
   model: 'googleai/gemini-2.5-flash',
