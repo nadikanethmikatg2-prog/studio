@@ -38,6 +38,7 @@ export function MotivationCard({ subjects }: MotivationCardProps) {
     const fetchUserStream = async () => {
       if (user) {
         try {
+          // Client-side read is fine here as it runs in the browser context
           const db = await getFirestoreInstance();
           const userDocRef = doc(db, "users", user.uid);
           const userDocSnap = await getDoc(userDocRef);

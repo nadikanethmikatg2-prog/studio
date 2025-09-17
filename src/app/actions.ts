@@ -12,8 +12,7 @@ import {
 } from "@/ai/flows/generate-study-goals";
 import type { StudyGoalInput, StudyGoalOutput } from "@/ai/schemas/study-goals-schemas";
 import { chatWithBot } from "@/ai/flows/chat-flow";
-import { getFirestoreInstance } from "@/lib/firebase/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { adminDb } from "@/lib/firebase/admin";
 
 
 // Define a type for the serializable subjects data
@@ -59,15 +58,17 @@ export async function generateStudyGoalsAction(
     if (!userId) {
         throw new Error("User not authenticated");
     }
+    if (!adminDb) {
+      throw new Error("Firebase Admin SDK not initialized.");
+    }
 
-    const db = await getFirestoreInstance();
-    const userDocRef = doc(db, "users", userId);
-    const userDocSnap = await getDoc(userDocRef);
+    const userDocRef = adminDb.collection("users").doc(userId);
+    const userDocSnap = await userDocRef.get();
 
-    if (!userDocSnap.exists()) {
+    if (!userDocSnap.exists) {
         throw new Error("User data not found.");
     }
-    const stream = userDocSnap.data().stream || 'maths';
+    const stream = userDocSnap.data()?.stream || 'maths';
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
         `- ${value.name}: ${value.totalHours} hours`
@@ -119,4 +120,3 @@ export async function chatWithBotAction(
     };
   }
 }
-
