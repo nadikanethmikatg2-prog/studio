@@ -25,11 +25,11 @@ const prompt = ai.definePrompt({
 
   Your task is to generate a realistic and balanced set of weekly study hour goals for their subjects.
 
-  The total weekly study goal should be around 22 hours.
+  The total weekly study goal should be dynamic. Start with a baseline of 20 hours. If the student has studied more than 40 hours in total across all subjects, increase the weekly goal to 24 hours to maintain momentum. If they have studied less than 10 hours in total, set the goal to 18 hours to help them build a routine.
 
-  Distribute these 22 hours among the subjects. Consider the student's current total study hours to identify which subjects might need more attention. For instance, if a subject has significantly fewer hours, you might allocate a bit more time to it to help the student catch up. However, don't neglect subjects they are already studying well. Aim for a balanced plan.
+  Distribute this total goal among the subjects. Consider the student's current total study hours to identify which subjects might need more attention. For instance, if a subject has significantly fewer hours, you might allocate a bit more time to it to help the student catch up. However, don't neglect subjects they are already studying well. Aim for a balanced plan.
 
-  The goals should be round numbers or to the nearest 0.5 hour (e.g., 5, 5.5, 6).
+  The goals for each subject should be round numbers or to the nearest 0.5 hour (e.g., 5, 5.5, 6).
 
   The student's subjects are: {{subjectNames}}.
 
