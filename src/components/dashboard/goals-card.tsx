@@ -65,7 +65,13 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
       const result = await generateStudyGoalsAction(stream, serializableSubjects);
 
       if (result.success && result.goals) {
-        onUpdate(result.goals);
+        // Convert the array of goals into the object format the onUpdate function expects
+        const newGoals = result.goals.goals.reduce((acc, goal) => {
+          acc[goal.subjectKey] = goal.goalHours;
+          return acc;
+        }, {} as { [key: string]: number });
+        
+        onUpdate(newGoals);
         toast({
           title: "AI Goals Generated",
           description: "Your weekly study goals have been updated by the AI.",

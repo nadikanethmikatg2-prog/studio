@@ -35,6 +35,8 @@ const prompt = ai.definePrompt({
 
   Current Total Study Hours:
   {{subjectData}}
+
+  VERY IMPORTANT: For the output, you must provide the subject's unique key ('chemistry', 'physics', 'pureMaths', 'appliedMaths', 'biology') in the 'subjectKey' field, not the full name.
   `,
 });
 

@@ -58,9 +58,14 @@ export async function generateStudyGoalsAction(
     if (!stream) {
         throw new Error("User stream not found.");
     }
+    if (!adminDb) {
+      throw new Error(
+        "Firebase Admin SDK not initialized. Missing service account key."
+      );
+    }
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
-        `- ${value.name}: ${value.totalHours} hours`
+        `- ${value.name} (${key}): ${value.totalHours} hours`
     ).join('\n');
     
     const subjectNames = Object.values(subjects).map(s => s.name).join(', ');

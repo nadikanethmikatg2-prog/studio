@@ -8,6 +8,11 @@ export const StudyGoalInputSchema = z.object({
 });
 export type StudyGoalInput = z.infer<typeof StudyGoalInputSchema>;
 
-// This output schema is dynamic. The keys will be the subject keys from the input.
-export const StudyGoalOutputSchema = z.record(z.number().describe('Suggested weekly goal hours for the subject.'));
+// This output schema is an array of objects, which is more reliable for the model.
+export const StudyGoalOutputSchema = z.object({
+  goals: z.array(z.object({
+    subjectKey: z.string().describe("The unique key for the subject (e.g., 'chemistry', 'physics')."),
+    goalHours: z.number().describe('Suggested weekly goal hours for the subject.'),
+  }))
+});
 export type StudyGoalOutput = z.infer<typeof StudyGoalOutputSchema>;
