@@ -11,14 +11,17 @@ const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
   ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
   : null;
 
-if (!serviceAccount) {
-    console.error("Firebase service account key not found. Make sure FIREBASE_SERVICE_ACCOUNT_KEY environment variable is set.");
+let adminApp;
+if (getApps().length === 0) {
+  if (serviceAccount) {
+    adminApp = initializeApp({
+      credential: cert(serviceAccount),
+    });
+  } else {
+    console.error("Firebase service account key not found. Skipping Admin SDK initialization.");
+  }
+} else {
+  adminApp = getApp();
 }
 
-const app =
-  getApps().length === 0 && serviceAccount
-    ? initializeApp({ credential: cert(serviceAccount) })
-    : getApps()[0] || null;
-
-// Ensure app is not null before getting firestore
-export const adminDb = app ? getFirestore(app) : null;
+export const adminDb = adminApp ? getFirestore(adminApp) : null;

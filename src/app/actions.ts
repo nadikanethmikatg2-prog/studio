@@ -51,12 +51,25 @@ export async function getMotivationalMessageAction(
 }
 
 export async function generateStudyGoalsAction(
-    stream: string,
+    userId: string,
     subjects: SerializableSubjects
 ): Promise<{ success: boolean; goals?: StudyGoalOutput; message: string }> {
   try {
+    if (!adminDb) {
+      throw new Error("Firebase Admin SDK not initialized. Check server logs.");
+    }
+    if (!userId) {
+        throw new Error("User not provided");
+    }
+
+    const userDoc = await adminDb.collection("users").doc(userId).get();
+    if (!userDoc.exists) {
+      throw new Error("User not found in database.");
+    }
+    const stream = userDoc.data()?.stream;
+    
     if (!stream) {
-        throw new Error("User stream not provided");
+        throw new Error("User stream not found in database.");
     }
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
