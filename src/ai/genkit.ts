@@ -3,8 +3,8 @@ import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
 function getApiKey(): string {
-  const anyscaleKeys = (process.env.GEMINI_API_KEYS || '').split(',');
-  return anyscaleKeys[Math.floor(Math.random() * anyscaleKeys.length)];
+  const geminiApiKeys = (process.env.GEMINI_API_KEY || '').split(',');
+  return geminiApiKeys[Math.floor(Math.random() * geminiApiKeys.length)];
 }
 
 export const ai = genkit({
