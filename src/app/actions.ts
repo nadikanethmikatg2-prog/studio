@@ -51,24 +51,13 @@ export async function getMotivationalMessageAction(
 }
 
 export async function generateStudyGoalsAction(
-    userId: string,
+    stream: string,
     subjects: SerializableSubjects
 ): Promise<{ success: boolean; goals?: StudyGoalOutput; message: string }> {
   try {
-    if (!userId) {
-        throw new Error("User not authenticated");
+    if (!stream) {
+        throw new Error("User stream not provided");
     }
-    if (!adminDb) {
-      throw new Error("Firebase Admin SDK not initialized.");
-    }
-
-    const userDocRef = adminDb.collection("users").doc(userId);
-    const userDocSnap = await userDocRef.get();
-
-    if (!userDocSnap.exists) {
-        throw new Error("User data not found.");
-    }
-    const stream = userDocSnap.data()?.stream || 'maths';
 
     const subjectData = Object.entries(subjects).map(([key, value]) => 
         `- ${value.name}: ${value.totalHours} hours`

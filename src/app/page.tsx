@@ -25,6 +25,7 @@ import {
   saveSubjects,
   saveDailyLogs,
   getDailyLogs,
+  getUserStream,
 } from "@/lib/firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -74,6 +75,7 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dataLoaded, setDataLoaded] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const [stream, setStream] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -86,9 +88,10 @@ export default function Home() {
       const fetchData = async () => {
         try {
           setDataLoaded(false); // Start loading
-          const [subjectsData, logsData] = await Promise.all([
+          const [subjectsData, logsData, userStream] = await Promise.all([
             getInitialSubjects(user.uid),
             getDailyLogs(user.uid),
+            getUserStream(user.uid),
           ]);
           Object.keys(subjectsData).forEach((key) => {
             if (iconMap[key]) {
@@ -97,6 +100,7 @@ export default function Home() {
           });
           setSubjects(subjectsData);
           setDailyLogs(logsData);
+          setStream(userStream);
         } catch (error) {
           console.error("Failed to fetch initial data:", error);
           // Optionally, show a toast to the user
@@ -309,7 +313,7 @@ export default function Home() {
       <main className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
-            <MotivationCard subjects={subjects} />
+            <MotivationCard subjects={subjects} stream={stream}/>
             <WeeklyProgressChart
               currentWeekData={currentWeekData}
               previousWeekData={previousWeekData}
@@ -330,7 +334,7 @@ export default function Home() {
           </div>
 
           <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
-            <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} />
+            <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} stream={stream} />
             <SubjectPieChart subjects={subjects} />
           </div>
         </div>

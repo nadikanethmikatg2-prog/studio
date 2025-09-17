@@ -16,47 +16,21 @@ import type { Subjects } from "@/app/page";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
-import { getFirestoreInstance } from "@/lib/firebase/firebase";
-import { doc, getDoc } from "firebase/firestore";
 
 interface MotivationCardProps {
   subjects: Subjects;
+  stream: string | null;
 }
 
-export function MotivationCard({ subjects }: MotivationCardProps) {
+export function MotivationCard({ subjects, stream }: MotivationCardProps) {
   const { user } = useAuth();
   const [analysis, setAnalysis] = useState<{
     message: string;
     subjectSpotlight: string;
   } | null>(null);
-  const [stream, setStream] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const fetchUserStream = async () => {
-      if (user) {
-        try {
-          // Client-side read is fine here as it runs in the browser context
-          const db = await getFirestoreInstance();
-          const userDocRef = doc(db, "users", user.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (userDocSnap.exists()) {
-            setStream(userDocSnap.data().stream || "maths");
-          }
-        } catch (error) {
-          console.error("Failed to fetch user stream:", error);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Could not load user data for AI analysis.",
-          });
-        }
-      }
-    };
-    fetchUserStream();
-  }, [user, toast]);
 
   const generateAnalysis = useCallback(() => {
     if (!user || !stream) return;

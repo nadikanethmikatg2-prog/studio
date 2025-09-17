@@ -66,6 +66,17 @@ export const setInitialUserData = async (userId: string, stream: string) => {
   await setDoc(userDocRef, { stream, subjects: initialData });
 };
 
+// Get user's stream
+export const getUserStream = async (userId: string): Promise<string | null> => {
+    const db = await getFirestoreInstance();
+    const userDocRef = doc(db, "users", userId);
+    const docSnap = await getDoc(userDocRef);
+    if (docSnap.exists()) {
+        return docSnap.data().stream || 'maths';
+    }
+    return null;
+}
+
 // Get initial subjects for a user
 export const getInitialSubjects = async (userId: string): Promise<Subjects> => {
   const db = await getFirestoreInstance();

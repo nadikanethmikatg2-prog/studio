@@ -22,20 +22,21 @@ import { useAuth } from "@/hooks/use-auth";
 interface GoalsCardProps {
   subjects: Subjects;
   onUpdate: (newGoals: { [key: string]: number }) => void;
+  stream: string | null;
 }
 
-export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
+export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const totalGoalHours = Object.values(subjects).reduce((sum, s) => sum + s.goalHours, 0);
 
   const handleGenerateGoals = () => {
-    if (!user) {
+    if (!user || !stream) {
         toast({
             variant: "destructive",
             title: "Error",
-            description: "You must be logged in to generate goals.",
+            description: "Could not determine user stream. Please try again.",
         });
         return;
     }
@@ -53,7 +54,7 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
             ])
           );
 
-      const result = await generateStudyGoalsAction(user.uid, serializableSubjects);
+      const result = await generateStudyGoalsAction(stream, serializableSubjects);
 
       if (result.success && result.goals) {
         onUpdate(result.goals);
@@ -117,7 +118,7 @@ export function GoalsCard({ subjects, onUpdate }: GoalsCardProps) {
             );
           })
         )}
-         <Button onClick={handleGenerateGoals} disabled={isPending} className="w-full">
+         <Button onClick={handleGenerateGoals} disabled={isPending || !stream} className="w-full">
             <Wand2 className="h-4 w-4 mr-2" />
             {isPending ? "Generating..." : "Generate Goals with AI"}
         </Button>
