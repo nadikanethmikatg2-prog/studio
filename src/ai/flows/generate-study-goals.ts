@@ -21,6 +21,11 @@ const prompt = ai.definePrompt({
   name: 'studyGoalPrompt',
   input: {schema: StudyGoalInputSchema},
   output: {schema: StudyGoalOutputSchema},
+  config: {
+    response: {
+      format: 'json',
+    }
+  },
   prompt: `You are an expert study planner for a Sri Lankan A/L student studying for the 2027 exam in the {{stream}} stream.
 
   Your task is to generate a realistic and balanced set of weekly study hour goals for their subjects.
