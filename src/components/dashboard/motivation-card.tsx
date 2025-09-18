@@ -103,7 +103,7 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
           Your personal AI assistant for smarter studying.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {isPending || !analysis ? (
           <div className="space-y-4">
             <Skeleton className="h-24 w-full" />
@@ -111,22 +111,21 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            <Alert className="bg-primary/10 border-primary/20">
-              <BrainCircuit className="h-4 w-4 text-primary" />
-              <AlertTitle className="text-primary">Analysis</AlertTitle>
+             <div className="p-4 rounded-lg bg-muted text-foreground">
+                <div className="flex items-center gap-2 mb-2 font-semibold text-primary">
+                    <BrainCircuit className="h-5 w-5" />
+                    <h4 className="text-base">Analysis</h4>
+                </div>
+                <p className="text-sm opacity-90">{analysis.message}</p>
+            </div>
 
-              <AlertDescription className="text-primary-foreground/90">
-                {analysis.message}
-              </AlertDescription>
-            </Alert>
-
-            <Alert variant="default" className="bg-accent/10 border-accent/20">
-              <Activity className="h-4 w-4 text-accent-foreground" />
-              <AlertTitle className="text-accent-foreground">Subject Spotlight</AlertTitle>
-              <AlertDescription className="text-accent-foreground/90">
-                {analysis.subjectSpotlight}
-              </AlertDescription>
-            </Alert>
+            <div>
+                <div className="flex items-center gap-2 mb-2 font-semibold">
+                    <Activity className="h-5 w-5" />
+                    <h4 className="text-base">Subject Spotlight</h4>
+                </div>
+                <p className="text-sm text-muted-foreground">{analysis.subjectSpotlight}</p>
+            </div>
           </div>
         )}
       </CardContent>
