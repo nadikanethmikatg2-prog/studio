@@ -8,9 +8,11 @@ import {
   browserSessionPersistence,
   browserLocalPersistence,
   signInAnonymously,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "firebase/auth";
 import { auth } from "./firebase";
-import { setInitialUserData, getInitialSubjects } from "./firestore";
+import { setInitialUserData, getUserStream } from "./firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirestoreInstance } from "./firebase";
 
@@ -39,6 +41,30 @@ export const handleSignIn = async (email: string, pass: string, keepLoggedIn: bo
     return { user: userCredential.user, error: null };
   } catch (error: any) {
     return { user: null, error: error.message };
+  }
+};
+
+export const handleGoogleSignIn = async (stream: string) => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    
+    // Check if the user is new or existing
+    const db = await getFirestoreInstance();
+    const userDocRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (!docSnap.exists()) {
+      // New user, set their initial data with the chosen stream
+      await setInitialUserData(user.uid, stream);
+      return { user, error: null, isNewUser: true };
+    }
+    
+    // Existing user, just sign them in
+    return { user, error: null, isNewUser: false };
+  } catch (error: any) {
+    return { user: null, error: error.message, isNewUser: false };
   }
 };
 

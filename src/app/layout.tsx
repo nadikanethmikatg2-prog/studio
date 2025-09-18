@@ -30,12 +30,9 @@ export default function RootLayout({
         )}
       >
         <AuthProvider>
-          <div className="flex-1">{children}</div>
+            {children}
         </AuthProvider>
         <Toaster />
-        <footer className="py-4 px-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Nadika Nethmika. All rights reserved.
-        </footer>
       </body>
     </html>
   );

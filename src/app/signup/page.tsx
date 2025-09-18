@@ -2,10 +2,9 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, BookHeart } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 
 import { handleSignUp } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+
+const AppLogo = (props: React.ComponentProps<"svg">) => (
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M24 4C12.96 4 4 12.96 4 24C4 35.04 12.96 44 24 44C35.04 44 44 35.04 44 24C44 12.96 35.04 4 24 4ZM24 36C17.38 36 12 30.62 12 24C12 17.38 17.38 12 24 12C30.62 12 36 17.38 36 24C36 30.62 30.62 36 24 36Z"
+        fill="hsl(var(--primary))"
+      />
+    </svg>
+);
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -44,107 +58,103 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="h-full">
-        <div className="w-full lg:grid lg:grid-cols-2 h-full">
-            <div className="flex items-center justify-center p-6 sm:p-12">
-                <div className="mx-auto w-full max-w-sm space-y-6">
-                    <div className="grid gap-2 text-center">
-                        <h1 className="text-3xl font-bold">Create an Account</h1>
-                        <p className="text-balance text-muted-foreground">
-                            Join to start tracking your studies for the A/L 2027 exam.
-                        </p>
-                    </div>
-                    <form onSubmit={onSignUp} className="grid gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                minLength={6}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label>Select Your Stream</Label>
-                            <RadioGroup
-                                defaultValue="maths"
-                                className="grid grid-cols-2 gap-4 pt-1"
-                                value={stream}
-                                onValueChange={setStream}
-                                disabled={isLoading}
-                            >
-                                <div>
-                                    <RadioGroupItem value="maths" id="maths" className="peer sr-only" />
-                                    <Label
-                                        htmlFor="maths"
-                                        className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                                    >
-                                        Maths
-                                    </Label>
-                                </div>
-                                <div>
-                                    <RadioGroupItem value="bio" id="bio" className="peer sr-only" />
-                                    <Label
-                                        htmlFor="bio"
-                                        className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                                    >
-                                        Biology
-                                    </Label>
-                                </div>
-                            </RadioGroup>
-                        </div>
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {isLoading ? "Creating Account..." : "Create Account"}
-                        </Button>
-                    </form>
-                    <div className="mt-4 text-center text-sm">
-                        Already have an account?{" "}
-                        <Link href="/login" className="underline text-primary">
-                            Sign in
-                        </Link>
-                    </div>
-                </div>
+    <div className="flex items-center justify-center min-h-screen w-full bg-background p-4">
+      <div className="w-full max-w-sm">
+        <div className="glass-card p-8 space-y-6">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <AppLogo />
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Create an account
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Join to start tracking your studies for the A/L 2027 exam.
+            </p>
+          </div>
+
+          <form onSubmit={onSignUp} className="space-y-4">
+            <div className="relative group">
+              <Label
+                htmlFor="email"
+                className="absolute left-3 -top-2.5 text-xs text-muted-foreground bg-accent px-1 transition-all group-focus-within:text-primary"
+              >
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="merveavsar@mail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="bg-accent border-border focus:bg-transparent"
+                disabled={isLoading}
+              />
             </div>
-            <div className="hidden bg-muted lg:block relative">
-                <Image
-                     src={PlaceHolderImages[0].imageUrl}
-                     alt="A studious person at a desk"
-                     width={1200}
-                     height={1800}
-                     className="h-full w-full object-cover"
-                     data-ai-hint={PlaceHolderImages[0].imageHint}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-                <div className="absolute top-8 right-8 flex items-center gap-2 text-primary-foreground">
-                    <BookHeart className="h-8 w-8" />
-                    <h1 className="text-3xl font-bold tracking-tight">
-                        A/L Study Buddy
-                    </h1>
-                </div>
-                 <div className="absolute bottom-8 right-8 text-lg text-primary-foreground text-right">
-                    <blockquote className="space-y-2">
-                        <p className="font-bold">&ldquo;Success is the sum of small efforts, repeated day in and day out.&rdquo;</p>
-                        <footer className="text-sm">- Robert Collier</footer>
-                    </blockquote>
-                </div>
+             <div className="relative group">
+              <Label
+                htmlFor="password"
+                className="absolute left-3 -top-2.5 text-xs text-muted-foreground bg-accent px-1 transition-all group-focus-within:text-primary"
+              >
+                Password
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="bg-accent border-border focus:bg-transparent"
+                disabled={isLoading}
+              />
             </div>
+            
+            <div className="grid gap-2 pt-2">
+                <Label className="text-muted-foreground text-xs">Select Your Stream</Label>
+                <RadioGroup
+                    defaultValue="maths"
+                    className="grid grid-cols-2 gap-4 pt-1"
+                    value={stream}
+                    onValueChange={setStream}
+                    disabled={isLoading}
+                >
+                    <div>
+                        <RadioGroupItem value="maths" id="maths" className="peer sr-only" />
+                        <Label
+                            htmlFor="maths"
+                            className="flex items-center justify-center rounded-md border-2 border-accent bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/20 [&:has([data-state=checked])]:border-primary"
+                        >
+                            Maths
+                        </Label>
+                    </div>
+                    <div>
+                        <RadioGroupItem value="bio" id="bio" className="peer sr-only" />
+                        <Label
+                            htmlFor="bio"
+                            className="flex items-center justify-center rounded-md border-2 border-accent bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/20 [&:has([data-state=checked])]:border-primary"
+                        >
+                            Biology
+                        </Label>
+                    </div>
+                </RadioGroup>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Account
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center text-sm">
+            <p className="text-muted-foreground">
+              Already have an account?{" "}
+              <Link href="/login" className="underline text-primary hover:text-primary/80">
+                Sign In
+              </Link>
+            </p>
+          </div>
         </div>
+      </div>
     </div>
   );
 }
