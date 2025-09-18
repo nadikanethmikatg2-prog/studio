@@ -97,7 +97,7 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-accent" />
+          <Sparkles className="h-6 w-6 text-primary" />
           AI Study Coach
         </CardTitle>
         <CardDescription>
@@ -116,15 +116,15 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
               <BrainCircuit className="h-4 w-4 text-primary" />
               <AlertTitle className="text-primary">Analysis</AlertTitle>
 
-              <AlertDescription className="text-primary/80">
+              <AlertDescription className="text-primary-foreground/90">
                 {analysis.message}
               </AlertDescription>
             </Alert>
 
             <Alert variant="default" className="bg-accent/10 border-accent/20">
-              <Activity className="h-4 w-4 text-accent" />
-              <AlertTitle className="text-accent">Subject Spotlight</AlertTitle>
-              <AlertDescription className="text-accent/80">
+              <Activity className="h-4 w-4 text-accent-foreground" />
+              <AlertTitle className="text-accent-foreground">Subject Spotlight</AlertTitle>
+              <AlertDescription className="text-accent-foreground/90">
                 {analysis.subjectSpotlight}
               </AlertDescription>
             </Alert>

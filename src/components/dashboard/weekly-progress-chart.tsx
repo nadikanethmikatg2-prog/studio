@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
@@ -26,7 +27,7 @@ interface WeeklyProgressChartProps {
 const CustomTooltip = ({ active, payload, label, subjects }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="p-2 bg-card border border-border rounded-lg shadow-lg">
+      <div className="p-2 bg-background/80 border border-border rounded-lg shadow-lg">
         <p className="label font-bold">{`${label}`}</p>
         {payload.map((pld: any, index: number) => (
             <div key={index} style={{ color: pld.stroke || pld.fill }}>
