@@ -111,7 +111,7 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
           </div>
         ) : (
           <div className="space-y-4">
-             <div className="p-4 rounded-lg bg-muted text-foreground">
+             <div className="p-4 rounded-lg bg-gradient-to-br from-accent to-background/50 text-foreground">
                 <div className="flex items-center gap-2 mb-2 font-semibold text-primary">
                     <BrainCircuit className="h-5 w-5" />
                     <h4 className="text-base">Analysis</h4>
@@ -119,8 +119,8 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
                 <p className="text-sm opacity-90">{analysis.message}</p>
             </div>
 
-            <div className="p-4 rounded-lg bg-muted text-foreground">
-                <div className="flex items-center gap-2 mb-2 font-semibold">
+            <div className="p-4 rounded-lg bg-gradient-to-br from-accent to-background/50 text-foreground">
+                <div className="flex items-center gap-2 mb-2 font-semibold text-primary">
                     <Activity className="h-5 w-5" />
                     <h4 className="text-base">Subject Spotlight</h4>
                 </div>
