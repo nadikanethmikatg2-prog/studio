@@ -119,12 +119,12 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
                 <p className="text-sm opacity-90">{analysis.message}</p>
             </div>
 
-            <div>
+            <div className="p-4 rounded-lg bg-muted text-foreground">
                 <div className="flex items-center gap-2 mb-2 font-semibold">
                     <Activity className="h-5 w-5" />
                     <h4 className="text-base">Subject Spotlight</h4>
                 </div>
-                <p className="text-sm text-muted-foreground">{analysis.subjectSpotlight}</p>
+                <p className="text-sm opacity-90">{analysis.subjectSpotlight}</p>
             </div>
           </div>
         )}
