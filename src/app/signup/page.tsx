@@ -58,7 +58,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen w-full bg-background p-4">
+    <div className="auth-container bg-background">
       <div className="w-full max-w-sm">
         <div className="glass-card p-8 space-y-6">
           <div className="flex flex-col items-center text-center space-y-4">
