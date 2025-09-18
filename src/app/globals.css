@@ -72,17 +72,17 @@ body {
     @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-lg rounded-2xl;
 }
 
-
-.auth-container {
-    @apply relative flex items-center justify-center min-h-screen w-full p-4 overflow-hidden;
-    background-image: radial-gradient(
-        ellipse 80% 80% at 50% -20%,
-        rgba(120, 119, 198, 0.3),
-        rgba(255, 255, 255, 0)
-    );
+.auth-container, .dashboard-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
 }
 
-.auth-container::before {
+.auth-container {
+    @apply flex items-center justify-center min-h-screen p-4;
+}
+
+.auth-container::before, .dashboard-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -106,7 +106,7 @@ body {
             transparent 50%
         );
     filter: blur(40px);
-    z-index: 1;
+    z-index: -1;
 }
 
 .auth-container > div {

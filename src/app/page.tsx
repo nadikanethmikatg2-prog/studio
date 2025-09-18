@@ -319,7 +319,7 @@ export default function Home() {
   const previousWeekData = getWeekData(lastWeekDate);
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background">
+    <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
       <SiteHeader />
       <main className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
