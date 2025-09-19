@@ -63,7 +63,7 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
                         {t("weeklyProgressTitle")}
                     </CardTitle>
                     <CardDescription>
-                        {t("weeklyProgressDescription", { weekStart: format(weekStart, "MMM d"), weekEnd: format(weekEnd, "MMM d, yyyy")})}
+                        {t("weeklyProgressDescription")}
                     </CardDescription>
                 </div>
                 <Popover>
@@ -131,3 +131,5 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
     </Card>
   );
 }
+
+    

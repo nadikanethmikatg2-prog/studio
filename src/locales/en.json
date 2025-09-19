@@ -12,7 +12,7 @@
     "analysis": "Analysis",
     "subjectSpotlight": "Subject Spotlight",
     "weeklyProgressTitle": "Weekly Progress",
-    "weeklyProgressDescription": "{weekStart} - {weekEnd}",
+    "weeklyProgressDescription": "Your study progress for the selected week.",
     "previousWeek": "Previous Week",
     "currentWeek": "Current Week",
     "logActivityTitle": "Log Your Study Activity",
@@ -56,7 +56,7 @@
     "passwordLabel": "Password",
     "rememberMe": "Remember me",
     "or": "Or",
-    "continueWithGoogle": "Continue with Google",
+    "continueAsGuest": "Continue as Guest",
     "noAccount": "Don't have an account?",
     "createAccountLink": "Create Account",
     "selectStreamTitle": "Select Your Study Stream",
@@ -97,11 +97,11 @@
     "cancel": "Cancel",
     "signInFailed": "Sign In Failed",
     "welcome": "Welcome!",
-    "welcomeNewUserStream": "We've created a new account for you in the {stream} stream.",
+    "welcomeGuest": "We've set up a temporary guest account for you in the {stream} stream.",
     "welcomeBackUser": "Welcome Back!",
     "welcomeBackSignIn": "You've successfully signed in.",
-    "googleSignInFailed": "Google Sign In Failed",
-    "googleSignInError": "Could not sign in with Google. Please try again.",
+    "guestSignInFailed": "Guest Sign In Failed",
+    "guestSignInError": "Could not sign in as a guest. Please try again.",
     "accountCreated": "Account Created",
     "accountCreatedSuccess": "Welcome! You'll be redirected to your dashboard.",
     "signUpFailed": "Sign Up Failed",
@@ -127,3 +127,5 @@
     "reAuthRequiredDescription": "For your security, please sign in again to change your password.",
     "language": "Language"
 }
+
+    

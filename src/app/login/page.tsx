@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight } from "lucide-react";
 
-import { handleSignIn, handleGoogleSignIn } from "@/lib/firebase/auth";
+import { handleSignIn, handleGuestSignIn } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,12 +24,12 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLanguage } from "@/hooks/use-language";
 
-const GoogleIcon = (props: React.ComponentProps<"svg">) => (
-    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <title>Google</title>
-      <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.3 1.62-3.96 1.62-3.36 0-6.21-2.82-6.21-6.21s2.85-6.21 6.21-6.21c1.84 0 3.15.75 3.96 1.53l2.64-2.52C18.15 2.85 15.6 1.5 12.48 1.5c-4.41 0-8.25 3.6-8.25 8.25s3.84 8.25 8.25 8.25c4.32 0 7.92-2.94 7.92-8.04 0-.54-.06-.96-.12-1.32H12.48z" />
+const GuestIcon = (props: React.ComponentProps<"svg">) => (
+    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props} fill="currentColor">
+      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
     </svg>
 );
+
 
 const AppLogo = (props: React.ComponentProps<"svg">) => (
     <svg
@@ -53,7 +53,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [keepLoggedIn, setKeepLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
   const [isStreamSelectOpen, setIsStreamSelectOpen] = useState(false);
   const [selectedStream, setSelectedStream] = useState("maths");
   const router = useRouter();
@@ -76,36 +76,27 @@ export default function LoginPage() {
     setIsLoading(false);
   };
   
-  const onGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
-    const { user, error, isNewUser } = await handleGoogleSignIn(selectedStream);
+  const onGuestSignIn = async () => {
+    setIsGuestLoading(true);
+    const { user, error } = await handleGuestSignIn(selectedStream);
     if (user) {
-      if (isNewUser) {
-        toast({
-          title: t("welcome"),
-          description: t("welcomeNewUserStream", { stream: selectedStream }),
-        });
-      } else {
-        toast({
-          title: t("welcomeBackUser"),
-          description: t("welcomeBackSignIn"),
-        });
-      }
+      toast({
+        title: t("welcome"),
+        description: t("welcomeGuest", { stream: selectedStream }),
+      });
       router.push("/");
     } else {
       toast({
         variant: "destructive",
-        title: t("googleSignInFailed"),
-        description: error || t("googleSignInError"),
+        title: t("guestSignInFailed"),
+        description: error || t("guestSignInError"),
       });
     }
-    setIsGoogleLoading(false);
+    setIsGuestLoading(false);
     setIsStreamSelectOpen(false);
   };
   
-  const handleGoogleClick = () => {
-    // We need to ask for the stream for new users.
-    // For now, let's assume we ask every time for simplicity.
+  const handleGuestClick = () => {
     setIsStreamSelectOpen(true);
   }
 
@@ -139,12 +130,12 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="bg-accent border-border focus:bg-transparent"
-                disabled={isLoading || isGoogleLoading}
+                disabled={isLoading || isGuestLoading}
               />
               <Button 
                 size="icon" 
                 className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full"
-                disabled={isLoading || isGoogleLoading || !email || !password}
+                disabled={isLoading || isGuestLoading || !email || !password}
                 type="submit"
               >
                 {isLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
@@ -164,7 +155,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="bg-accent border-border focus:bg-transparent"
-                disabled={isLoading || isGoogleLoading}
+                disabled={isLoading || isGuestLoading}
               />
             </div>
              <div className="flex items-center space-x-2">
@@ -174,7 +165,7 @@ export default function LoginPage() {
                   onCheckedChange={(checked) =>
                     setKeepLoggedIn(checked as boolean)
                   }
-                  disabled={isLoading || isGoogleLoading}
+                  disabled={isLoading || isGuestLoading}
                 />
                 <label
                   htmlFor="keep-logged-in"
@@ -199,14 +190,14 @@ export default function LoginPage() {
                 variant="outline"
                 type="button"
                 className="w-full justify-between items-center bg-accent border-border hover:bg-border"
-                onClick={handleGoogleClick}
-                disabled={isGoogleLoading}
+                onClick={handleGuestClick}
+                disabled={isGuestLoading}
               >
                 <div className="flex items-center gap-2">
-                    <GoogleIcon className="h-4 w-4 fill-current"/>
-                    <span>{t("continueWithGoogle")}</span>
+                    <GuestIcon className="h-4 w-4"/>
+                    <span>{t("continueAsGuest")}</span>
                 </div>
-                {isGoogleLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
+                {isGuestLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
             </Button>
           </div>
 
@@ -238,16 +229,16 @@ export default function LoginPage() {
               className="grid grid-cols-2 gap-4 pt-1"
               value={selectedStream}
               onValueChange={setSelectedStream}
-              disabled={isGoogleLoading}
+              disabled={isGuestLoading}
             >
               <div>
                 <RadioGroupItem
                   value="maths"
-                  id="maths-google"
+                  id="maths-guest"
                   className="peer sr-only"
                 />
                 <Label
-                  htmlFor="maths-google"
+                  htmlFor="maths-guest"
                   className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                 >
                   {t("maths")}
@@ -256,11 +247,11 @@ export default function LoginPage() {
               <div>
                 <RadioGroupItem
                   value="bio"
-                  id="bio-google"
+                  id="bio-guest"
                   className="peer sr-only"
                 />
                 <Label
-                  htmlFor="bio-google"
+                  htmlFor="bio-guest"
                   className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                 >
                   {t("bio")}
@@ -269,12 +260,12 @@ export default function LoginPage() {
             </RadioGroup>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isGoogleLoading}>{t("cancel")}</AlertDialogCancel>
-            <Button onClick={onGoogleSignIn} disabled={isGoogleLoading}>
-              {isGoogleLoading && (
+            <AlertDialogCancel disabled={isGuestLoading}>{t("cancel")}</AlertDialogCancel>
+            <Button onClick={onGuestSignIn} disabled={isGuestLoading}>
+              {isGuestLoading && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isGoogleLoading ? t("signingInButton") : t("continueButton")}
+              {isGuestLoading ? t("signingInButton") : t("continueButton")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -282,3 +273,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    

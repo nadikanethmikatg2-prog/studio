@@ -12,7 +12,7 @@
     "analysis": "විශ්ලේෂණය",
     "subjectSpotlight": "විශේෂ විෂය",
     "weeklyProgressTitle": "සතිපතා ප්‍රගතිය",
-    "weeklyProgressDescription": "{weekStart} - {weekEnd}",
+    "weeklyProgressDescription": "තෝරාගත් සතිය සඳහා ඔබගේ අධ්‍යයන ප්‍රගතිය.",
     "previousWeek": "පසුගිය සතිය",
     "currentWeek": "වත්මන් සතිය",
     "logActivityTitle": "ඔබේ අධ්‍යයන ක්‍රියාකාරකම් සටහන් කරන්න",
@@ -56,7 +56,7 @@
     "passwordLabel": "මුරපදය",
     "rememberMe": "මාව මතක තබාගන්න",
     "or": "හෝ",
-    "continueWithGoogle": "Google සමඟ ඉදිරියට යන්න",
+    "continueAsGuest": "ආගන්තුකයෙකු ලෙස ඉදිරියට යන්න",
     "noAccount": "ගිණුමක් නැද්ද?",
     "createAccountLink": "ගිණුමක් සාදන්න",
     "selectStreamTitle": "ඔබේ අධ්‍යයන විෂය ධාරාව තෝරන්න",
@@ -92,11 +92,11 @@
     "cancel": "අවලංගු කරන්න",
     "signInFailed": "පුරනය වීම අසාර්ථක විය",
     "welcome": "පිළිගන්නවා!",
-    "welcomeNewUserStream": "අපි ඔබ වෙනුවෙන් {stream} විෂය ධාරාවෙන් නව ගිණුමක් නිර්මාණය කර ඇත.",
+    "welcomeGuest": "අපි ඔබ වෙනුවෙන් {stream} විෂය ධාරාවෙන් තාවකාලික ආගන්තුක ගිණුමක් නිර්මාණය කර ඇත.",
     "welcomeBackUser": "නැවත සාදරයෙන් පිළිගනිමු!",
     "welcomeBackSignIn": "ඔබ සාර්ථකව පුරනය විය.",
-    "googleSignInFailed": "Google පුරනය වීම අසාර්ථක විය",
-    "googleSignInError": "Google සමඟ පුරනය වීමට නොහැකි විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "guestSignInFailed": "ආගන්තුක පුරනය වීම අසාර්ථක විය",
+    "guestSignInError": "ආගන්තුකයෙකු ලෙස පුරනය වීමට නොහැකි විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     "accountCreated": "ගිණුම නිර්මාණය කරන ලදී",
     "accountCreatedSuccess": "පිළිගන්නවා! ඔබව ඔබේ උපකරණ පුවරුව වෙත යොමු කරනු ඇත.",
     "signUpFailed": "ලියාපදිංචි වීම අසාර්ථක විය",
@@ -122,3 +122,5 @@
     "reAuthRequiredDescription": "ඔබගේ ආරක්ෂාව සඳහා, ඔබගේ මුරපදය වෙනස් කිරීමට කරුණාකර නැවත පුරනය වන්න.",
     "language": "භාෂාව"
 }
+
+    

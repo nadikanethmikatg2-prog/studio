@@ -54,39 +54,6 @@ export const handleSignIn = async (email: string, pass: string, keepLoggedIn: bo
   }
 };
 
-export const handleGoogleSignIn = async (stream: string) => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    
-    // Check if the user is new or existing
-    const db = await getFirestoreInstance();
-    const userDocRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userDocRef);
-
-    if (!docSnap.exists()) {
-      // New user, set their initial data with the chosen stream
-      await setInitialUserData(user.uid, stream);
-      // Display name is usually set automatically from Google account
-    }
-    
-    // Existing user, just sign them in
-    return { user, error: null, isNewUser: !docSnap.exists() };
-  } catch (error: any) {
-    return { user: null, error: error.message, isNewUser: false };
-  }
-};
-
-
-export const handleSignOut = async () => {
-  try {
-    await signOut(auth);
-  } catch (error: any) {
-    console.error("Error signing out: ", error);
-  }
-};
-
 export const handleGuestSignIn = async (stream: string) => {
   try {
     // Guest sessions are persisted locally by default.
@@ -110,6 +77,14 @@ export const handleGuestSignIn = async (stream: string) => {
   }
 };
 
+
+export const handleSignOut = async () => {
+  try {
+    await signOut(auth);
+  } catch (error: any) {
+    console.error("Error signing out: ", error);
+  }
+};
 
 export const updateUserDisplayName = async (name: string) => {
     const user = auth.currentUser;
@@ -149,3 +124,5 @@ export const getCurrentUserDisplayName = () => {
     const user = auth.currentUser;
     return user?.displayName;
 };
+
+    
