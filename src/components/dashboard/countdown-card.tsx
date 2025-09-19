@@ -63,10 +63,10 @@ export function CountdownCard() {
               key={part.label}
               className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-2 py-1"
             >
-              <div className="text-sm font-bold text-primary-foreground">
+              <div className="text-sm font-bold text-foreground">
                 {String(part.value).padStart(2, "0")}
               </div>
-              <div className="text-xs uppercase tracking-wider text-primary-foreground/80">
+              <div className="text-xs uppercase tracking-wider text-foreground/80">
                 {part.label}
               </div>
             </div>
