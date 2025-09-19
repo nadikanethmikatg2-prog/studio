@@ -13,11 +13,14 @@ import {
   deleteAllTodosTool,
   deleteSubjectTodosTool,
 } from "@/ai/tools/todo-tools";
+import { ragTool } from "@/ai/tools/rag-tool";
 import { z } from "genkit";
 
 const baseSystemInstruction = `You are a helpful assistant for the A/L Study Buddy app.
 Your goal is to assist the user with managing their study tasks and providing information about their progress.
 Be friendly and answer questions.
+
+If the user asks a question about Chemistry or Physics, you MUST use the ragTool to find relevant information from the provided syllabus documents and use that information to answer the question. Your answer should be based on the information from the tool.
 
 If the user asks you to add a task, use the addTodoTool.
 IMPORTANT: After you call the addTodoTool, you MUST include the JSON output from the tool in your response to the user, inside a markdown JSON code block. This is critical for the app to work. For example:
@@ -57,7 +60,7 @@ export async function chatWithBot(
     model: "googleai/gemini-2.5-flash",
     prompt: prompt,
     system: systemInstruction,
-    tools: [addTodoTool, deleteAllTodosTool, deleteSubjectTodosTool],
+    tools: [addTodoTool, deleteAllTodosTool, deleteSubjectTodosTool, ragTool],
   });
 
   return llmResponse.text;
