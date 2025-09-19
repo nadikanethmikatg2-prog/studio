@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { generateStudyGoalsAction } from "@/app/actions";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
 
 interface GoalsCardProps {
   subjects: Subjects;
@@ -27,6 +28,7 @@ interface GoalsCardProps {
 
 export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const totalGoalHours = Object.values(subjects).reduce((sum, s) => sum + s.goalHours, 0);
@@ -35,16 +37,16 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
     if (!user) {
         toast({
             variant: "destructive",
-            title: "Error",
-            description: "You must be logged in to generate goals.",
+            title: t("toastError"),
+            description: t("toastMustBeLoggedIn"),
         });
         return;
     }
      if (!stream) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Could not determine study stream. Please refresh.",
+        title: t("toastError"),
+        description: t("toastStreamNotFound"),
       });
       return;
     }
@@ -73,13 +75,13 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
         
         onUpdate(newGoals);
         toast({
-          title: "AI Goals Generated",
-          description: "Your weekly study goals have been updated by the AI.",
+          title: t("toastAIGoalsGenerated"),
+          description: t("toastAIGoalsUpdated"),
         });
       } else {
         toast({
           variant: "destructive",
-          title: "Error",
+          title: t("toastError"),
           description: result.message,
         });
       }
@@ -91,16 +93,16 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Target className="h-6 w-6 text-primary" />
-          Weekly Goals
+          {t("weeklyGoalsTitle")}
         </CardTitle>
         <CardDescription>
-          Track your progress towards your weekly study hour goals.
+          {t("weeklyGoalsDescription")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-3 rounded-lg bg-muted">
-            <div className="text-sm font-medium text-muted-foreground">Total Weekly Goal</div>
-            <div className="text-2xl font-bold text-primary">{totalGoalHours.toFixed(1)} hrs</div>
+            <div className="text-sm font-medium text-muted-foreground">{t("totalWeeklyGoal")}</div>
+            <div className="text-2xl font-bold text-primary">{totalGoalHours.toFixed(1)} {t("hrsSuffix")}</div>
         </div>
 
         {isPending ? (
@@ -111,7 +113,7 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
             <Skeleton className="h-10 w-full" />
           </div>
         ) : (
-          Object.values(subjects).map((subject) => {
+          Object.entries(subjects).map(([key, subject]) => {
             const progress =
               subject.goalHours > 0
                 ? (subject.totalHours / subject.goalHours) * 100
@@ -121,10 +123,10 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
                 <div className="flex justify-between text-sm items-center">
                   <Label className="font-medium flex items-center gap-2">
                     <subject.icon className="w-4 h-4" style={{ color: subject.color }}/>
-                    {subject.name}
+                    {t(key as any) || subject.name}
                   </Label>
                   <span className="text-muted-foreground">
-                    {subject.totalHours.toFixed(1)} / {subject.goalHours} hrs
+                    {subject.totalHours.toFixed(1)} / {subject.goalHours} {t("hrsSuffix")}
                   </span>
                 </div>
                 <Progress value={progress} indicatorClassName="transition-all duration-500" style={{'--indicator-color': subject.color} as React.CSSProperties} />
@@ -134,7 +136,7 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
         )}
          <Button onClick={handleGenerateGoals} disabled={isPending || !user} className="w-full">
             <Wand2 className="h-4 w-4 mr-2" />
-            {isPending ? "Generating..." : "Generate Goals with AI"}
+            {isPending ? t("generatingButton") : t("generateGoalsButton")}
         </Button>
       </CardContent>
     </Card>

@@ -4,6 +4,7 @@ import {z} from 'genkit';
 export const MotivationalMessageInputSchema = z.object({
   stream: z.string().describe("The student's study stream (e.g., Maths, Bio)."),
   subjectData: z.string().describe("A JSON string of the student's subjects, including hours and to-do lists."),
+  language: z.string().describe("The language for the output message (e.g., 'English', 'Sinhala')."),
 });
 export type MotivationalMessageInput = z.infer<typeof MotivationalMessageInputSchema>;
 

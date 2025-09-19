@@ -15,6 +15,7 @@ import { Calendar as CalendarIcon, GanttChart } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format, startOfWeek, endOfWeek } from "date-fns";
 import type { Subjects } from "@/app/page";
+import { useLanguage } from "@/hooks/use-language";
 
 interface WeeklyProgressChartProps {
   currentWeekData: any[];
@@ -24,7 +25,7 @@ interface WeeklyProgressChartProps {
   onDateChange: (date: Date) => void;
 }
 
-const CustomTooltip = ({ active, payload, label, subjects }: any) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="p-2 bg-background/80 border border-border rounded-lg shadow-lg">
@@ -43,6 +44,7 @@ const CustomTooltip = ({ active, payload, label, subjects }: any) => {
 
 
 export function WeeklyProgressChart({ currentWeekData, previousWeekData, subjects, selectedDate, onDateChange }: WeeklyProgressChartProps) {
+  const { t } = useLanguage();
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
   
@@ -58,10 +60,10 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
                 <div className="space-y-1.5">
                     <CardTitle className="flex items-center gap-2">
                         <GanttChart className="h-5 w-5 text-primary"/>
-                        Weekly Progress
+                        {t("weeklyProgressTitle")}
                     </CardTitle>
                     <CardDescription>
-                        {format(weekStart, "MMM d")} - {format(weekEnd, "MMM d, yyyy")}
+                        {t("weeklyProgressDescription", { weekStart: format(weekStart, "MMM d"), weekEnd: format(weekEnd, "MMM d, yyyy")})}
                     </CardDescription>
                 </div>
                 <Popover>
@@ -107,7 +109,7 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
                         tickFormatter={(value) => `${value}h`}
                         />
                         <Tooltip
-                            content={<CustomTooltip subjects={subjects} />}
+                            content={<CustomTooltip />}
                             cursor={{ fill: "hsl(var(--muted))", fillOpacity: 0.5 }}
                             contentStyle={{
                                 backgroundColor: "hsl(var(--card))",
@@ -116,13 +118,13 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
                             }}
                         />
                         <Legend iconSize={10} wrapperStyle={{fontSize: '0.8rem'}}/>
-                        <Area dataKey="previousTotalHours" name="Previous Week" stroke="hsl(var(--muted-foreground))" fill="transparent" strokeWidth={1.5} strokeDasharray="4 4" />
-                        <Area type="monotone" dataKey="totalHours" name="Current Week" stroke="hsl(var(--primary))" fill="url(#colorTotal)" strokeWidth={2} />
+                        <Area dataKey="previousTotalHours" name={t("previousWeek")} stroke="hsl(var(--muted-foreground))" fill="transparent" strokeWidth={1.5} strokeDasharray="4 4" />
+                        <Area type="monotone" dataKey="totalHours" name={t("currentWeek")} stroke="hsl(var(--primary))" fill="url(#colorTotal)" strokeWidth={2} />
                     </AreaChart>
                 </ResponsiveContainer>
             ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                    No study hours logged for this week.
+                    {t("noHoursLogged")}
                 </div>
             )}
         </CardContent>

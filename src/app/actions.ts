@@ -27,7 +27,8 @@ type SerializableSubjects = {
 
 export async function getMotivationalMessageAction(
   stream: string,
-  subjects: SerializableSubjects
+  subjects: SerializableSubjects,
+  locale: 'en' | 'si'
 ): Promise<{ success: boolean; analysis?: MotivationalMessageOutput; message: string }> {
   try {
     const subjectData = Object.entries(subjects).map(([key, value]) => 
@@ -36,7 +37,8 @@ export async function getMotivationalMessageAction(
     
     const input: MotivationalMessageInput = {
         stream,
-        subjectData
+        subjectData,
+        language: locale === 'si' ? 'Sinhala' : 'English',
     };
 
     const result = await generateMotivationalMessage(input);

@@ -1,13 +1,22 @@
-import { BookHeart, LogOut } from "lucide-react";
+import { BookHeart, LogOut, Languages } from "lucide-react";
 import { CountdownCard } from "./dashboard/countdown-card";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { handleSignOut } from "@/lib/firebase/auth";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/hooks/use-language";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function SiteHeader() {
   const { user } = useAuth();
   const router = useRouter();
+  const { locale, setLocale, t } = useLanguage();
 
   const onSignOut = async () => {
     await handleSignOut();
@@ -20,18 +29,35 @@ export function SiteHeader() {
         <div className="flex gap-2 items-center">
           <BookHeart className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight text-primary">
-            A/L Study Buddy
+            {t("appTitle")}
           </h1>
         </div>
         <div className="hidden md:block">
           <CountdownCard />
         </div>
-        {user && (
-          <Button variant="ghost" size="icon" onClick={onSignOut}>
-            <LogOut className="h-5 w-5" />
-            <span className="sr-only">Sign Out</span>
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Languages className="h-5 w-5" />
+                  <span className="sr-only">Change language</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuRadioGroup value={locale} onValueChange={(value) => setLocale(value as 'en' | 'si')}>
+                  <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {user && (
+              <Button variant="ghost" size="icon" onClick={onSignOut} title={t("signOut")}>
+                <LogOut className="h-5 w-5" />
+                <span className="sr-only">{t("signOut")}</span>
+              </Button>
+            )}
+        </div>
       </div>
     </header>
   );

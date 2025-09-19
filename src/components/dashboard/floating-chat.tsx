@@ -11,6 +11,7 @@ import {
 import { Bot, X } from "lucide-react";
 import { ChatCard } from "./chat-card";
 import type { Subjects, Message } from "@/app/page";
+import { useLanguage } from "@/hooks/use-language";
 
 interface FloatingChatProps {
   subjects: Subjects;
@@ -23,6 +24,7 @@ interface FloatingChatProps {
 
 export function FloatingChat({ subjects, messages, setMessages, onTaskAdded, onDeleteAllTodos, onDeleteSubjectTodos }: FloatingChatProps) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const { t } = useLanguage();
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>

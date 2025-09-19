@@ -16,6 +16,7 @@ import { Clock, Activity, ListTodo, Plus } from "lucide-react";
 import type { Subjects } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/use-language";
 
 interface ActivityLoggerCardProps {
   subjects: Subjects;
@@ -28,6 +29,7 @@ export function ActivityLoggerCard({
   onLogHours,
   onAddTask,
 }: ActivityLoggerCardProps) {
+  const { t } = useLanguage();
   const [selectedSubject, setSelectedSubject] = useState<string>(Object.keys(subjects)[0]);
   const [hoursToAdd, setHoursToAdd] = useState("");
   const [taskToAdd, setTaskToAdd] = useState("");
@@ -40,16 +42,15 @@ export function ActivityLoggerCard({
         onLogHours(selectedSubject, hours);
         setHoursToAdd("");
         toast({
-          title: "Success",
-          description: `${hours} hour(s) added to ${subjects[selectedSubject].name}.`,
+          title: t("toastSuccess"),
+          description: t("toastHoursAdded", { hours, subjectName: subjects[selectedSubject].name }),
         });
       });
     } else {
       toast({
         variant: "destructive",
-        title: "Invalid Input",
-        description:
-          "Please select a subject and enter a positive number for hours.",
+        title: t("toastInvalidInput"),
+        description: t("toastInvalidHours"),
       });
     }
   };
@@ -64,18 +65,16 @@ export function ActivityLoggerCard({
       startTransition(() => {
         onAddTask(selectedSubject, taskToAdd.trim());
         toast({
-          title: "Task Added",
-          description: `"${taskToAdd.trim()}" added to ${
-            subjects[selectedSubject].name
-          }.`,
+          title: t("toastTaskAdded"),
+          description: t("toastTaskAddedTo", { task: taskToAdd.trim(), subjectName: subjects[selectedSubject].name }),
         });
         setTaskToAdd("");
       });
     } else {
       toast({
         variant: "destructive",
-        title: "Invalid Input",
-        description: "Please select a subject and enter a task description.",
+        title: t("toastInvalidInput"),
+        description: t("toastInvalidTask"),
       });
     }
   };
@@ -85,15 +84,15 @@ export function ActivityLoggerCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Activity className="text-primary" />
-          Log Your Study Activity
+          {t("logActivityTitle")}
         </CardTitle>
         <CardDescription>
-          Select a subject, then log your study time or add a to-do task.
+          {t("logActivityDescription")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <Label className="mb-2 block">1. Select a subject</Label>
+          <Label className="mb-2 block">{t("selectSubject")}</Label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {Object.entries(subjects).map(([key, subject]) => {
               const Icon = subject.icon;
@@ -110,7 +109,7 @@ export function ActivityLoggerCard({
                   onClick={() => setSelectedSubject(key)}
                 >
                   <Icon className="h-6 w-6" style={{ color: subject.color }} />
-                  <span className="text-xs">{subject.name}</span>
+                  <span className="text-xs">{t(key as any) || subject.name}</span>
                 </Button>
               );
             })}
@@ -119,7 +118,7 @@ export function ActivityLoggerCard({
 
         <div className="space-y-2">
           <Label htmlFor={`hours-input`} className="flex items-center gap-2">
-            <Clock /> 2. Log Study Hours
+            <Clock /> {t("logStudyHours")}
           </Label>
           <div className="flex gap-2 items-center">
             <Input
@@ -127,7 +126,7 @@ export function ActivityLoggerCard({
               type="number"
               value={hoursToAdd}
               onChange={(e) => setHoursToAdd(e.target.value)}
-              placeholder="e.g., 1.5"
+              placeholder={t("hoursInputPlaceholder")}
               onKeyDown={(e) => e.key === "Enter" && handleLogHoursFromInput()}
               disabled={!selectedSubject}
             />
@@ -135,7 +134,7 @@ export function ActivityLoggerCard({
               onClick={handleLogHoursFromInput}
               disabled={isPending || !selectedSubject || !hoursToAdd}
             >
-              Log
+              {t("logButton")}
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -145,7 +144,7 @@ export function ActivityLoggerCard({
               onClick={() => handleAddHours(0.5)}
               disabled={!selectedSubject}
             >
-              +30m
+              {t("add30min")}
             </Button>
             <Button
               variant="outline"
@@ -153,7 +152,7 @@ export function ActivityLoggerCard({
               onClick={() => handleAddHours(1)}
               disabled={!selectedSubject}
             >
-              +1h
+              {t("add1hr")}
             </Button>
             <Button
               variant="outline"
@@ -161,14 +160,14 @@ export function ActivityLoggerCard({
               onClick={() => handleAddHours(2)}
               disabled={!selectedSubject}
             >
-              +2h
+              {t("add2hr")}
             </Button>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor={`task-input`} className="flex items-center gap-2">
-            <ListTodo /> 3. Add a To-Do Task
+            <ListTodo /> {t("addTodoTask")}
           </Label>
           <div className="flex gap-2 items-center">
             <Input
@@ -176,7 +175,7 @@ export function ActivityLoggerCard({
               type="text"
               value={taskToAdd}
               onChange={(e) => setTaskToAdd(e.target.value)}
-              placeholder="e.g., Review chapter 5"
+              placeholder={t("taskInputPlaceholder")}
               onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
               disabled={!selectedSubject}
             />
@@ -184,7 +183,7 @@ export function ActivityLoggerCard({
               onClick={handleAddTask}
               disabled={isPending || !selectedSubject || !taskToAdd}
             >
-              <Plus className="h-4 w-4 mr-1" /> Task
+              <Plus className="h-4 w-4 mr-1" /> {t("addTaskButton")}
             </Button>
           </div>
         </div>

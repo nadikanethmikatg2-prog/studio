@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/hooks/use-auth';
+import { LanguageProvider } from '@/hooks/use-language';
 
 export const metadata: Metadata = {
   title: 'A/L Study Buddy',
@@ -29,9 +30,11 @@ export default function RootLayout({
           'min-h-screen bg-background font-sans antialiased flex flex-col'
         )}
       >
-        <AuthProvider>
-            {children}
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+              {children}
+          </AuthProvider>
+        </LanguageProvider>
         <Toaster />
       </body>
     </html>

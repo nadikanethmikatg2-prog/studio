@@ -22,6 +22,7 @@ import {
   AlertDialogFooter
 } from "@/components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useLanguage } from "@/hooks/use-language";
 
 const GoogleIcon = (props: React.ComponentProps<"svg">) => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -57,6 +58,7 @@ export default function LoginPage() {
   const [selectedStream, setSelectedStream] = useState("maths");
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const onSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +69,7 @@ export default function LoginPage() {
     } else {
       toast({
         variant: "destructive",
-        title: "Sign In Failed",
+        title: t("signInFailed"),
         description: error,
       });
     }
@@ -80,21 +82,21 @@ export default function LoginPage() {
     if (user) {
       if (isNewUser) {
         toast({
-          title: "Welcome!",
-          description: `We've created a new account for you in the ${selectedStream} stream.`,
+          title: t("welcome"),
+          description: t("welcomeNewUserStream", { stream: selectedStream }),
         });
       } else {
         toast({
-          title: "Welcome Back!",
-          description: "You've successfully signed in.",
+          title: t("welcomeBackUser"),
+          description: t("welcomeBackSignIn"),
         });
       }
       router.push("/");
     } else {
       toast({
         variant: "destructive",
-        title: "Google Sign In Failed",
-        description: error || "Could not sign in with Google. Please try again.",
+        title: t("googleSignInFailed"),
+        description: error || t("googleSignInError"),
       });
     }
     setIsGoogleLoading(false);
@@ -114,10 +116,10 @@ export default function LoginPage() {
           <div className="flex flex-col items-center text-center space-y-4">
               <AppLogo />
             <h1 className="text-2xl font-semibold tracking-tight">
-              Welcome back
+              {t("welcomeBack")}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Please enter your details to sign in.
+              {t("signInPrompt")}
             </p>
           </div>
 
@@ -127,7 +129,7 @@ export default function LoginPage() {
                 htmlFor="email"
                 className="absolute left-3 -top-2.5 text-xs text-muted-foreground bg-accent px-1 transition-all group-focus-within:text-primary"
               >
-                Email
+                {t("emailLabel")}
               </Label>
               <Input
                 id="email"
@@ -153,7 +155,7 @@ export default function LoginPage() {
                 htmlFor="password"
                 className="absolute left-3 -top-2.5 text-xs text-muted-foreground bg-accent px-1 transition-all group-focus-within:text-primary"
               >
-                Password
+                {t("passwordLabel")}
               </Label>
               <Input
                 id="password"
@@ -178,7 +180,7 @@ export default function LoginPage() {
                   htmlFor="keep-logged-in"
                   className="text-xs font-medium text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Remember me
+                  {t("rememberMe")}
                 </label>
               </div>
           </form>
@@ -188,7 +190,7 @@ export default function LoginPage() {
               <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white/5 px-2 text-muted-foreground">Or</span>
+              <span className="bg-white/5 px-2 text-muted-foreground">{t("or")}</span>
             </div>
           </div>
 
@@ -202,7 +204,7 @@ export default function LoginPage() {
               >
                 <div className="flex items-center gap-2">
                     <GoogleIcon className="h-4 w-4 fill-current"/>
-                    <span>Continue with Google</span>
+                    <span>{t("continueWithGoogle")}</span>
                 </div>
                 {isGoogleLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
             </Button>
@@ -210,9 +212,9 @@ export default function LoginPage() {
 
           <div className="mt-4 text-center text-sm">
             <p className="text-muted-foreground">
-              Don't have an account?{" "}
+              {t("noAccount")}{" "}
               <Link href="/signup" className="underline text-primary hover:text-primary/80">
-                Create Account
+                {t("createAccountLink")}
               </Link>
             </p>
           </div>
@@ -225,9 +227,9 @@ export default function LoginPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Select Your Study Stream</AlertDialogTitle>
+            <AlertDialogTitle>{t("selectStreamTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This helps us personalize your dashboard. You only need to do this once.
+              {t("selectStreamDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="py-4">
@@ -248,7 +250,7 @@ export default function LoginPage() {
                   htmlFor="maths-google"
                   className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                 >
-                  Maths
+                  {t("maths")}
                 </Label>
               </div>
               <div>
@@ -261,18 +263,18 @@ export default function LoginPage() {
                   htmlFor="bio-google"
                   className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                 >
-                  Biology
+                  {t("bio")}
                 </Label>
               </div>
             </RadioGroup>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isGoogleLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isGoogleLoading}>{t("cancel")}</AlertDialogCancel>
             <Button onClick={onGoogleSignIn} disabled={isGoogleLoading}>
               {isGoogleLoading && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isGoogleLoading ? "Signing in..." : "Continue"}
+              {isGoogleLoading ? t("signingInButton") : t("continueButton")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

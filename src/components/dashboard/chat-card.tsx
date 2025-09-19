@@ -18,6 +18,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import type { Subjects, Message } from "@/app/page";
+import { useLanguage } from "@/hooks/use-language";
 
 interface ChatCardProps {
   subjects: Subjects;
@@ -52,6 +53,7 @@ export function ChatCard({
   onDeleteSubjectTodos,
 }: ChatCardProps) {
   const [input, setInput] = useState("");
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -110,10 +112,8 @@ export function ChatCard({
           if (subjects[taskData.subjectKey]) {
             onTaskAdded(taskData.subjectKey, taskData.task);
             toast({
-              title: "Task Added",
-              description: `"${taskData.task}" added to ${
-                subjects[taskData.subjectKey].name
-              }.`,
+              title: t("toastTaskAdded"),
+              description: t("toastTaskAddedTo", { task: taskData.task, subjectName: subjects[taskData.subjectKey].name }),
             });
           }
         }
@@ -121,7 +121,7 @@ export function ChatCard({
         // Handle deleting all tasks
         if (lowerCaseResponse.includes("deleted all to-do items")) {
           const subjectMatch = lowerCaseResponse.match(
-            /for (chemistry|physics|puremaths|appliedmaths)/
+            /for (chemistry|physics|puremaths|appliedmaths|biology)/
           );
           if (subjectMatch) {
             let subjectKey = subjectMatch[1];
@@ -129,21 +129,21 @@ export function ChatCard({
             if (subjectKey === "appliedmaths") subjectKey = "appliedMaths";
             onDeleteSubjectTodos(subjectKey);
             toast({
-              title: "Tasks Deleted",
-              description: `All tasks for ${subjects[subjectKey].name} have been deleted.`,
+              title: t("tasksDeleted"),
+              description: t("tasksForSubjectDeleted", { subjectName: subjects[subjectKey].name }),
             });
           } else {
             onDeleteAllTodos();
             toast({
-              title: "All Tasks Deleted",
-              description: "All your to-do items have been cleared.",
+              title: t("allTasksDeleted"),
+              description: t("allTasksCleared"),
             });
           }
         }
       } else {
         toast({
           variant: "destructive",
-          title: "AI Chat Error",
+          title: t("aiChatError"),
           description: result.message,
         });
         // On error, remove the user's message to allow them to try again.
@@ -157,10 +157,10 @@ export function ChatCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bot className="text-primary" />
-          Chat with your AI Assistant
+          {t("chatTitle")}
         </CardTitle>
         <CardDescription>
-          Try asking: "What are my to-do items for chemistry?"
+          {t("chatDescription")}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
@@ -221,7 +221,7 @@ export function ChatCard({
               </>
             ) : (
               <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                No messages yet. Start the conversation!
+                {t("noMessagesYet")}
               </div>
             )}
           </div>
@@ -230,7 +230,7 @@ export function ChatCard({
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
+            placeholder={t("chatInputPlaceholder")}
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
             disabled={isPending}
           />

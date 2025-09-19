@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useTransition } from "react";
@@ -26,6 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useLanguage } from "@/hooks/use-language";
 
 interface SubjectCardProps {
   subjectKey: string;
@@ -40,6 +42,7 @@ export function SubjectCard({
   onUpdate,
   onLogHours,
 }: SubjectCardProps) {
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [isLogHoursDialogOpen, setIsLogHoursDialogOpen] = useState(false);
   const [completedTodo, setCompletedTodo] = useState<Todo | null>(null);
@@ -72,8 +75,8 @@ export function SubjectCard({
     if (isNaN(hours) || hours <= 0) {
       toast({
         variant: "destructive",
-        title: "Invalid Input",
-        description: "Please enter a positive number for hours.",
+        title: t("toastInvalidInput"),
+        description: t("toastInvalidHours"),
       });
       return;
     }
@@ -89,8 +92,8 @@ export function SubjectCard({
       onUpdate(subjectKey, { todos: updatedTodos });
 
       toast({
-        title: "Task Completed!",
-        description: `You logged ${hours} hour(s) for "${completedTodo.text}".`,
+        title: t("toastTaskCompleted"),
+        description: t("toastLoggedHoursForTask", { hours, taskText: completedTodo.text }),
       });
 
       // Reset and close dialog
@@ -110,7 +113,7 @@ export function SubjectCard({
   return (
     <div className="space-y-4">
         <div className="space-y-2">
-          <Label>To-Do List</Label>
+          <Label>{t("todoList")}</Label>
            <ScrollArea className="h-48 w-full rounded-md border mt-2">
             <div className="p-2 space-y-2">
               {subject.todos.length > 0 ? (
@@ -143,7 +146,7 @@ export function SubjectCard({
                 ))
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  No tasks yet. Add one in the logger!
+                  {t("noTasksYet")}
                 </p>
               )}
             </div>
@@ -153,13 +156,13 @@ export function SubjectCard({
         <AlertDialog open={isLogHoursDialogOpen} onOpenChange={setIsLogHoursDialogOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Log Hours for Task</AlertDialogTitle>
+                    <AlertDialogTitle>{t("logHoursForTaskTitle")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        How many hours did you spend on "{completedTodo?.text}"?
+                        {t("logHoursForTaskDescription", { taskText: completedTodo?.text || "" })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="py-4">
-                    <Label htmlFor="hours-spent">Hours Spent</Label>
+                    <Label htmlFor="hours-spent">{t("hoursSpent")}</Label>
                     <Input
                         id="hours-spent"
                         type="number"
@@ -170,9 +173,9 @@ export function SubjectCard({
                     />
                 </div>
                 <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setHoursSpent('')}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel onClick={() => setHoursSpent('')}>{t("cancel")}</AlertDialogCancel>
                     <AlertDialogAction onClick={handleLogHoursForTodo} disabled={isPending || !hoursSpent}>
-                        {isPending ? "Logging..." : "Log & Complete"}
+                        {isPending ? t("generatingButton") : t("logAndCompleteButton")}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

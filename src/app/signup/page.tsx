@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 const AppLogo = (props: React.ComponentProps<"svg">) => (
     <svg
@@ -36,6 +37,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const onSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,14 +45,14 @@ export default function SignupPage() {
     const { user, error } = await handleSignUp(email, password, stream);
     if (user) {
       toast({
-        title: "Account Created",
-        description: "Welcome! You'll be redirected to your dashboard.",
+        title: t("accountCreated"),
+        description: t("accountCreatedSuccess"),
       });
       router.push("/");
     } else {
         toast({
             variant: "destructive",
-            title: "Sign Up Failed",
+            title: t("signUpFailed"),
             description: error,
           });
     }
@@ -64,10 +66,10 @@ export default function SignupPage() {
           <div className="flex flex-col items-center text-center space-y-4">
             <AppLogo />
             <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
+              {t("createAccountTitle")}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Join to start tracking your studies for the A/L 2027 exam.
+              {t("createAccountDescription")}
             </p>
           </div>
 
@@ -77,7 +79,7 @@ export default function SignupPage() {
                 htmlFor="email"
                 className="absolute left-3 -top-2.5 text-xs text-muted-foreground bg-accent px-1 transition-all group-focus-within:text-primary"
               >
-                Email
+                {t("emailLabel")}
               </Label>
               <Input
                 id="email"
@@ -95,7 +97,7 @@ export default function SignupPage() {
                 htmlFor="password"
                 className="absolute left-3 -top-2.5 text-xs text-muted-foreground bg-accent px-1 transition-all group-focus-within:text-primary"
               >
-                Password
+                {t("passwordLabel")}
               </Label>
               <Input
                 id="password"
@@ -110,7 +112,7 @@ export default function SignupPage() {
             </div>
             
             <div className="grid gap-2 pt-2">
-                <Label className="text-muted-foreground text-xs">Select Your Stream</Label>
+                <Label className="text-muted-foreground text-xs">{t("selectYourStream")}</Label>
                 <RadioGroup
                     defaultValue="maths"
                     className="grid grid-cols-2 gap-4 pt-1"
@@ -124,7 +126,7 @@ export default function SignupPage() {
                             htmlFor="maths"
                             className="flex items-center justify-center rounded-md border-2 border-accent bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/20 [&:has([data-state=checked])]:border-primary"
                         >
-                            Maths
+                            {t("maths")}
                         </Label>
                     </div>
                     <div>
@@ -133,7 +135,7 @@ export default function SignupPage() {
                             htmlFor="bio"
                             className="flex items-center justify-center rounded-md border-2 border-accent bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/20 [&:has([data-state=checked])]:border-primary"
                         >
-                            Biology
+                            {t("bio")}
                         </Label>
                     </div>
                 </RadioGroup>
@@ -141,15 +143,15 @@ export default function SignupPage() {
 
             <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Account
+                {t("createAccountButton")}
             </Button>
           </form>
 
           <div className="mt-4 text-center text-sm">
             <p className="text-muted-foreground">
-              Already have an account?{" "}
+              {t("haveAccount")}{" "}
               <Link href="/login" className="underline text-primary hover:text-primary/80">
-                Sign In
+                {t("signInLink")}
               </Link>
             </p>
           </div>

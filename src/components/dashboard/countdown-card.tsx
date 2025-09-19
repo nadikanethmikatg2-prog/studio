@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Timer } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 const examDate = new Date("2027-08-01T00:00:00");
 
 export function CountdownCard() {
+  const { t } = useLanguage();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -46,16 +48,16 @@ export function CountdownCard() {
   }, []);
 
   const timeParts = [
-    { label: "Days", value: timeLeft.days },
-    { label: "Hours", value: timeLeft.hours },
-    { label: "Mins", value: timeLeft.minutes },
+    { label: t("days"), value: timeLeft.days },
+    { label: t("hours"), value: timeLeft.hours },
+    { label: t("mins"), value: timeLeft.minutes },
   ];
 
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2 text-primary text-sm">
         <Timer className="h-4 w-4" />
-        <span>A/L 2027</span>
+        <span>{t("al2027")}</span>
       </div>
       <div className="flex gap-2 text-center">
           {timeParts.map((part) => (
@@ -63,7 +65,7 @@ export function CountdownCard() {
               key={part.label}
               className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-2 py-1"
             >
-              <div className="text-sm font-bold text-foreground">
+              <div className="text-sm font-bold text-foreground/90">
                 {String(part.value).padStart(2, "0")}
               </div>
               <div className="text-xs uppercase tracking-wider text-foreground/80">

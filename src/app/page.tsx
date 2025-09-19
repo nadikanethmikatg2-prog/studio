@@ -28,6 +28,7 @@ import {
   getDailyLogs,
 } from "@/lib/firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/hooks/use-language";
 
 export type Todo = {
   id: number;
@@ -69,6 +70,7 @@ const iconMap: { [key: string]: React.ElementType } = {
 
 export default function Home() {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const [subjects, setSubjects] = useState<Subjects | null>(null);
   const [dailyLogs, setDailyLogs] = useState<DailyLog>({});
@@ -307,7 +309,7 @@ export default function Home() {
         <SiteHeader />
         <main className="flex-1 p-4 md:p-6 lg:p-8">
           <div className="flex items-center justify-center h-full">
-            <p className="text-destructive">Could not load study data. Please try refreshing the page.</p>
+            <p className="text-destructive">{t("toastCouldNotLoadData")}</p>
           </div>
         </main>
       </div>

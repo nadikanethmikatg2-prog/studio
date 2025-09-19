@@ -63,7 +63,15 @@ export const setInitialUserData = async (userId: string, stream: string) => {
   const db = await getFirestoreInstance();
   const userDocRef = doc(db, "users", userId);
   const initialData = stream === 'bio' ? bioSubjects : mathsSubjects;
-  await setDoc(userDocRef, { stream, subjects: initialData });
+  
+  const subjectsWithTranslatedNames = Object.fromEntries(
+    Object.entries(initialData).map(([key, value]) => [
+        key,
+        { ...value, name: key } // Store key as name initially
+    ])
+  );
+
+  await setDoc(userDocRef, { stream, subjects: subjectsWithTranslatedNames });
 };
 
 // Get user's stream
@@ -91,6 +99,7 @@ export const getInitialSubjects = async (userId: string): Promise<Subjects> => {
         return mathsSubjects;
     }
     const subjects = data.subjects as Subjects;
+    // Make sure todos is an array
     for (const key in subjects) {
       if (subjects[key] && !Array.isArray(subjects[key].todos)) {
         subjects[key].todos = [];

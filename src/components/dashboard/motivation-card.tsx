@@ -12,9 +12,9 @@ import { Sparkles, BrainCircuit, Activity } from "lucide-react";
 import { getMotivationalMessageAction } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
 import type { Subjects } from "@/app/page";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
 
 interface MotivationCardProps {
   subjects: Subjects;
@@ -23,6 +23,7 @@ interface MotivationCardProps {
 
 export function MotivationCard({ subjects, stream }: MotivationCardProps) {
   const { user } = useAuth();
+  const { t, locale } = useLanguage();
   const [analysis, setAnalysis] = useState<{
     message: string;
     subjectSpotlight: string;
@@ -49,7 +50,8 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
 
       const result = await getMotivationalMessageAction(
         stream,
-        serializableSubjects
+        serializableSubjects,
+        locale
       );
 
       if (result.success && result.analysis) {
@@ -57,13 +59,13 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
       } else {
         toast({
           variant: "destructive",
-          title: "AI Analysis Error",
+          title: t("toastAIAnalysisError"),
           description: result.message,
         });
         setAnalysis(null);
       }
     });
-  }, [user, stream, subjects, toast]);
+  }, [user, stream, subjects, toast, t, locale]);
 
   useEffect(() => {
     const hasActivity = Object.values(subjects).some(
@@ -78,10 +80,8 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
       debounceTimeout.current = setTimeout(generateAnalysis, 1500);
     } else if (!hasActivity) {
       setAnalysis({
-        message:
-          "Log some study hours or add a to-do task to get your first analysis from the AI Study Coach!",
-        subjectSpotlight:
-          "Select a subject in the 'Log Your Study Activity' card to get started.",
+        message: t("motivationCardInitialMessage"),
+        subjectSpotlight: t("motivationCardInitialSpotlight"),
       });
     }
 
@@ -90,17 +90,17 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
         clearTimeout(debounceTimeout.current);
       }
     };
-  }, [subjects, user, stream, generateAnalysis]);
+  }, [subjects, user, stream, generateAnalysis, t]);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-primary" />
-          AI Study Coach
+          {t("aiStudyCoachTitle")}
         </CardTitle>
         <CardDescription>
-          Your personal AI assistant for smarter studying.
+          {t("aiStudyCoachDescription")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -114,7 +114,7 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
              <div className="p-4 rounded-lg bg-gradient-to-br from-accent to-background/50 text-foreground">
                 <div className="flex items-center gap-2 mb-2 font-semibold text-primary">
                     <BrainCircuit className="h-5 w-5" />
-                    <h4 className="text-base">Analysis</h4>
+                    <h4 className="text-base">{t("analysis")}</h4>
                 </div>
                 <p className="text-sm opacity-90">{analysis.message}</p>
             </div>
@@ -122,7 +122,7 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
             <div className="p-4 rounded-lg bg-gradient-to-br from-accent to-background/50 text-foreground">
                 <div className="flex items-center gap-2 mb-2 font-semibold text-primary">
                     <Activity className="h-5 w-5" />
-                    <h4 className="text-base">Subject Spotlight</h4>
+                    <h4 className="text-base">{t("subjectSpotlight")}</h4>
                 </div>
                 <p className="text-sm opacity-90">{analysis.subjectSpotlight}</p>
             </div>

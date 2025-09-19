@@ -5,6 +5,7 @@ import type { Subjects } from "@/app/page";
 import { PieChart as PieChartIcon } from "lucide-react";
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { useLanguage } from "@/hooks/use-language";
 
 interface SubjectPieChartProps {
   subjects: Subjects;
@@ -27,10 +28,11 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 
 
 export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
-  const chartData = Object.values(subjects)
-    .filter((subject) => subject.totalHours > 0)
-    .map((subject) => ({
-      name: subject.name,
+  const { t } = useLanguage();
+  const chartData = Object.entries(subjects)
+    .filter(([key, subject]) => subject.totalHours > 0)
+    .map(([key, subject]) => ({
+      name: t(key as any) || subject.name,
       value: subject.totalHours,
       fill: subject.color,
     }));
@@ -40,10 +42,10 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <PieChartIcon className="h-5 w-5 text-primary" />
-                Subject Distribution
+                {t("subjectDistributionTitle")}
             </CardTitle>
             <CardDescription>
-                Your study time distribution.
+                {t("subjectDistributionDescription")}
             </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex items-center justify-center">
@@ -57,7 +59,7 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
                     borderColor: "hsl(var(--border))",
                     borderRadius: "var(--radius)",
                     }}
-                    formatter={(value: number, name: string) => [`${value.toFixed(1)} hrs`, name]}
+                    formatter={(value: number, name: string) => [`${value.toFixed(1)} ${t("hrsSuffix")}`, name]}
                 />
                 <Pie
                     data={chartData}
@@ -80,7 +82,7 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
             </ResponsiveContainer>
            ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-              Log some hours to see the chart.
+              {t("noHoursLogged")}
             </div>
           )}
         </CardContent>
