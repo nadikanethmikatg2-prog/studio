@@ -1,4 +1,4 @@
-import { BookHeart, LogOut, Languages } from "lucide-react";
+import { BookHeart, LogOut, Languages, User } from "lucide-react";
 import { CountdownCard } from "./dashboard/countdown-card";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -8,8 +8,15 @@ import { useLanguage } from "@/hooks/use-language";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -36,28 +43,40 @@ export function SiteHeader() {
           <CountdownCard />
         </div>
         <div className="flex items-center gap-2">
+          {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Languages className="h-5 w-5" />
-                  <span className="sr-only">Change language</span>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Open user menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuRadioGroup value={locale} onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}>
-                  <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="sg">Singlish</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>{user.email || "My Account"}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Languages className="mr-2 h-4 w-4" />
+                      <span>Language</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                       <DropdownMenuRadioGroup value={locale} onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}>
+                         <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="sg">Singlish</DropdownMenuRadioItem>
+                       </DropdownMenuRadioGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>{t("signOut")}</span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {user && (
-              <Button variant="ghost" size="icon" onClick={onSignOut} title={t("signOut")}>
-                <LogOut className="h-5 w-5" />
-                <span className="sr-only">{t("signOut")}</span>
-              </Button>
-            )}
+          )}
         </div>
       </div>
     </header>
