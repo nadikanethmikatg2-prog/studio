@@ -44,9 +44,10 @@ export function SiteHeader() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuRadioGroup value={locale} onValueChange={(value) => setLocale(value as 'en' | 'si')}>
+                <DropdownMenuRadioGroup value={locale} onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}>
                   <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="sg">Singlish</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -6,28 +6,30 @@ import { IntlProvider, MessageFormatElement } from 'next-intl';
 
 import enMessages from '@/locales/en.json';
 import siMessages from '@/locales/si.json';
+import sgMessages from '@/locales/sg.json';
 
-type Locale = 'en' | 'si';
+type Locale = 'en' | 'si' | 'sg';
 
 const messages: Record<Locale, Record<string, string | MessageFormatElement[]>> = {
   en: enMessages,
   si: siMessages,
+  sg: sgMessages,
 };
 
 interface LanguageContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: keyof typeof enMessages) => string;
+  t: (key: keyof typeof sgMessages) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [locale, setLocale] = useState<Locale>('en');
+  const [locale, setLocale] = useState<Locale>('sg');
 
   useEffect(() => {
     const storedLocale = localStorage.getItem('locale') as Locale | null;
-    if (storedLocale) {
+    if (storedLocale && ['en', 'si', 'sg'].includes(storedLocale)) {
       setLocale(storedLocale);
     }
   }, []);
@@ -37,8 +39,8 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     localStorage.setItem('locale', newLocale);
   };
   
-  const t = (key: keyof typeof enMessages) => {
-    const message = (messages[locale] as any)[key] || (messages['en'] as any)[key];
+  const t = (key: keyof typeof sgMessages) => {
+    const message = (messages[locale] as any)[key] || (messages['sg'] as any)[key];
     return message || key;
   };
 
