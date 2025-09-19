@@ -1,4 +1,5 @@
-import { BookHeart, LogOut, Languages, User } from "lucide-react";
+import { BookHeart, LogOut, Languages, User, Settings } from "lucide-react";
+import Link from "next/link";
 import { CountdownCard } from "./dashboard/countdown-card";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -36,7 +37,7 @@ export function SiteHeader() {
         <div className="flex gap-2 items-center">
           <BookHeart className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight text-primary">
-            {t("appTitle")}
+            <Link href="/">{t("appTitle")}</Link>
           </h1>
         </div>
         <div className="hidden md:block">
@@ -52,9 +53,22 @@ export function SiteHeader() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>{user.email || "My Account"}</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.displayName || "User"}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
+                    <Link href="/account">
+                        <DropdownMenuItem>
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Account</span>
+                        </DropdownMenuItem>
+                    </Link>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                       <Languages className="mr-2 h-4 w-4" />

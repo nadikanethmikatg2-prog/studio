@@ -104,5 +104,20 @@
     "allTasksDeleted": "සියලුම කාර්යයන් මකා දමන ලදී",
     "allTasksCleared": "ඔබගේ සියලුම කළ යුතු දේ හිස් කර ඇත.",
     "tasksDeleted": "කාර්යයන් මකා දමන ලදී",
-    "tasksForSubjectDeleted": "{subjectName} සඳහා සියලුම කාර්යයන් මකා දමා ඇත."
+    "tasksForSubjectDeleted": "{subjectName} සඳහා සියලුම කාර්යයන් මකා දමා ඇත.",
+    "accountPreferences": "ගිණුම් මනාප",
+    "updateYourProfile": "ඔබේ පැතිකඩ තොරතුරු යාවත්කාලීන කරන්න.",
+    "displayName": "පෙන්වන නම",
+    "updateName": "නම යාවත්කාලීන කරන්න",
+    "nameUpdated": "නම යාවත්කාලීන කරන ලදී",
+    "nameUpdatedSuccess": "ඔබගේ පෙන්වන නම යාවත්කාලීන කර ඇත.",
+    "updatePassword": "මුරපදය යාවත්කාලීන කරන්න",
+    "updatePasswordDescription": "ඔබගේ ගිණුම සුරක්ෂිතව තබා ගැනීමට දිගු, අහඹු මුරපදයක් භාවිතා කරන බවට සහතික වන්න.",
+    "newPassword": "නව මුරපදය",
+    "confirmPassword": "නව මුරපදය තහවුරු කරන්න",
+    "passwordMismatch": "මුරපද නොගැලපේ.",
+    "passwordUpdated": "මුරපදය යාවත්කාලීන කරන ලදී",
+    "passwordUpdatedSuccess": "ඔබගේ මුරපදය සාර්ථකව යාවත්කාලීන කර ඇත.",
+    "reAuthRequired": "සත්‍යාපනය අවශ්‍යයි",
+    "reAuthRequiredDescription": "ඔබගේ ආරක්ෂාව සඳහා, ඔබගේ මුරපදය වෙනස් කිරීමට කරුණාකර නැවත පුරනය වන්න."
 }

@@ -9,7 +9,11 @@ import {
   browserLocalPersistence,
   signInAnonymously,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  updateProfile,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from "firebase/auth";
 import { auth } from "./firebase";
 import { setInitialUserData, getUserStream } from "./firestore";
@@ -24,10 +28,16 @@ export const handleSignUp = async (email: string, pass: string, stream: string) 
       pass
     );
     const user = userCredential.user;
+    
+    // Set an initial display name
+    await updateProfile(user, { displayName: email.split('@')[0] });
+
     // Set persistence to keep the user logged in across sessions after sign-up
     await setPersistence(auth, browserLocalPersistence);
+    
     // IMPORTANT: Await the database operation to ensure it completes
     await setInitialUserData(user.uid, stream);
+    
     return { user, error: null };
   } catch (error: any) {
     return { user: null, error: error.message };
@@ -58,15 +68,16 @@ export const handleGoogleSignIn = async (stream: string) => {
     if (!docSnap.exists()) {
       // New user, set their initial data with the chosen stream
       await setInitialUserData(user.uid, stream);
-      return { user, error: null, isNewUser: true };
+      // Display name is usually set automatically from Google account
     }
     
     // Existing user, just sign them in
-    return { user, error: null, isNewUser: false };
+    return { user, error: null, isNewUser: !docSnap.exists() };
   } catch (error: any) {
     return { user: null, error: error.message, isNewUser: false };
   }
 };
+
 
 export const handleSignOut = async () => {
   try {
@@ -97,4 +108,40 @@ export const handleGuestSignIn = async (stream: string) => {
     console.error("Error signing in as guest: ", error);
     return { user: null, error: error.message };
   }
+};
+
+
+export const updateUserDisplayName = async (name: string) => {
+    const user = auth.currentUser;
+    if (user) {
+        try {
+            await updateProfile(user, { displayName: name });
+            return { success: true, error: null };
+        } catch (error: any) {
+            return { success: false, error: error.message };
+        }
+    }
+    return { success: false, error: "No user logged in." };
+};
+
+export const updateUserPassword = async (newPass: string) => {
+    const user = auth.currentUser;
+    if (user) {
+        try {
+            await updatePassword(user, newPass);
+            return { success: true, error: null };
+        } catch (error: any) {
+             // Handle re-authentication if required
+            if (error.code === 'auth/requires-recent-login') {
+                return { success: false, error: 'auth/requires-recent-login' };
+            }
+            return { success: false, error: error.message };
+        }
+    }
+    return { success: false, error: "No user logged in." };
+};
+
+export const getCurrentUserDisplayName = () => {
+    const user = auth.currentUser;
+    return user?.displayName;
 };

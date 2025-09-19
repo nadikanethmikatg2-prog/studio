@@ -109,5 +109,20 @@
     "allTasksDeleted": "All Tasks Deleted",
     "allTasksCleared": "All your to-do items have been cleared.",
     "tasksDeleted": "Tasks Deleted",
-    "tasksForSubjectDeleted": "All tasks for {subjectName} have been deleted."
+    "tasksForSubjectDeleted": "All tasks for {subjectName} have been deleted.",
+    "accountPreferences": "Account Preferences",
+    "updateYourProfile": "Update your profile information.",
+    "displayName": "Display Name",
+    "updateName": "Update Name",
+    "nameUpdated": "Name Updated",
+    "nameUpdatedSuccess": "Your display name has been updated.",
+    "updatePassword": "Update Password",
+    "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure.",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "passwordMismatch": "Passwords do not match.",
+    "passwordUpdated": "Password Updated",
+    "passwordUpdatedSuccess": "Your password has been updated successfully.",
+    "reAuthRequired": "Authentication Required",
+    "reAuthRequiredDescription": "For your security, please sign in again to change your password."
 }
