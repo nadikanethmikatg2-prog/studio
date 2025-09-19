@@ -20,7 +20,7 @@ import { setInitialUserData, getUserStream } from "./firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirestoreInstance } from "./firebase";
 
-export const handleSignUp = async (email: string, pass: string, stream: string) => {
+export const handleSignUp = async (email: string, pass: string, stream: string, displayName: string) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -29,8 +29,8 @@ export const handleSignUp = async (email: string, pass: string, stream: string) 
     );
     const user = userCredential.user;
     
-    // Set an initial display name
-    await updateProfile(user, { displayName: email.split('@')[0] });
+    // Set display name provided by the user
+    await updateProfile(user, { displayName: displayName });
 
     // Set persistence to keep the user logged in across sessions after sign-up
     await setPersistence(auth, browserLocalPersistence);
@@ -116,6 +116,10 @@ export const updateUserDisplayName = async (name: string) => {
     if (user) {
         try {
             await updateProfile(user, { displayName: name });
+            // Manually trigger a re-render by updating the user object in the auth state
+            // This is a bit of a hack, but it's a common pattern with Firebase Auth
+            // to ensure the UI updates immediately with the new displayName.
+            auth.updateCurrentUser(auth.currentUser);
             return { success: true, error: null };
         } catch (error: any) {
             return { success: false, error: error.message };

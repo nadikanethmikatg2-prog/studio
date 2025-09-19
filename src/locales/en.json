@@ -124,5 +124,6 @@
     "passwordUpdated": "Password Updated",
     "passwordUpdatedSuccess": "Your password has been updated successfully.",
     "reAuthRequired": "Authentication Required",
-    "reAuthRequiredDescription": "For your security, please sign in again to change your password."
+    "reAuthRequiredDescription": "For your security, please sign in again to change your password.",
+    "language": "Language"
 }

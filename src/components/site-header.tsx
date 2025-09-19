@@ -1,4 +1,7 @@
-import { BookHeart, LogOut, Languages, User, Settings } from "lucide-react";
+
+"use client";
+
+import { BookHeart, LogOut, Languages, Settings } from "lucide-react";
 import Link from "next/link";
 import { CountdownCard } from "./dashboard/countdown-card";
 import { Button } from "./ui/button";
@@ -20,18 +23,32 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import { AccountDialog } from "./account/account-dialog";
+import { useState } from "react";
 
 export function SiteHeader() {
   const { user } = useAuth();
   const router = useRouter();
   const { locale, setLocale, t } = useLanguage();
+  const [isAccountDialogOpen, setAccountDialogOpen] = useState(false);
 
   const onSignOut = async () => {
     await handleSignOut();
     router.push("/login");
   };
+  
+  const getInitials = (name?: string | null) => {
+    if (!name) return "U";
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return names[0][0] + names[names.length - 1][0];
+    }
+    return name.substring(0, 2);
+  }
 
   return (
+    <>
     <header className="sticky top-0 z-40 w-full border-b bg-card/50 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between space-x-4">
         <div className="flex gap-2 items-center">
@@ -48,8 +65,11 @@ export function SiteHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
-                  <User className="h-5 w-5" />
-                  <span className="sr-only">Open user menu</span>
+                   <Avatar className="h-8 w-8">
+                     <AvatarFallback className="bg-primary text-primary-foreground font-bold">
+                       {getInitials(user.displayName)}
+                     </AvatarFallback>
+                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -63,16 +83,14 @@ export function SiteHeader() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <Link href="/account">
-                        <DropdownMenuItem>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Account</span>
-                        </DropdownMenuItem>
-                    </Link>
+                    <DropdownMenuItem onSelect={() => setAccountDialogOpen(true)}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>{t('accountPreferences')}</span>
+                    </DropdownMenuItem>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                       <Languages className="mr-2 h-4 w-4" />
-                      <span>Language</span>
+                      <span>{t('language')}</span>
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                        <DropdownMenuRadioGroup value={locale} onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}>
@@ -94,5 +112,7 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
+    {user && <AccountDialog open={isAccountDialogOpen} onOpenChange={setAccountDialogOpen} />}
+    </>
   );
 }

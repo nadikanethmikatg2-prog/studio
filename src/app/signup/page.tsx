@@ -31,6 +31,7 @@ const AppLogo = (props: React.ComponentProps<"svg">) => (
 );
 
 export default function SignupPage() {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [stream, setStream] = useState("maths");
@@ -41,8 +42,16 @@ export default function SignupPage() {
 
   const onSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!displayName.trim()) {
+        toast({
+            variant: "destructive",
+            title: t("toastInvalidInput"),
+            description: "Please enter a display name.",
+        });
+        return;
+    }
     setIsLoading(true);
-    const { user, error } = await handleSignUp(email, password, stream);
+    const { user, error } = await handleSignUp(email, password, stream, displayName);
     if (user) {
       toast({
         title: t("accountCreated"),
@@ -74,6 +83,24 @@ export default function SignupPage() {
           </div>
 
           <form onSubmit={onSignUp} className="space-y-4">
+            <div className="relative group">
+              <Label
+                htmlFor="displayName"
+                className="absolute left-3 -top-2.5 text-xs text-muted-foreground bg-accent px-1 transition-all group-focus-within:text-primary"
+              >
+                {t("displayName")}
+              </Label>
+              <Input
+                id="displayName"
+                type="text"
+                placeholder="Merve Avşar"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                required
+                className="bg-accent border-border focus:bg-transparent"
+                disabled={isLoading}
+              />
+            </div>
             <div className="relative group">
               <Label
                 htmlFor="email"

@@ -5,7 +5,6 @@ import { useState, useTransition } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -55,14 +54,14 @@ export function UpdateNameCard() {
   };
 
   return (
-    <Card>
+    <Card className="shadow-none border-border/50">
       <form onSubmit={handleUpdateName}>
         <CardHeader>
-          <CardTitle>{t("displayName")}</CardTitle>
+          <CardTitle className="text-base">{t("displayName")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="name">{t("displayName")}</Label>
+          <div className="grid w-full items-center gap-1.5">
+            <Label htmlFor="name" className="sr-only">{t("displayName")}</Label>
             <Input
               id="name"
               type="text"
@@ -72,8 +71,8 @@ export function UpdateNameCard() {
             />
           </div>
         </CardContent>
-        <CardFooter className="border-t px-6 py-4">
-          <Button disabled={isPending || name === user?.displayName}>
+        <CardFooter className="border-t px-6 py-3 bg-muted/50">
+          <Button size="sm" disabled={isPending || name === user?.displayName}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t("updateName")}
           </Button>

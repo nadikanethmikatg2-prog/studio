@@ -5,10 +5,10 @@ import { useState, useTransition } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,10 +75,10 @@ export function UpdatePasswordCard() {
   };
 
   return (
-    <Card>
+    <Card className="shadow-none border-border/50">
       <form onSubmit={handleUpdatePassword}>
         <CardHeader>
-          <CardTitle>{t("updatePassword")}</CardTitle>
+          <CardTitle className="text-base">{t("updatePassword")}</CardTitle>
           <CardDescription>{t("updatePasswordDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -107,8 +107,8 @@ export function UpdatePasswordCard() {
             />
           </div>
         </CardContent>
-        <CardFooter className="border-t px-6 py-4">
-          <Button disabled={isPending || !password || !confirmPassword}>
+        <CardFooter className="border-t px-6 py-3 bg-muted/50">
+          <Button size="sm" disabled={isPending || !password || !confirmPassword}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t("updatePassword")}
           </Button>

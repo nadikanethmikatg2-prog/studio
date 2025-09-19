@@ -119,5 +119,6 @@
     "passwordUpdated": "මුරපදය යාවත්කාලීන කරන ලදී",
     "passwordUpdatedSuccess": "ඔබගේ මුරපදය සාර්ථකව යාවත්කාලීන කර ඇත.",
     "reAuthRequired": "සත්‍යාපනය අවශ්‍යයි",
-    "reAuthRequiredDescription": "ඔබගේ ආරක්ෂාව සඳහා, ඔබගේ මුරපදය වෙනස් කිරීමට කරුණාකර නැවත පුරනය වන්න."
+    "reAuthRequiredDescription": "ඔබගේ ආරක්ෂාව සඳහා, ඔබගේ මුරපදය වෙනස් කිරීමට කරුණාකර නැවත පුරනය වන්න.",
+    "language": "භාෂාව"
 }
