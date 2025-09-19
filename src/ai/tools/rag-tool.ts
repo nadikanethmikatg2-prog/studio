@@ -5,6 +5,7 @@ import { z } from "genkit";
 import * as fs from "fs";
 import * as path from "path";
 import { embed } from "@genkit-ai/googleai";
+import pdf from "pdf-parse";
 
 /**
  * A simple in-memory vector store for demonstration purposes.
@@ -61,12 +62,19 @@ async function indexDocuments() {
   console.log("[RAG Tool] Starting document indexing...");
 
   const dataDir = path.join(process.cwd(), "src", "ai", "rag-data");
-  const files = ["chemistry.md", "physics.md"];
+  const files = ["chemistry.pdf", "physics.pdf"];
 
   for (const file of files) {
     try {
       const filePath = path.join(dataDir, file);
-      const content = fs.readFileSync(filePath, "utf-8");
+      if (!fs.existsSync(filePath)) {
+          console.warn(`[RAG Tool] Document not found, skipping: ${file}`);
+          continue;
+      }
+
+      const dataBuffer = fs.readFileSync(filePath);
+      const pdfData = await pdf(dataBuffer);
+      const content = pdfData.text;
 
       // Simple chunking by paragraphs. You could use more advanced strategies.
       const chunks = content.split(/\n\s*\n/).filter(chunk => chunk.trim().length > 10);
