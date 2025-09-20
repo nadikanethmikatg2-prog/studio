@@ -108,7 +108,7 @@ async function indexDocuments() {
 }
 
 // Immediately start indexing when the server loads this file.
-indexDocuments();
+indexDocuments().catch(console.error);
 
 
 export const ragTool = ai.defineTool(
