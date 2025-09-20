@@ -4,7 +4,6 @@ import { ai } from "@/ai/genkit";
 import { z } from "genkit";
 import * as fs from "fs";
 import * as path from "path";
-import pdf from "pdf-parse";
 
 /**
  * A simple in-memory vector store for demonstration purposes.
@@ -59,6 +58,9 @@ async function searchSimilar(queryEmbedding: number[], topK = 3): Promise<string
 async function indexDocuments() {
   if (isIndexed) return;
   console.log("[RAG Tool] Starting document indexing...");
+
+  // Dynamically import pdf-parse
+  const pdf = (await import('pdf-parse')).default;
 
   const dataDir = path.join(process.cwd(), "src", "ai", "rag-data");
   const files = ["chemistry.pdf", "physics.pdf"];
