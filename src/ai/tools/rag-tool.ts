@@ -4,7 +4,6 @@ import { ai } from "@/ai/genkit";
 import { z } from "genkit";
 import * as fs from "fs";
 import * as path from "path";
-import { embed } from "@genkit-ai/googleai";
 import pdf from "pdf-parse";
 
 /**
@@ -83,7 +82,7 @@ async function indexDocuments() {
 
       for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
-        const {embedding} = await embed({
+        const {embedding} = await ai.embed({
             model: 'googleai/text-embedding-004',
             content: chunk,
         });
@@ -127,7 +126,7 @@ export const ragTool = ai.defineTool(
         await indexDocuments();
     }
 
-    const { embedding } = await embed({
+    const { embedding } = await ai.embed({
         model: 'googleai/text-embedding-004',
         content: query,
     });
