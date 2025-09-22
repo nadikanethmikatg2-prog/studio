@@ -52,18 +52,15 @@ async function searchSimilar(queryEmbedding: number[], topK = 3): Promise<string
 
 
 /**
- * Indexes the content of the Chemistry and Physics resource books.
+ * Indexes the content of the Chemistry and Physics resource books (now in Markdown format).
  * This is a one-time operation (per server start).
  */
 async function indexDocuments() {
   if (isIndexed) return;
-  console.log("[RAG Tool] Starting document indexing...");
-
-  // Dynamically import pdf-parse
-  const pdf = (await import('pdf-parse')).default;
+  console.log("[RAG Tool] Starting document indexing from Markdown files...");
 
   const dataDir = path.join(process.cwd(), "src", "ai", "rag-data");
-  const files = ["chemistry.pdf", "physics.pdf"];
+  const files = ["chemistry.md", "physics.md"]; // Switched to .md files
 
   for (const file of files) {
     try {
@@ -73,11 +70,9 @@ async function indexDocuments() {
           continue;
       }
 
-      const dataBuffer = fs.readFileSync(filePath);
-      const pdfData = await pdf(dataBuffer);
-      const content = pdfData.text;
+      const content = fs.readFileSync(filePath, 'utf-8');
 
-      // Simple chunking by paragraphs. You could use more advanced strategies.
+      // Simple chunking by paragraphs (splitting by double newlines).
       const chunks = content.split(/\n\s*\n/).filter(chunk => chunk.trim().length > 10);
       
       console.log(`[RAG Tool] Indexing ${chunks.length} chunks from ${file}...`);
