@@ -19,6 +19,7 @@ import { generateStudyGoalsAction } from "@/app/actions";
 import { Skeleton } from "../ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
+import { GuestFeaturePrompt } from "./guest-feature-prompt";
 
 interface GoalsCardProps {
   subjects: Subjects;
@@ -31,9 +32,14 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const [isGuestPromptOpen, setGuestPromptOpen] = useState(false);
   const totalGoalHours = Object.values(subjects).reduce((sum, s) => sum + s.goalHours, 0);
 
   const handleGenerateGoals = () => {
+    if (user?.isAnonymous) {
+      setGuestPromptOpen(true);
+      return;
+    }
     if (!user) {
         toast({
             variant: "destructive",
@@ -89,6 +95,7 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
   };
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -134,11 +141,17 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
             );
           })
         )}
-         <Button onClick={handleGenerateGoals} disabled={isPending || !user} className="w-full">
+         <Button onClick={handleGenerateGoals} disabled={isPending} className="w-full">
             <Wand2 className="h-4 w-4 mr-2" />
             {isPending ? t("generatingButton") : t("generateGoalsButton")}
         </Button>
       </CardContent>
     </Card>
+    <GuestFeaturePrompt 
+        isOpen={isGuestPromptOpen} 
+        onOpenChange={setGuestPromptOpen}
+        featureName="AI Goal Generation"
+    />
+    </>
   );
 }

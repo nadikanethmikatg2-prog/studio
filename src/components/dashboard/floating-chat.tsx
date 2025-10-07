@@ -12,6 +12,7 @@ import { Bot, X } from "lucide-react";
 import { ChatCard } from "./chat-card";
 import type { Subjects, Message } from "@/app/page";
 import { useLanguage } from "@/hooks/use-language";
+import { useAuth } from "@/hooks/use-auth";
 
 interface FloatingChatProps {
   subjects: Subjects;
@@ -24,7 +25,12 @@ interface FloatingChatProps {
 
 export function FloatingChat({ subjects, messages, setMessages, onTaskAdded, onDeleteAllTodos, onDeleteSubjectTodos }: FloatingChatProps) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const { user } = useAuth();
   const { t } = useLanguage();
+
+  const handleTriggerClick = () => {
+      setIsOpen(!isOpen);
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -33,6 +39,7 @@ export function FloatingChat({ subjects, messages, setMessages, onTaskAdded, onD
           variant="default"
           size="icon"
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
+          onClick={handleTriggerClick}
         >
           {isOpen ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
           <span className="sr-only">Toggle Chat</span>
@@ -57,5 +64,3 @@ export function FloatingChat({ subjects, messages, setMessages, onTaskAdded, onD
     </Popover>
   );
 }
-
-    

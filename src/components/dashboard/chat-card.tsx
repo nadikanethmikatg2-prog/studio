@@ -19,6 +19,8 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import type { Subjects, Message } from "@/app/page";
 import { useLanguage } from "@/hooks/use-language";
+import { useAuth } from "@/hooks/use-auth";
+import { GuestFeaturePrompt } from "./guest-feature-prompt";
 
 interface ChatCardProps {
   subjects: Subjects;
@@ -55,7 +57,9 @@ export function ChatCard({
   const [input, setInput] = useState("");
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
+  const [isGuestPromptOpen, setGuestPromptOpen] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -74,6 +78,11 @@ export function ChatCard({
 
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
+
+    if (user?.isAnonymous) {
+      setGuestPromptOpen(true);
+      return;
+    }
 
     const currentInput = input;
     setMessages((prev) => [...prev, { role: "user", content: currentInput }]);
@@ -153,6 +162,7 @@ export function ChatCard({
   };
 
   return (
+    <>
     <Card className="flex flex-col h-[60vh] max-h-[700px] shadow-none border-none">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -231,7 +241,12 @@ export function ChatCard({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={t("chatInputPlaceholder")}
-            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            }}
             disabled={isPending}
           />
           <Button onClick={handleSendMessage} disabled={isPending || !input}>
@@ -240,5 +255,11 @@ export function ChatCard({
         </div>
       </CardContent>
     </Card>
+     <GuestFeaturePrompt 
+        isOpen={isGuestPromptOpen} 
+        onOpenChange={setGuestPromptOpen}
+        featureName="AI Chat"
+    />
+    </>
   );
 }
