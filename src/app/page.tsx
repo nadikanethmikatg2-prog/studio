@@ -295,7 +295,7 @@ export default function Home() {
           <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 grid gap-6 md:gap-8">
               <Skeleton className="h-48 w-full" />
-              <Skeleton className="h-96 w-full" />
+              <Skeleton className="h-[300px] w-full" />
               <Skeleton className="h-64 w-full" />
               <Skeleton className="h-96 w-full" />
             </div>
@@ -350,7 +350,7 @@ export default function Home() {
             <SubjectDetailsCard
               subjects={subjects}
               onUpdate={handleUpdate}
-              onLogHours={handleLogHours}
+              onLogHours={onLogHours}
             />
           </div>
 
