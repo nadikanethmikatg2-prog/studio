@@ -57,3 +57,5 @@ export function FloatingChat({ subjects, messages, setMessages, onTaskAdded, onD
     </Popover>
   );
 }
+
+    

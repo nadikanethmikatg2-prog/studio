@@ -1,23 +1,15 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { Atom, Combine, FlaskConical, Sigma, Leaf } from "lucide-react";
+import dynamic from "next/dynamic";
 import { SiteHeader } from "@/components/site-header";
 import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
-import { SubjectPieChart } from "@/components/dashboard/subject-pie-chart";
 import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card";
 import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
-import { WeeklyProgressChart } from "@/components/dashboard/weekly-progress-chart";
-import {
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
-  format,
-  subWeeks,
-} from "date-fns";
-import { FloatingChat } from "@/components/dashboard/floating-chat";
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import {
@@ -30,6 +22,20 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
 import { GuestPromptCard } from "@/components/dashboard/guest-prompt-card";
+
+// Dynamically import heavy components
+const WeeklyProgressChart = dynamic(() => import('@/components/dashboard/weekly-progress-chart').then(mod => mod.WeeklyProgressChart), {
+  loading: () => <Skeleton className="h-[300px] w-full" />,
+  ssr: false
+});
+const SubjectPieChart = dynamic(() => import('@/components/dashboard/subject-pie-chart').then(mod => mod.SubjectPieChart), {
+  loading: () => <Skeleton className="h-full w-full min-h-[300px]" />,
+  ssr: false
+});
+const FloatingChat = dynamic(() => import('@/components/dashboard/floating-chat').then(mod => mod.FloatingChat), {
+  ssr: false
+});
+
 
 export type Todo = {
   id: number;
@@ -365,3 +371,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

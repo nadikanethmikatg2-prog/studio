@@ -46,6 +46,7 @@
     "subjectDistributionTitle": "Subject Distribution",
     "subjectDistributionDescription": "Your study time distribution.",
     "noHoursLogged": "Log some hours to see the chart.",
+    "noHoursLoggedYet": "No hours logged for this week yet.",
     "chatTitle": "Chat with your AI Assistant",
     "chatDescription": "Try asking: \"What are my to-do items for chemistry?\"",
     "chatInputPlaceholder": "Type your message...",
@@ -132,3 +133,5 @@
     "guestPromptDescription": "Your data is saved on this device only. Create a free account to save your progress and access it anywhere.",
     "guestPrivacyNotice": "Your data is private and is not visible to anyone else."
 }
+
+    

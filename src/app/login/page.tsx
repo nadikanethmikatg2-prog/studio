@@ -116,7 +116,7 @@ export default function LoginPage() {
         <div className="absolute top-4 right-4 z-10">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" aria-label="Settings">
                   <Settings className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -313,3 +313,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    

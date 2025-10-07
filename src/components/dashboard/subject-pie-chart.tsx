@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Pie, PieChart, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts";
@@ -82,10 +83,12 @@ export function SubjectPieChart({ subjects }: SubjectPieChartProps) {
             </ResponsiveContainer>
            ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-              {t("noHoursLogged")}
+              {t("noHoursLoggedYet")}
             </div>
           )}
         </CardContent>
     </Card>
   );
 }
+
+    

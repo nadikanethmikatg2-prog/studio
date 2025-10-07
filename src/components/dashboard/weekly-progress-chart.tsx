@@ -124,12 +124,14 @@ export function WeeklyProgressChart({ currentWeekData, previousWeekData, subject
                 </ResponsiveContainer>
             ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                    {t("noHoursLogged")}
+                    {t("noHoursLoggedYet")}
                 </div>
             )}
         </CardContent>
     </Card>
   );
 }
+
+    
 
     
