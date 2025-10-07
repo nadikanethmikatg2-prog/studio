@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { cn } from '@/lib/utils';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
@@ -25,9 +24,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased flex flex-col'
-        )}
+        className='min-h-screen bg-background font-sans antialiased flex flex-col'
       >
         <Providers>
           {children}
