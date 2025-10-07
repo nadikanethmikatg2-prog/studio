@@ -16,7 +16,6 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<Theme>('blue');
 
   useEffect(() => {
-    // Get stored theme from local storage
     const storedTheme = localStorage.getItem('theme') as Theme | null;
     if (storedTheme && ['blue', 'rose', 'green', 'orange'].includes(storedTheme)) {
       setTheme(storedTheme);
@@ -24,15 +23,13 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
   
   useEffect(() => {
-    // Remove all theme classes
-    document.documentElement.classList.remove('theme-rose', 'theme-green', 'theme-orange');
+    const root = document.documentElement;
+    root.classList.remove('theme-rose', 'theme-green', 'theme-orange');
     
-    // Add the current theme class if it's not the default
     if (theme !== 'blue') {
-      document.documentElement.classList.add(`theme-${theme}`);
+      root.classList.add(`theme-${theme}`);
     }
     
-    // Save theme to local storage
     localStorage.setItem('theme', theme);
   }, [theme]);
 
