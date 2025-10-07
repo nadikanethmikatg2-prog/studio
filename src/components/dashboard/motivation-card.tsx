@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useTransition, useEffect, useRef, useCallback } from "react";
@@ -77,11 +78,11 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
         clearTimeout(debounceTimeout.current);
       }
       setAnalysis(null);
-      debounceTimeout.current = setTimeout(generateAnalysis, 1500);
+      debounceTimeout.current = setTimeout(generateAnalysis, 2000);
     } else if (!hasActivity) {
       setAnalysis({
-        message: t("motivationCardInitialMessage"),
-        subjectSpotlight: t("motivationCardInitialSpotlight"),
+        message: t("newUserWelcomeMessage"),
+        subjectSpotlight: t("newUserWelcomeSpotlight"),
       });
     }
 

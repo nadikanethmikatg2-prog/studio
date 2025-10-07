@@ -94,6 +94,8 @@
     "toastCouldNotLoadData": "Could not load study data. Please try refreshing the page.",
     "motivationCardInitialMessage": "Log some study hours or add a to-do task to get your first analysis from the AI Study Coach!",
     "motivationCardInitialSpotlight": "Select a subject in the 'Log Your Study Activity' card to get started.",
+    "newUserWelcomeMessage": "Welcome to your A/L Study Buddy! This dashboard is your command center. You can log study hours for each subject, manage to-do lists, and track your weekly progress.",
+    "newUserWelcomeSpotlight": "To get started, head to the 'Log Your Study Activity' card. Select a subject and log your first study session or add a task you need to complete. Let's get started!",
     "cancel": "Cancel",
     "signInFailed": "Sign In Failed",
     "welcome": "Welcome!",
@@ -127,7 +129,3 @@
     "reAuthRequiredDescription": "For your security, please sign in again to change your password.",
     "language": "Language"
 }
-
-    
-
-    

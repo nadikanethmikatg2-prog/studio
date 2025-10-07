@@ -87,8 +87,10 @@
     "toastAIGoalsUpdated": "ඔබේ සතිපතා අධ්‍යයන ඉලක්ක AI මගින් යාවත්කාලීන කර ඇත.",
     "toastAIAnalysisError": "AI විශ්ලේෂණ දෝෂය",
     "toastCouldNotLoadData": "අධ්‍යයන දත්ත පූරණය කළ නොහැකි විය. කරුණාකර පිටුව නැවත පූරණය කිරීමට උත්සාහ කරන්න.",
-    "motivationCardInitialMessage": "AI අධ්‍යයන පුහුණුකරුගෙන් ඔබේ පළමු විශ්ලේෂණය ලබා ගැනීමට අධ්‍යයන පැය කිහිපයක් හෝ කළ යුතු කාර්යයක් එක් කරන්න!",
-    "motivationCardInitialSpotlight": "ආරම්භ කිරීමට 'ඔබේ අධ්‍යයන ක්‍රියාකාරකම් සටහන් කරන්න' කාඩ්පතේ විෂයයක් තෝරන්න.",
+    "motivationCardInitialMessage": "Log some study hours or add a to-do task to get your first analysis from the AI Study Coach!",
+    "motivationCardInitialSpotlight": "Select a subject in the 'Log Your Study Activity' card to get started.",
+    "newUserWelcomeMessage": "ඔබේ A/L Study Buddy වෙත සාදරයෙන් පිළිගනිමු! මෙම උපකරණ පුවරුව ඔබේ පාලන මධ්‍යස්ථානයයි. ඔබට එක් එක් විෂය සඳහා අධ්‍යයන පැය සටහන් කිරීමට, කළ යුතු දේ ලැයිස්තු කළමනාකරණය කිරීමට සහ ඔබේ සතිපතා ප්‍රගතිය නිරීක්ෂණය කිරීමට හැකිය.",
+    "newUserWelcomeSpotlight": "ආරම්භ කිරීමට, 'ඔබේ අධ්‍යයන ක්‍රියාකාරකම් සටහන් කරන්න' කාඩ්පත වෙත යන්න. විෂයයක් තෝරා ඔබේ පළමු අධ්‍යයන සැසිය සටහන් කරන්න හෝ ඔබට සම්පූර්ණ කළ යුතු කාර්යයක් එක් කරන්න. අපි ආරම්භ කරමු!",
     "cancel": "අවලංගු කරන්න",
     "signInFailed": "පුරනය වීම අසාර්ථක විය",
     "welcome": "පිළිගන්නවා!",
@@ -120,9 +122,9 @@
     "passwordUpdatedSuccess": "ඔබගේ මුරපදය සාර්ථකව යාවත්කාලීන කර ඇත.",
     "reAuthRequired": "සත්‍යාපනය අවශ්‍යයි",
     "reAuthRequiredDescription": "ඔබගේ ආරක්ෂාව සඳහා, ඔබගේ මුරපදය වෙනස් කිරීමට කරුණාකර නැවත පුරනය වන්න.",
-    "language": "භාෂාව"
+    "language": "භාෂාව",
+    "chemistry": "රසායන විද්‍යාව",
+    "physics": "භෞතික විද්‍යාව",
+    "pureMaths": "ශුද්ධ ගණිතය",
+    "appliedMaths": "ව්‍යවහාරික ගණිතය"
 }
-
-    
-
-    
