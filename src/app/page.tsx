@@ -29,6 +29,7 @@ import {
 } from "@/lib/firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
+import { GuestPromptCard } from "@/components/dashboard/guest-prompt-card";
 
 export type Todo = {
   id: number;
@@ -326,6 +327,7 @@ export default function Home() {
       <main className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
+            {user?.isAnonymous && <GuestPromptCard />}
             <MotivationCard subjects={subjects} stream={stream}/>
             <WeeklyProgressChart
               currentWeekData={currentWeekData}
@@ -342,7 +344,7 @@ export default function Home() {
             <SubjectDetailsCard
               subjects={subjects}
               onUpdate={handleUpdate}
-              onLogHours={handleLogHours}
+              onLogHours={onLogHours}
             />
           </div>
 

@@ -127,5 +127,7 @@
     "passwordUpdatedSuccess": "Your password has been updated successfully.",
     "reAuthRequired": "Authentication Required",
     "reAuthRequiredDescription": "For your security, please sign in again to change your password.",
-    "language": "Language"
+    "language": "Language",
+    "guestPromptTitle": "You're Using a Guest Account",
+    "guestPromptDescription": "Your data is saved on this device only. Create a free account to save your progress and access it anywhere."
 }
