@@ -38,7 +38,7 @@ export async function getMotivationalMessageAction(
     const input: MotivationalMessageInput = {
         stream,
         subjectData,
-        language: locale === 'si' ? 'Sinhala' : 'English', // The model understands 'English' for 'sg' too
+        language: locale === 'en' ? 'English' : 'Sinhala', // Use Sinhala for both 'si' and 'sg' locales
     };
 
     const result = await generateMotivationalMessage(input);
