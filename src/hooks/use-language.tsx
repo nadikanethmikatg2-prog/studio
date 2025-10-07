@@ -19,7 +19,7 @@ const messages: Record<Locale, Record<string, string | MessageFormatElement[]>> 
 interface LanguageContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: keyof typeof sgMessages) => string;
+  t: (key: keyof typeof sgMessages, values?: Record<string, any>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -39,15 +39,29 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     localStorage.setItem('locale', newLocale);
   };
   
-  const t = (key: keyof typeof sgMessages) => {
-    const message = (messages[locale] as any)[key] || (messages['sg'] as any)[key];
-    return message || key;
+  const t = (key: keyof typeof sgMessages, values?: Record<string, any>) => {
+    let message = (messages[locale] as any)[key] || (messages['sg'] as any)[key] || key;
+  
+    if (values) {
+      Object.keys(values).forEach(valueKey => {
+        const regex = new RegExp(`{${valueKey}}`, 'g');
+        message = message.replace(regex, values[valueKey]);
+      });
+    }
+    
+    return message;
   };
 
 
   return (
     <LanguageContext.Provider value={{ locale, setLocale: handleSetLocale, t }}>
-      <IntlProvider messages={messages[locale]} locale={locale}>
+      <IntlProvider messages={messages[locale]} locale={locale} onError={(err) => {
+          if (err.code === 'MISSING_MESSAGE') {
+            // No need to log, we handle fallbacks gracefully
+          } else {
+            console.error(err);
+          }
+        }}>
         {children}
       </IntlProvider>
     </LanguageContext.Provider>

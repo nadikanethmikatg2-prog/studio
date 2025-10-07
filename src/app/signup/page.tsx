@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, Languages } from "lucide-react";
 
 import { handleSignUp } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,13 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const AppLogo = (props: React.ComponentProps<"svg">) => (
     <svg
@@ -38,7 +45,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, locale, setLocale } = useLanguage();
 
   const onSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +77,26 @@ export default function SignupPage() {
 
   return (
     <div className="auth-container bg-background">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm relative">
+        <div className="absolute top-4 right-4 z-10">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Languages className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuRadioGroup
+                  value={locale}
+                  onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}
+                >
+                  <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="sg">Singlish</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
         <div className="glass-card p-8 space-y-6">
           <div className="flex flex-col items-center text-center space-y-4">
             <AppLogo />

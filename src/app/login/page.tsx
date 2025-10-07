@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, Languages } from "lucide-react";
 
 import { handleSignIn, handleGuestSignIn } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,13 @@ import {
   AlertDialogCancel,
   AlertDialogFooter
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -58,7 +65,7 @@ export default function LoginPage() {
   const [selectedStream, setSelectedStream] = useState("maths");
   const router = useRouter();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, locale, setLocale } = useLanguage();
 
   const onSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +109,26 @@ export default function LoginPage() {
 
   return (
     <div className="auth-container bg-background">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm relative">
+        <div className="absolute top-4 right-4 z-10">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Languages className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuRadioGroup
+                  value={locale}
+                  onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}
+                >
+                  <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="sg">Singlish</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
         <div className="glass-card p-8 space-y-6">
           <div className="flex flex-col items-center text-center space-y-4">
               <AppLogo />
@@ -279,5 +305,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
