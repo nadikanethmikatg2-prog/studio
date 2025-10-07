@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ClientWrapper } from './ClientWrapper';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'A/L Study Buddy',
@@ -27,11 +28,15 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-background font-sans antialiased flex flex-col">
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased flex flex-col'
+        )}
+      >
         <ClientWrapper>
           {children}
-          <Toaster />
         </ClientWrapper>
+        <Toaster />
       </body>
     </html>
   );
