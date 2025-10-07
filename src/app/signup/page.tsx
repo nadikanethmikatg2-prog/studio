@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowRight, Languages, Settings, Palette } from "lucide-react";
+import { Loader2, ArrowRight, Languages, Settings } from "lucide-react";
 
 import { handleSignUp } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,7 +49,6 @@ export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { t, locale, setLocale } = useLanguage();
-  const { theme, setTheme } = useTheme();
 
   const onSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,20 +89,6 @@ export default function SignupPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <Palette className="mr-2 h-4 w-4" />
-                      <span>{t('theme')}</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                       <DropdownMenuRadioGroup value={theme} onValueChange={(value) => setTheme(value as any)}>
-                         <DropdownMenuRadioItem value="blue">{t('blue')}</DropdownMenuRadioItem>
-                         <DropdownMenuRadioItem value="rose">{t('rose')}</DropdownMenuRadioItem>
-                         <DropdownMenuRadioItem value="green">{t('green')}</DropdownMenuRadioItem>
-                         <DropdownMenuRadioItem value="orange">{t('orange')}</DropdownMenuRadioItem>
-                       </DropdownMenuRadioGroup>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                       <Languages className="mr-2 h-4 w-4" />

@@ -129,7 +129,7 @@ export function GoalsCard({ subjects, onUpdate, stream }: GoalsCardProps) {
                     {subject.totalHours.toFixed(1)} / {subject.goalHours} {t("hrsSuffix")}
                   </span>
                 </div>
-                <Progress value={progress} indicatorClassName="transition-all duration-500" />
+                <Progress value={progress} />
               </div>
             );
           })

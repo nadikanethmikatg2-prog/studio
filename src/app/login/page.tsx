@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowRight, Languages, Settings, Palette } from "lucide-react";
+import { Loader2, ArrowRight, Languages, Settings } from "lucide-react";
 
 import { handleSignIn, handleGuestSignIn } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLanguage } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
 
 const GuestIcon = (props: React.ComponentProps<"svg">) => (
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props} fill="currentColor">
@@ -70,7 +69,6 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { t, locale, setLocale } = useLanguage();
-  const { theme, setTheme } = useTheme();
 
   const onSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,20 +121,6 @@ export default function LoginPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <Palette className="mr-2 h-4 w-4" />
-                      <span>{t('theme')}</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                       <DropdownMenuRadioGroup value={theme} onValueChange={(value) => setTheme(value as any)}>
-                         <DropdownMenuRadioItem value="blue">{t('blue')}</DropdownMenuRadioItem>
-                         <DropdownMenuRadioItem value="rose">{t('rose')}</DropdownMenuRadioItem>
-                         <DropdownMenuRadioItem value="green">{t('green')}</DropdownMenuRadioItem>
-                         <DropdownMenuRadioItem value="orange">{t('orange')}</DropdownMenuRadioItem>
-                       </DropdownMenuRadioGroup>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                       <Languages className="mr-2 h-4 w-4" />

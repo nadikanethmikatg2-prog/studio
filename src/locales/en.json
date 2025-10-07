@@ -130,10 +130,5 @@
     "language": "Language",
     "guestPromptTitle": "You're Using a Guest Account",
     "guestPromptDescription": "Your data is saved on this device only. Create a free account to save your progress and access it anywhere.",
-    "guestPrivacyNotice": "Your data is private and is not visible to anyone else.",
-    "theme": "Theme",
-    "blue": "Blue",
-    "rose": "Rose",
-    "green": "Green",
-    "orange": "Orange"
+    "guestPrivacyNotice": "Your data is private and is not visible to anyone else."
 }
