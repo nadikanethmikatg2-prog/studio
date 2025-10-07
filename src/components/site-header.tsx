@@ -1,7 +1,7 @@
 
 "use client";
 
-import { BookHeart, LogOut, Languages, Settings } from "lucide-react";
+import { BookHeart, LogOut, Languages, Settings, Palette } from "lucide-react";
 import Link from "next/link";
 import { CountdownCard } from "./dashboard/countdown-card";
 import { Button } from "./ui/button";
@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { handleSignOut } from "@/lib/firebase/auth";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/hooks/use-language";
+import { useTheme } from "@/hooks/use-theme";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +32,7 @@ export function SiteHeader() {
   const { user } = useAuth();
   const router = useRouter();
   const { locale, setLocale, t } = useLanguage();
+  const { theme, setTheme } = useTheme();
   const [isAccountDialogOpen, setAccountDialogOpen] = useState(false);
 
   const onSignOut = async () => {
@@ -87,6 +89,20 @@ export function SiteHeader() {
                         <Settings className="mr-2 h-4 w-4" />
                         <span>{t('accountPreferences')}</span>
                     </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Palette className="mr-2 h-4 w-4" />
+                      <span>{t('theme')}</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                       <DropdownMenuRadioGroup value={theme} onValueChange={(value) => setTheme(value as any)}>
+                         <DropdownMenuRadioItem value="blue">{t('blue')}</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="rose">{t('rose')}</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="green">{t('green')}</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="orange">{t('orange')}</DropdownMenuRadioItem>
+                       </DropdownMenuRadioGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
                       <Languages className="mr-2 h-4 w-4" />

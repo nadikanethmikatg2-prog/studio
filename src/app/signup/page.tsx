@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowRight, Languages } from "lucide-react";
+import { Loader2, ArrowRight, Languages, Settings, Palette } from "lucide-react";
 
 import { handleSignUp } from "@/lib/firebase/auth";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,16 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
+import { useTheme } from "@/hooks/use-theme";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 
 const AppLogo = (props: React.ComponentProps<"svg">) => (
@@ -46,6 +50,7 @@ export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { t, locale, setLocale } = useLanguage();
+  const { theme, setTheme } = useTheme();
 
   const onSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,18 +87,37 @@ export default function SignupPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
-                  <Languages className="h-4 w-4" />
+                  <Settings className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuRadioGroup
-                  value={locale}
-                  onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}
-                >
-                  <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="sg">Singlish</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Palette className="mr-2 h-4 w-4" />
+                      <span>{t('theme')}</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                       <DropdownMenuRadioGroup value={theme} onValueChange={(value) => setTheme(value as any)}>
+                         <DropdownMenuRadioItem value="blue">{t('blue')}</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="rose">{t('rose')}</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="green">{t('green')}</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="orange">{t('orange')}</DropdownMenuRadioItem>
+                       </DropdownMenuRadioGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <Languages className="mr-2 h-4 w-4" />
+                      <span>{t('language')}</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                       <DropdownMenuRadioGroup value={locale} onValueChange={(value) => setLocale(value as 'en' | 'si' | 'sg')}>
+                         <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="si">සිංහල</DropdownMenuRadioItem>
+                         <DropdownMenuRadioItem value="sg">Singlish</DropdownMenuRadioItem>
+                       </DropdownMenuRadioGroup>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
               </DropdownMenuContent>
             </DropdownMenu>
         </div>
