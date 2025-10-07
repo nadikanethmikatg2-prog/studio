@@ -132,14 +132,6 @@ export default function LoginPage() {
                 className="bg-accent border-border focus:bg-transparent"
                 disabled={isLoading || isGuestLoading}
               />
-              <Button 
-                size="icon" 
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full"
-                disabled={isLoading || isGuestLoading || !email || !password}
-                type="submit"
-              >
-                {isLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
-              </Button>
             </div>
              <div className="relative group">
               <Label
@@ -158,22 +150,31 @@ export default function LoginPage() {
                 disabled={isLoading || isGuestLoading}
               />
             </div>
-             <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="keep-logged-in"
-                  checked={keepLoggedIn}
-                  onCheckedChange={(checked) =>
-                    setKeepLoggedIn(checked as boolean)
-                  }
-                  disabled={isLoading || isGuestLoading}
-                />
-                <label
-                  htmlFor="keep-logged-in"
-                  className="text-xs font-medium text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {t("rememberMe")}
-                </label>
+             <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                    <Checkbox
+                    id="keep-logged-in"
+                    checked={keepLoggedIn}
+                    onCheckedChange={(checked) =>
+                        setKeepLoggedIn(checked as boolean)
+                    }
+                    disabled={isLoading || isGuestLoading}
+                    />
+                    <label
+                    htmlFor="keep-logged-in"
+                    className="text-xs font-medium text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                    {t("rememberMe")}
+                    </label>
+                </div>
               </div>
+            <Button
+                className="w-full"
+                disabled={isLoading || isGuestLoading || !email || !password}
+                type="submit"
+              >
+                {isLoading ? <Loader2 className="animate-spin" /> : t("signInLink")}
+              </Button>
           </form>
           
           <div className="relative">
@@ -273,5 +274,7 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
 
     
