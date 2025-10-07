@@ -210,6 +210,11 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
+
+          <div className="mt-6 pt-6 border-t border-white/10 text-center text-xs text-muted-foreground">
+            <p>© {new Date().getFullYear()} Nadika Nethmika. All rights reserved.</p>
+          </div>
+
         </div>
       </div>
       
@@ -274,7 +279,5 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
 
     
