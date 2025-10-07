@@ -80,10 +80,17 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
       setAnalysis(null);
       debounceTimeout.current = setTimeout(generateAnalysis, 2000);
     } else if (!hasActivity) {
-      setAnalysis({
-        message: t("newUserWelcomeMessage"),
-        subjectSpotlight: t("newUserWelcomeSpotlight"),
-      });
+        if (locale === 'en') {
+            setAnalysis({
+                message: t("newUserWelcomeMessage"),
+                subjectSpotlight: t("newUserWelcomeSpotlight"),
+            });
+        } else {
+            setAnalysis({
+                message: "ඔබගේ A/L අධ්‍යයන සහායක වෙත සාදරයෙන් පිළිගනිමු! මෙම උපකරණ පුවරුව ඔබගේ පාලන මධ්‍යස්ථානයයි. ඔබට එක් එක් විෂය සඳහා අධ්‍යයන පැය සටහන් කිරීමට, කළ යුතු දේ ලැයිස්තු කළමනාකරණය කිරීමට සහ ඔබගේ සතිපතා ප්‍රගතිය නිරීක්ෂණය කිරීමට හැකිය.",
+                subjectSpotlight: "ආරම්භ කිරීමට, 'ඔබේ අධ්‍යයන ක්‍රියාකාරකම් සටහන් කරන්න' කාඩ්පත වෙත යන්න. විෂයයක් තෝරා ඔබගේ පළමු අධ්‍යයන සැසිය සටහන් කරන්න හෝ ඔබට සම්පූර්ණ කළ යුතු කාර්යයක් එක් කරන්න. අපි ආරම්භ කරමු!",
+            });
+        }
     }
 
     return () => {
@@ -91,7 +98,7 @@ export function MotivationCard({ subjects, stream }: MotivationCardProps) {
         clearTimeout(debounceTimeout.current);
       }
     };
-  }, [subjects, user, stream, generateAnalysis, t]);
+  }, [subjects, user, stream, generateAnalysis, t, locale]);
 
   return (
     <Card>
