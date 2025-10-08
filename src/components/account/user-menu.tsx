@@ -52,7 +52,7 @@ export function UserMenu() {
           {user && (
           <DropdownMenu>
               <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full h-10 w-10">
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                       {getInitials(user.displayName)}

@@ -413,9 +413,8 @@ export default function Home() {
             <SubjectDetailsCard
               subjects={subjects}
               onUpdate={handleUpdate}
-              onLogHours={handleLogHours}
+              onLogHours={onLogHours}
             />
-            <SubjectPieChart subjects={subjects} />
           </div>
 
           <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
