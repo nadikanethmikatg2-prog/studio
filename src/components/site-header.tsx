@@ -3,7 +3,6 @@
 
 import { BookHeart, LogOut, Languages, Settings } from "lucide-react";
 import Link from "next/link";
-import { CountdownCard } from "./dashboard/countdown-card";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { handleSignOut } from "@/lib/firebase/auth";
@@ -51,15 +50,13 @@ export function SiteHeader() {
     <>
       <header className="fixed top-4 left-1/2 -translate-x-1/2 z-40">
         <div className="container h-16 flex items-center justify-between space-x-4 border bg-card/60 backdrop-blur-xl rounded-2xl shadow-lg">
-          <div className="flex gap-2 items-center">
-            <BookHeart className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold tracking-tight text-primary">
+          <div className="flex items-center gap-2">
+            <BookHeart className="h-6 w-6 text-primary flex-shrink-0" />
+            <h1 className="text-xl font-bold tracking-tight text-primary whitespace-nowrap">
               <Link href="/">{t("appTitle")}</Link>
             </h1>
           </div>
-          <div className="hidden md:block">
-            <CountdownCard />
-          </div>
+          
           <div className="flex items-center gap-2">
             {user && (
               <DropdownMenu>
