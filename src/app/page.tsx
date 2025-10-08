@@ -41,6 +41,7 @@ export type Todo = {
   id: number;
   text: string;
   completed: boolean;
+  completedAt?: string; // ISO 8601 string format
 };
 
 export type DailyLog = {
@@ -350,7 +351,7 @@ export default function Home() {
             <SubjectDetailsCard
               subjects={subjects}
               onUpdate={handleUpdate}
-              onLogHours={handleLogHours}
+              onLogHours={onLogHours}
             />
           </div>
 

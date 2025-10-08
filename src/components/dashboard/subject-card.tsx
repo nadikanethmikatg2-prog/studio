@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/hooks/use-language";
 import { Switch } from "../ui/switch";
+import { differenceInDays } from "date-fns";
 
 interface SubjectCardProps {
   subjectKey: string;
@@ -54,7 +55,7 @@ export function SubjectCard({
 
   const completeTodo = (todo: Todo) => {
      const updatedTodos = subject.todos.map((t) =>
-        t.id === todo.id ? { ...t, completed: true } : t
+        t.id === todo.id ? { ...t, completed: true, completedAt: new Date().toISOString() } : t
       );
       onUpdate(subjectKey, { todos: updatedTodos });
   }
@@ -71,7 +72,7 @@ export function SubjectCard({
       } else {
         // If un-marking, just update the state without opening dialog
         const updatedTodos = subject.todos.map((t) =>
-          t.id === id ? { ...t, completed: false } : t
+          t.id === id ? { ...t, completed: false, completedAt: undefined } : t
         );
         onUpdate(subjectKey, { todos: updatedTodos });
       }
@@ -126,14 +127,32 @@ export function SubjectCard({
     });
   };
 
+  const sortedAndFilteredTodos = useMemo(() => {
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+
+    return subject.todos
+      .filter(todo => {
+        if (!todo.completed || !todo.completedAt) {
+          return true; // Keep active todos
+        }
+        // Keep completed todos that are less than 5 days old
+        return differenceInDays(new Date(), new Date(todo.completedAt)) < 5;
+      })
+      .sort((a, b) => {
+        if (a.completed === b.completed) return 0;
+        return a.completed ? 1 : -1;
+      });
+  }, [subject.todos]);
+
   return (
     <div className="space-y-4">
         <div className="space-y-2">
           <Label>{t("todoList")}</Label>
            <ScrollArea className="h-48 w-full rounded-md border mt-2">
             <div className="p-2 space-y-2">
-              {subject.todos.length > 0 ? (
-                subject.todos.map((todo) => (
+              {sortedAndFilteredTodos.length > 0 ? (
+                sortedAndFilteredTodos.map((todo) => (
                   <div key={todo.id} className="flex items-center gap-2 group">
                     <Checkbox
                       id={`todo-${subjectKey}-${todo.id}`}
