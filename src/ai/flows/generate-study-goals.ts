@@ -27,7 +27,7 @@ const prompt = ai.definePrompt({
 
   The total weekly study goal should be dynamic. Start with a baseline of 20 hours. If the student has studied more than 40 hours in total across all subjects, increase the weekly goal to 24 hours to maintain momentum. If they have studied less than 10 hours in total, set the goal to 18 hours to help them build a routine.
 
-  Distribute this total goal among the subjects. Consider the student's current total study hours to identify which subjects might need more attention. For instance, if a subject has significantly fewer hours, you might allocate a bit more time to it to help the student catch up. However, don't neglect subjects they are already studying well. Aim for a balanced plan.
+  Distribute this total goal among the subjects. Your primary focus should be to help the student balance their efforts. Identify which subjects have the lowest total study hours and allocate a higher portion of the weekly goal to those subjects to help the student catch up. However, do not completely neglect subjects they are already studying well. Ensure every subject gets some time. Aim for a balanced but strategic plan.
 
   The goals for each subject should be round numbers or to the nearest 0.5 hour (e.g., 5, 5.5, 6).
 
