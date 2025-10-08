@@ -93,17 +93,8 @@ export default function Home() {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [stream, setStream] = useState<string | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -385,13 +376,11 @@ export default function Home() {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
       <SiteHeader />
-      <div className={cn(
-        "fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden md:block transition-transform duration-300",
-        isScrolled ? "scale-75" : "scale-100"
-      )}>
+      <div className="fixed top-24 left-4 z-30">
         <CountdownCard />
       </div>
-      <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8 lg:pl-32">
+
+      <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
             {user?.isAnonymous && <GuestPromptCard />}
@@ -440,5 +429,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { Timer } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import { Card } from "../ui/card";
 
 const examDate = new Date("2027-08-01T00:00:00");
 
@@ -55,28 +56,28 @@ export function CountdownCard() {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-2 glass-card p-3">
-      <div className="flex flex-col items-center gap-1 text-primary text-xs">
-        <Timer className="h-4 w-4" />
-        <span className="font-semibold">{t("al2027")}</span>
-      </div>
-      <div className="flex flex-col gap-2 text-center">
-          {timeParts.map((part) => (
-            <div
-              key={part.label}
-              className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-3 py-1 w-16"
-            >
-              <div className="text-xl font-bold text-foreground/90">
-                {String(part.value).padStart(2, "0")}
-              </div>
-              <div className="text-[10px] uppercase tracking-wider text-foreground/80">
-                {part.label}
-              </div>
+    <Card className="p-4">
+        <div className="flex items-center gap-4 text-center">
+            <div className="flex flex-col items-center gap-1 text-primary">
+                <Timer className="h-5 w-5" />
+                <span className="text-xs font-semibold">{t("al2027")}</span>
             </div>
-          ))}
+            <div className="flex items-center gap-3">
+                {timeParts.map((part) => (
+                    <div
+                    key={part.label}
+                    className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-4 py-2 w-20"
+                    >
+                    <div className="text-2xl font-bold text-foreground/90">
+                        {String(part.value).padStart(2, "0")}
+                    </div>
+                    <div className="text-xs uppercase tracking-wider text-foreground/80">
+                        {part.label}
+                    </div>
+                    </div>
+                ))}
+            </div>
         </div>
-    </div>
+    </Card>
   );
 }
-
-    
