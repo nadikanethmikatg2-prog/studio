@@ -25,6 +25,7 @@ import { StatsCard } from "@/components/dashboard/stats-card";
 import { BadgesCard } from "@/components/dashboard/badges-card";
 import { CountdownCard } from "@/components/dashboard/countdown-card";
 import { format, parseISO, differenceInCalendarDays } from "date-fns";
+import { cn } from "@/lib/utils";
 
 // Dynamically import heavy components
 const WeeklyProgressChart = dynamic(() => import('@/components/dashboard/weekly-progress-chart').then(mod => mod.WeeklyProgressChart), {
@@ -92,6 +93,7 @@ export default function Home() {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [stream, setStream] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -100,6 +102,14 @@ export default function Home() {
       router.push("/login");
     }
   }, [user, loading, router]);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -374,7 +384,10 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
-       <header className="fixed top-4 left-1/2 -translate-x-1/2 z-40 flex items-start gap-4">
+       <header className={cn(
+          "fixed top-4 left-1/2 -translate-x-1/2 z-40 flex items-start gap-4 transition-transform duration-300",
+          isScrolled && "-translate-y-24"
+        )}>
         <SiteHeader />
         <CountdownCard />
       </header>

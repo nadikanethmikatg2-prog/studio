@@ -56,22 +56,22 @@ export function CountdownCard() {
   ];
 
   return (
-    <Card className="p-2">
-        <div className="flex items-center gap-4 text-center">
-            <div className="flex flex-col items-center justify-center gap-1 text-primary pr-2 border-r border-border">
+    <Card className="p-2 h-[52px] flex items-center">
+        <div className="flex items-center gap-3 text-center">
+            <div className="flex flex-col items-center justify-center text-primary pr-2 border-r border-border h-full">
                 <Timer className="h-5 w-5" />
                 <span className="text-xs font-semibold">{t("al2027")}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
                 {timeParts.map((part) => (
                     <div
                     key={part.label}
-                    className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-2 py-1 w-16"
+                    className="flex flex-col items-center justify-center rounded-md bg-primary/10 px-1 py-0 w-12"
                     >
-                    <div className="text-xl font-bold text-foreground/90">
+                    <div className="text-lg font-bold text-foreground/90">
                         {String(part.value).padStart(2, "0")}
                     </div>
-                    <div className="text-[10px] uppercase tracking-wider text-foreground/80">
+                    <div className="text-[9px] uppercase tracking-wider text-foreground/70 -mt-1">
                         {part.label}
                     </div>
                     </div>
