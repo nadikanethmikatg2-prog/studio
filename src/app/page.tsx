@@ -428,7 +428,7 @@ export default function Home() {
 
       <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 grid gap-6 md:gap-8">
+          <div className="lg:col-span-2 grid gap-6 md:gap-8 content-start">
             {user?.isAnonymous && <GuestPromptCard />}
             <MotivationCard subjects={subjects} stream={stream}/>
             <WeeklyProgressChart
@@ -475,5 +475,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
