@@ -378,7 +378,7 @@ export default function Home() {
       <div className="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden md:block">
         <CountdownCard />
       </div>
-      <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
+      <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8 lg:pl-32">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
             {user?.isAnonymous && <GuestPromptCard />}
