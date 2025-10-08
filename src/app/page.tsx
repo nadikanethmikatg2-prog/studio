@@ -334,7 +334,7 @@ export default function Home() {
     return (
       <div className="flex flex-col min-h-screen">
         <SiteHeader />
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
           <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 grid gap-6 md:gap-8">
               <Skeleton className="h-48 w-full" />
@@ -357,7 +357,7 @@ export default function Home() {
     return (
        <div className="flex flex-col min-h-screen">
         <SiteHeader />
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
           <div className="flex items-center justify-center h-full">
             <p className="text-destructive">{t("toastCouldNotLoadData")}</p>
           </div>
@@ -374,7 +374,7 @@ export default function Home() {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
       <SiteHeader />
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
             {user?.isAnonymous && <GuestPromptCard />}
