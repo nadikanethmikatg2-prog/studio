@@ -18,16 +18,15 @@ import type { Subject, Todo } from "@/app/page";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useLanguage } from "@/hooks/use-language";
+import { Switch } from "../ui/switch";
 
 interface SubjectCardProps {
   subjectKey: string;
@@ -50,6 +49,7 @@ export function SubjectCard({
   const [isLogHoursDialogOpen, setIsLogHoursDialogOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [hoursSpent, setHoursSpent] = useState("");
+  const [isFullyCompleted, setIsFullyCompleted] = useState(true);
   const { toast } = useToast();
 
   const completeTodo = (todo: Todo) => {
@@ -78,61 +78,45 @@ export function SubjectCard({
     });
   };
 
-  const handleLogHoursAndComplete = () => {
+  const handleDone = () => {
     if (!selectedTodo) return;
 
     const hours = parseFloat(hoursSpent);
-    if (isNaN(hours) || hours <= 0) {
-        // If no hours are entered, just complete the task
-        completeTodo(selectedTodo);
-        toast({
-            title: t("toastTaskCompleted"),
-            description: `"${selectedTodo.text}" marked as complete.`,
-        });
-        resetAndCloseDialog();
-        return;
-    }
+    const hasHours = !isNaN(hours) && hours > 0;
 
     startTransition(() => {
-      onLogHours(subjectKey, hours);
-      completeTodo(selectedTodo);
+      if (hasHours) {
+        onLogHours(subjectKey, hours);
+      }
 
-      toast({
-        title: t("toastTaskCompleted"),
-        description: t("toastLoggedHoursForTask", { hours, taskText: selectedTodo.text }),
-      });
+      if (isFullyCompleted) {
+        completeTodo(selectedTodo);
+        toast({
+          title: t("toastTaskCompleted"),
+          description: hasHours 
+            ? t("toastLoggedHoursForTask", { hours, taskText: selectedTodo.text })
+            : `"${selectedTodo.text}" marked as complete.`,
+        });
+      } else {
+         if (hasHours) {
+             toast({
+                title: t("progressLogged"),
+                description: t("partialProgressLogged", { hours, taskText: selectedTodo.text }),
+            });
+         } else {
+            // Nothing to do if not fully completed and no hours logged, just close dialog
+         }
+      }
 
       resetAndCloseDialog();
     });
   };
   
-  const handleLogPartialProgress = () => {
-    if (!selectedTodo) return;
-
-    const hours = parseFloat(hoursSpent);
-    if (isNaN(hours) || hours <= 0) {
-      toast({
-        variant: "destructive",
-        title: t("toastInvalidInput"),
-        description: t("toastInvalidHours"),
-      });
-      return;
-    }
-    
-    startTransition(() => {
-        onLogHours(subjectKey, hours);
-        toast({
-            title: t("progressLogged"),
-            description: t("partialProgressLogged", { hours, taskText: selectedTodo.text }),
-        });
-        resetAndCloseDialog();
-    });
-  }
-
   const resetAndCloseDialog = () => {
      setIsLogHoursDialogOpen(false);
      setSelectedTodo(null);
      setHoursSpent("");
+     setIsFullyCompleted(true);
   }
 
   const handleDeleteTodo = (id: number) => {
@@ -185,35 +169,44 @@ export function SubjectCard({
           </ScrollArea>
         </div>
 
-        <AlertDialog open={isLogHoursDialogOpen} onOpenChange={(isOpen) => !isOpen && resetAndCloseDialog()}>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>{t("logHoursForTaskTitle")}</AlertDialogTitle>
-                    <AlertDialogDescription>
+        <Dialog open={isLogHoursDialogOpen} onOpenChange={(isOpen) => !isOpen && resetAndCloseDialog()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t("logHoursForTaskTitle")}</DialogTitle>
+                    <DialogDescription>
                         {t("logHoursForTaskOptionalDescription", { taskText: selectedTodo?.text || '' })}
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="py-4">
-                    <Label htmlFor="hours-spent">{t("hoursSpent")}</Label>
-                    <Input
-                        id="hours-spent"
-                        type="number"
-                        value={hoursSpent}
-                        onChange={(e) => setHoursSpent(e.target.value)}
-                        placeholder="e.g., 2.5"
-                        autoFocus
-                    />
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                    <div>
+                      <Label htmlFor="hours-spent">{t("hoursSpent")}</Label>
+                      <Input
+                          id="hours-spent"
+                          type="number"
+                          value={hoursSpent}
+                          onChange={(e) => setHoursSpent(e.target.value)}
+                          placeholder="e.g., 2.5"
+                          autoFocus
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="completion-status"
+                        checked={isFullyCompleted}
+                        onCheckedChange={setIsFullyCompleted}
+                      />
+                      <Label htmlFor="completion-status">
+                        {isFullyCompleted ? "I fully completed it" : "I haven't fully completed this yet"}
+                      </Label>
+                    </div>
                 </div>
-                <AlertDialogFooter className="sm:flex-row sm:justify-end sm:space-x-2">
-                    <Button variant="outline" onClick={handleLogPartialProgress} disabled={isPending || !hoursSpent}>
-                        {t("partialCompleteButton")}
+                <DialogFooter>
+                     <Button onClick={handleDone} disabled={isPending}>
+                        {isPending ? t("loggingButton") : "Done"}
                     </Button>
-                     <Button onClick={handleLogHoursAndComplete} disabled={isPending}>
-                        {isPending ? t("loggingButton") : t("fullCompleteButton")}
-                    </Button>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </div>
   );
 }
