@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Atom, Combine, FlaskConical, Sigma, Leaf } from "lucide-react";
 import dynamic from "next/dynamic";
 import { SiteHeader } from "@/components/site-header";
@@ -9,7 +9,6 @@ import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
 import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card";
 import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
-import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks, differenceInCalendarDays, parseISO } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import {
@@ -23,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
 import { GuestPromptCard } from "@/components/dashboard/guest-prompt-card";
 import { StatsCard } from "@/components/dashboard/stats-card";
+import { format, parseISO, differenceInCalendarDays } from "date-fns";
 
 // Dynamically import heavy components
 const WeeklyProgressChart = dynamic(() => import('@/components/dashboard/weekly-progress-chart').then(mod => mod.WeeklyProgressChart), {
@@ -35,6 +35,10 @@ const SubjectPieChart = dynamic(() => import('@/components/dashboard/subject-pie
 });
 const FloatingChat = dynamic(() => import('@/components/dashboard/floating-chat').then(mod => mod.FloatingChat), {
   ssr: false
+});
+const ProductivityChart = dynamic(() => import('@/components/dashboard/productivity-chart').then(mod => mod.ProductivityChart), {
+    loading: () => <Skeleton className="h-[300px] w-full" />,
+    ssr: false
 });
 
 
@@ -83,7 +87,6 @@ export default function Home() {
   const router = useRouter();
   const [subjects, setSubjects] = useState<Subjects | null>(null);
   const [dailyLogs, setDailyLogs] = useState<DailyLog>({});
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dataLoaded, setDataLoaded] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [stream, setStream] = useState<string | null>(null);
@@ -261,33 +264,6 @@ export default function Home() {
     });
   }, []);
 
-  const getWeekData = useCallback(
-    (date: Date) => {
-      if (!subjects) return [];
-      const weekStart = startOfWeek(date, { weekStartsOn: 1 });
-      const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
-      const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
-
-      return weekDays.map((day) => {
-        const dateKey = format(day, "yyyy-MM-dd");
-        const dayLog = dailyLogs[dateKey] || {};
-        const totalHours = Object.values(dayLog).reduce(
-          (sum, hours) => sum + hours,
-          0
-        );
-
-        return {
-          date: format(day, "EEE"),
-          totalHours: totalHours,
-          ...Object.keys(subjects).reduce(
-            (acc, key) => ({ ...acc, [key]: dayLog[key] || 0 }),
-            {}
-          ),
-        };
-      });
-    },
-    [dailyLogs, subjects]
-  );
   
   const calculateStreaks = useCallback(() => {
     const loggedDates = Object.keys(dailyLogs)
@@ -389,9 +365,6 @@ export default function Home() {
     )
   }
 
-  const currentWeekData = getWeekData(selectedDate);
-  const lastWeekDate = subWeeks(selectedDate, 1);
-  const previousWeekData = getWeekData(lastWeekDate);
   const { currentStreak, longestStreak } = calculateStreaks();
   const totalHoursStudied = Object.values(subjects).reduce((sum, s) => sum + s.totalHours, 0);
 
@@ -404,11 +377,8 @@ export default function Home() {
             {user?.isAnonymous && <GuestPromptCard />}
             <MotivationCard subjects={subjects} stream={stream}/>
             <WeeklyProgressChart
-              currentWeekData={currentWeekData}
-              previousWeekData={previousWeekData}
+              dailyLogs={dailyLogs}
               subjects={subjects}
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
             />
             <ActivityLoggerCard
               subjects={subjects}
@@ -429,6 +399,7 @@ export default function Home() {
               longestStreak={longestStreak}
               totalHours={totalHoursStudied}
             />
+            <ProductivityChart dailyLogs={dailyLogs} subjects={subjects} />
             <SubjectPieChart subjects={subjects} />
           </div>
         </div>

@@ -149,5 +149,20 @@
     "currentStreak": "Current Streak",
     "longestStreak": "Longest Streak",
     "totalHours": "Total Hours",
-    "daysSuffix": "days"
+    "daysSuffix": "days",
+    "studyTrends": "Study Trends",
+    "studyTrendsDescription": "Your total study hours over a selected period.",
+    "week": "Week",
+    "month": "Month",
+    "all": "All Time",
+    "productivityHotspots": "Productivity Hotspots",
+    "productivityHotspotsDescription": "Your most productive days of the week.",
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "total": "Total"
 }

@@ -148,5 +148,20 @@
     "currentStreak": "වත්මන් σε Streak",
     "longestStreak": "දිගම Streak",
     "totalHours": "සම්පූර්ණ පැය",
-    "daysSuffix": "දින"
+    "daysSuffix": "දින",
+    "studyTrends": "අධ්‍යයන ප්‍රවණතා",
+    "studyTrendsDescription": "තෝරාගත් කාල සීමාවක් තුළ ඔබගේ සම්පූර්ණ අධ්‍යයන පැය.",
+    "week": "සතිය",
+    "month": "මාසය",
+    "all": "සෑම විටම",
+    "productivityHotspots": "ඵලදායිතා කේන්ද්‍ර",
+    "productivityHotspotsDescription": "සතියේ ඔබගේ වඩාත්ම ඵලදායී දින.",
+    "sun": "ඉරිදා",
+    "mon": "සඳුදා",
+    "tue": "අඟහරුවාදා",
+    "wed": "බදාදා",
+    "thu": "බ්‍රහස්පතින්දා",
+    "fri": "සිකුරාදා",
+    "sat": "සෙනසුරාදා",
+    "total": "එකතුව"
 }
