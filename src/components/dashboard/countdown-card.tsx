@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Timer } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 import { Card } from "../ui/card";
+import { cn } from "@/lib/utils";
 
 const examDate = new Date("2027-08-01T00:00:00");
 
@@ -18,8 +19,6 @@ export function CountdownCard() {
   });
 
   useEffect(() => {
-    // This check is to avoid "Text content does not match server-rendered HTML" error
-    // by ensuring the countdown only runs on the client.
     if (typeof window === 'undefined') {
       return;
     }
@@ -39,7 +38,6 @@ export function CountdownCard() {
       return timeLeft;
     };
 
-    // Set initial value
     setTimeLeft(calculateTimeLeft());
 
     const timer = setInterval(() => {
@@ -56,8 +54,8 @@ export function CountdownCard() {
   ];
 
   return (
-    <Card className="p-2">
-        <div className="flex h-full items-center gap-3 text-center">
+    <Card className="p-0.5 md:w-auto">
+        <div className="flex h-full items-center gap-3 text-center px-2">
             <div className="flex items-center gap-1.5 text-primary pr-3 border-r border-border h-full">
                 <Timer className="h-5 w-5" />
                 <span className="text-xs font-semibold">{t("al2027")}</span>
@@ -66,12 +64,12 @@ export function CountdownCard() {
                 {timeParts.map((part) => (
                     <div
                     key={part.label}
-                    className="flex flex-col items-center justify-center rounded-md bg-primary/10 px-1 py-0 w-10 h-9"
+                    className="flex flex-col items-center justify-center rounded-md bg-primary/10 px-1 py-0 w-9 h-8"
                     >
                     <div className="text-sm font-bold text-foreground/90">
                         {String(part.value).padStart(2, "0")}
                     </div>
-                    <div className="text-[8px] uppercase tracking-wider text-foreground/70 -mt-1">
+                    <div className="text-[7px] uppercase tracking-wider text-foreground/70 -mt-1">
                         {part.label}
                     </div>
                     </div>

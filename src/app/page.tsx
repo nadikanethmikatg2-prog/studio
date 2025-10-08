@@ -27,6 +27,7 @@ import { CountdownCard } from "@/components/dashboard/countdown-card";
 import { format, parseISO, differenceInCalendarDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "@/components/account/user-menu";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 // Dynamically import heavy components
 const WeeklyProgressChart = dynamic(() => import('@/components/dashboard/weekly-progress-chart').then(mod => mod.WeeklyProgressChart), {
@@ -95,6 +96,7 @@ export default function Home() {
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [stream, setStream] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -345,7 +347,9 @@ export default function Home() {
   if (loading || !dataLoaded) {
     return (
       <div className="flex flex-col min-h-screen">
-        <SiteHeader />
+        <header className="fixed top-4 left-1/2 z-40 -translate-x-1/2">
+            <Skeleton className="h-12 w-80" />
+        </header>
         <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
           <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 grid gap-6 md:gap-8">
@@ -368,7 +372,9 @@ export default function Home() {
     // This can happen if data loading failed but dataLoaded is true.
     return (
        <div className="flex flex-col min-h-screen">
-        <SiteHeader />
+        <header className="fixed top-4 left-1/2 z-40 -translate-x-1/2">
+           <SiteHeader onMenuClick={() => {}} />
+        </header>
         <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
           <div className="flex items-center justify-center h-full">
             <p className="text-destructive">{t("toastCouldNotLoadData")}</p>
@@ -385,18 +391,42 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
+      {/* Desktop Header */}
       <header
         className={cn(
-          "fixed top-4 left-1/2 z-40 flex -translate-x-1/2 items-center gap-4 transition-transform duration-300",
+          "fixed top-4 left-1/2 z-40 hidden -translate-x-1/2 items-center gap-4 transition-transform duration-300 md:flex",
           isScrolled && "-translate-y-24"
         )}
       >
-        <SiteHeader />
+        <SiteHeader onMenuClick={() => {}} />
         <CountdownCard />
         <UserMenu />
       </header>
+      
+      {/* Mobile Header */}
+      <header
+        className={cn(
+          "fixed top-4 left-1/2 z-40 flex w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-4 transition-transform duration-300 md:hidden",
+          isScrolled && "-translate-y-24"
+        )}
+      >
+        <SiteHeader onMenuClick={() => setMobileMenuOpen(true)} />
+      </header>
 
-      <main className="flex-1 p-4 pt-32 md:p-6 lg:p-8">
+      <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <SheetContent side="left" className="w-[300px] p-4">
+            <div className="flex flex-col gap-8 h-full">
+                <div className="flex-1 space-y-8">
+                    <UserMenu />
+                    <CountdownCard />
+                </div>
+                <p className="text-xs text-muted-foreground text-center">© {new Date().getFullYear()} A/L Study Buddy</p>
+            </div>
+        </SheetContent>
+      </Sheet>
+
+
+      <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
             {user?.isAnonymous && <GuestPromptCard />}

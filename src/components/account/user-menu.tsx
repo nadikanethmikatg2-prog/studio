@@ -52,7 +52,7 @@ export function UserMenu() {
           {user && (
           <DropdownMenu>
               <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+              <Button variant="ghost" className="relative h-full w-10 rounded-full">
                   <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                       {getInitials(user.displayName)}
@@ -60,7 +60,7 @@ export function UserMenu() {
                   </Avatar>
               </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 mt-2">
               <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">{user.displayName || "User"}</p>
