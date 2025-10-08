@@ -23,8 +23,8 @@ import { useLanguage } from "@/hooks/use-language";
 import { GuestPromptCard } from "@/components/dashboard/guest-prompt-card";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { BadgesCard } from "@/components/dashboard/badges-card";
-import { format, parseISO, differenceInCalendarDays } from "date-fns";
 import { CountdownCard } from "@/components/dashboard/countdown-card";
+import { format, parseISO, differenceInCalendarDays } from "date-fns";
 import { cn } from "@/lib/utils";
 
 // Dynamically import heavy components
@@ -375,7 +375,7 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
-      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-40 flex items-start gap-4">
+       <header className="fixed top-4 left-1/2 -translate-x-1/2 z-40 flex items-start gap-4">
         <CountdownCard />
         <SiteHeader />
       </header>
@@ -397,7 +397,7 @@ export default function Home() {
             <SubjectDetailsCard
               subjects={subjects}
               onUpdate={handleUpdate}
-              onLogHours={onLogHours}
+              onLogHours={handleLogHours}
             />
             <SubjectPieChart subjects={subjects} />
           </div>
