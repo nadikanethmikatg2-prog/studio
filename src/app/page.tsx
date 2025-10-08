@@ -413,7 +413,7 @@ export default function Home() {
             <SubjectDetailsCard
               subjects={subjects}
               onUpdate={handleUpdate}
-              onLogHours={onLogHours}
+              onLogHours={handleLogHours}
             />
           </div>
 
