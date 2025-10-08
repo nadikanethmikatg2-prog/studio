@@ -393,6 +393,7 @@ export default function Home() {
               onUpdate={handleUpdate}
               onLogHours={handleLogHours}
             />
+            <SubjectPieChart subjects={subjects} />
           </div>
 
           <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
@@ -408,7 +409,6 @@ export default function Home() {
               totalTasksCompleted={totalTasksCompleted}
             />
             <ProductivityChart dailyLogs={dailyLogs} subjects={subjects} />
-            <SubjectPieChart subjects={subjects} />
           </div>
         </div>
       </main>
