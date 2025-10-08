@@ -9,15 +9,10 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Award, Medal, Trophy, Brain, Flame, Target } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface BadgesCardProps {
   totalHours: number;
@@ -40,6 +35,15 @@ const allBadges = [
   { id: 'tasks-100', type: 'tasks', threshold: 100, name: 'Completionist', description: 'Completed 100 to-do items.', icon: Brain },
 ];
 
+const getProgress = (badge: (typeof allBadges)[0], props: BadgesCardProps) => {
+    switch (badge.type) {
+      case 'hours': return (props.totalHours / badge.threshold) * 100;
+      case 'streak': return (props.longestStreak / badge.threshold) * 100;
+      case 'tasks': return (props.totalTasksCompleted / badge.threshold) * 100;
+      default: return 0;
+    }
+};
+
 
 export function BadgesCard({ totalHours, longestStreak, totalTasksCompleted }: BadgesCardProps) {
   const { t } = useLanguage();
@@ -59,37 +63,43 @@ export function BadgesCard({ totalHours, longestStreak, totalTasksCompleted }: B
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-primary"/>
+            <Trophy className="h-5 w-5 text-primary"/>
             {t('achievements')}
         </CardTitle>
         <CardDescription>{t('achievementsDescription', { unlocked: unlockedCount, total: allBadges.length })}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <TooltipProvider>
-            <div className="grid grid-cols-5 gap-3">
-            {allBadges.map((badge) => (
-                <Tooltip key={badge.id}>
-                <TooltipTrigger asChild>
-                    <div
-                        className={cn(
-                            "flex items-center justify-center p-2 rounded-lg aspect-square border-2 transition-all",
-                            isUnlocked(badge)
-                            ? "bg-primary/20 border-primary/50 text-primary"
-                            : "bg-muted text-muted-foreground opacity-50"
-                        )}
-                    >
+      <CardContent className="space-y-4">
+        {allBadges.map((badge) => {
+            const unlocked = isUnlocked(badge);
+            const progress = unlocked ? 100 : getProgress(badge, {totalHours, longestStreak, totalTasksCompleted});
+            return (
+                <div key={badge.id} className={cn(
+                    "flex items-center gap-4 p-3 rounded-lg transition-all",
+                    unlocked ? "bg-primary/20" : "bg-muted/50"
+                )}>
+                    <div className={cn(
+                        "flex items-center justify-center h-10 w-10 rounded-full flex-shrink-0",
+                        unlocked ? "bg-primary text-primary-foreground" : "bg-background text-muted-foreground"
+                    )}>
                         <badge.icon className="h-6 w-6" />
                     </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p className="font-bold">{badge.name}</p>
-                    <p className="text-sm text-muted-foreground">{badge.description}</p>
-                    {!isUnlocked(badge) && <p className="text-xs text-destructive mt-1">{t('locked')}</p>}
-                </TooltipContent>
-                </Tooltip>
-            ))}
-            </div>
-        </TooltipProvider>
+                    <div className="flex-grow w-full">
+                        <div className="flex justify-between items-start">
+                            <p className="font-semibold text-sm">{badge.name}</p>
+                            {!unlocked && (
+                                <p className="text-xs text-muted-foreground">
+                                    {badge.type === 'hours' && `${totalHours.toFixed(1)}/${badge.threshold}`}
+                                    {badge.type === 'streak' && `${longestStreak}/${badge.threshold}`}
+                                    {badge.type === 'tasks' && `${totalTasksCompleted}/${badge.threshold}`}
+                                </p>
+                            )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-1">{badge.description}</p>
+                        {!unlocked && <Progress value={progress} className="h-1.5" />}
+                    </div>
+                </div>
+            )
+        })}
       </CardContent>
     </Card>
   );
