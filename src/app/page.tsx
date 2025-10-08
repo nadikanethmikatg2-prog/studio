@@ -375,12 +375,12 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
-      <SiteHeader />
-      <div className="fixed top-24 left-4 z-30">
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-40 flex items-start gap-4">
         <CountdownCard />
-      </div>
+        <SiteHeader />
+      </header>
 
-      <main className="flex-1 p-4 pt-24 md:p-6 lg:p-8">
+      <main className="flex-1 p-4 pt-32 md:p-6 lg:p-8">
         <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 grid gap-6 md:gap-8">
             {user?.isAnonymous && <GuestPromptCard />}
@@ -397,7 +397,7 @@ export default function Home() {
             <SubjectDetailsCard
               subjects={subjects}
               onUpdate={handleUpdate}
-              onLogHours={handleLogHours}
+              onLogHours={onLogHours}
             />
             <SubjectPieChart subjects={subjects} />
           </div>
@@ -429,3 +429,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

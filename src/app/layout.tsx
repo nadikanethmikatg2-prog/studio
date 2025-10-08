@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -30,7 +31,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased flex flex-col'
+          'min-h-screen bg-background font-sans antialiased'
         )}
       >
         <ClientWrapper>
@@ -41,3 +42,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    
