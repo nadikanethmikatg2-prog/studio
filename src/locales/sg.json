@@ -143,5 +143,11 @@
     "guestFeatureTitle": "Unlock {featureName}",
     "guestFeatureDescription": "To use this AI-powered feature and save all your progress online, please create a free account. It only takes a minute!",
     "maybeLater": "Maybe Later",
-    "createFreeAccount": "Create Free Account"
+    "createFreeAccount": "Create Free Account",
+    "statsTitle": "Your Stats",
+    "statsDescription": "A quick look at your study habits.",
+    "currentStreak": "Current Streak",
+    "longestStreak": "Longest Streak",
+    "totalHours": "Total Hours",
+    "daysSuffix": "days"
 }

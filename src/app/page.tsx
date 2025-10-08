@@ -9,7 +9,7 @@ import { GoalsCard } from "@/components/dashboard/goals-card";
 import { MotivationCard } from "@/components/dashboard/motivation-card";
 import { ActivityLoggerCard } from "@/components/dashboard/activity-logger-card";
 import { SubjectDetailsCard } from "@/components/dashboard/subject-details-card";
-import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks } from "date-fns";
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, subWeeks, differenceInCalendarDays, parseISO } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import {
@@ -22,6 +22,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
 import { GuestPromptCard } from "@/components/dashboard/guest-prompt-card";
+import { StatsCard } from "@/components/dashboard/stats-card";
 
 // Dynamically import heavy components
 const WeeklyProgressChart = dynamic(() => import('@/components/dashboard/weekly-progress-chart').then(mod => mod.WeeklyProgressChart), {
@@ -287,6 +288,70 @@ export default function Home() {
     },
     [dailyLogs, subjects]
   );
+  
+  const calculateStreaks = useCallback(() => {
+    const loggedDates = Object.keys(dailyLogs)
+      .filter(date => {
+        const totalHours = Object.values(dailyLogs[date]).reduce((sum, hours) => sum + hours, 0);
+        return totalHours > 0;
+      })
+      .map(date => parseISO(date))
+      .sort((a, b) => b.getTime() - a.getTime());
+
+    if (loggedDates.length === 0) {
+      return { currentStreak: 0, longestStreak: 0 };
+    }
+
+    // Calculate current streak
+    let currentStreak = 0;
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const todayStr = format(today, 'yyyy-MM-dd');
+    const yesterdayStr = format(yesterday, 'yyyy-MM-dd');
+
+    if (dailyLogs[todayStr] || dailyLogs[yesterdayStr]) {
+      currentStreak = 1;
+      let lastDate = dailyLogs[todayStr] ? today : yesterday;
+
+      for (let i = 0; i < loggedDates.length; i++) {
+        const currentDate = loggedDates[i];
+        if (differenceInCalendarDays(lastDate, currentDate) === 1) {
+          currentStreak++;
+          lastDate = currentDate;
+        } else if (differenceInCalendarDays(lastDate, currentDate) > 1) {
+           // if the current date is not consecutive break
+           if (! (format(lastDate, 'yyyy-MM-dd') === format(currentDate, 'yyyy-MM-dd'))) {
+            break;
+           }
+        }
+      }
+    }
+
+
+    // Calculate longest streak
+    let longestStreak = 0;
+    if (loggedDates.length > 0) {
+        longestStreak = 1;
+        let currentLongest = 1;
+        for (let i = 0; i < loggedDates.length - 1; i++) {
+            const diff = differenceInCalendarDays(loggedDates[i], loggedDates[i+1]);
+            if (diff === 1) {
+                currentLongest++;
+            } else if (diff > 1) {
+                currentLongest = 1; // Reset streak
+            }
+            if (currentLongest > longestStreak) {
+                longestStreak = currentLongest;
+            }
+        }
+    }
+
+
+    return { currentStreak, longestStreak };
+  }, [dailyLogs]);
+
 
   if (loading || !dataLoaded) {
     return (
@@ -327,6 +392,8 @@ export default function Home() {
   const currentWeekData = getWeekData(selectedDate);
   const lastWeekDate = subWeeks(selectedDate, 1);
   const previousWeekData = getWeekData(lastWeekDate);
+  const { currentStreak, longestStreak } = calculateStreaks();
+  const totalHoursStudied = Object.values(subjects).reduce((sum, s) => sum + s.totalHours, 0);
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
@@ -357,6 +424,11 @@ export default function Home() {
 
           <div className="lg:col-span-1 grid gap-6 md:gap-8 content-start">
             <GoalsCard subjects={subjects} onUpdate={handleBulkUpdateGoals} stream={stream} />
+            <StatsCard 
+              currentStreak={currentStreak}
+              longestStreak={longestStreak}
+              totalHours={totalHoursStudied}
+            />
             <SubjectPieChart subjects={subjects} />
           </div>
         </div>

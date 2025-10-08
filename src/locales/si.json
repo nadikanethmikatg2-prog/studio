@@ -142,5 +142,11 @@
     "guestFeatureTitle": "{featureName} වෙත පිවිසෙන්න",
     "guestFeatureDescription": "මෙම AI බලයෙන් ක්‍රියාත්මක වන විශේෂාංගය භාවිතා කිරීමට සහ ඔබගේ සියලු ප්‍රගතිය මාර්ගගතව සුරැකීමට, කරුණාකර නොමිලේ ගිණුමක් සාදන්න. එයට ගතවන්නේ විනාඩියක් පමණි!",
     "maybeLater": "පසුවට",
-    "createFreeAccount": "නොමිලේ ගිණුමක් සාදන්න"
+    "createFreeAccount": "නොමිලේ ගිණුමක් සාදන්න",
+    "statsTitle": "ඔබේ සංඛ්‍යාලේඛන",
+    "statsDescription": "ඔබේ අධ්‍යයන පුරුදු පිළිබඳ ඉක්මන් බැල්මක්.",
+    "currentStreak": "වත්මන් σε Streak",
+    "longestStreak": "දිගම Streak",
+    "totalHours": "සම්පූර්ණ පැය",
+    "daysSuffix": "දින"
 }
