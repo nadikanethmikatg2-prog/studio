@@ -32,7 +32,10 @@ import { useLanguage } from "@/hooks/use-language";
 interface SubjectCardProps {
   subjectKey: string;
   subject: Subject;
-  onUpdate: (key: string, updatedData: Partial<Subject>) => void;
+  onUpdate: (
+    key: string,
+    updatedData: Partial<Subject> | ((prevTodos: Todo[]) => Todo[])
+  ) => void;
   onLogHours: (subjectKey: string, hours: number) => void;
 }
 
@@ -48,6 +51,13 @@ export function SubjectCard({
   const [completedTodo, setCompletedTodo] = useState<Todo | null>(null);
   const [hoursSpent, setHoursSpent] = useState("");
   const { toast } = useToast();
+
+  const completeTodo = (todo: Todo) => {
+     const updatedTodos = subject.todos.map((t) =>
+        t.id === todo.id ? { ...t, completed: true } : t
+      );
+      onUpdate(subjectKey, { todos: updatedTodos });
+  }
 
   const handleToggleTodo = (id: number) => {
     startTransition(() => {
@@ -86,10 +96,7 @@ export function SubjectCard({
       onLogHours(subjectKey, hours);
 
       // Mark todo as complete
-      const updatedTodos = subject.todos.map((t) =>
-        t.id === completedTodo.id ? { ...t, completed: true } : t
-      );
-      onUpdate(subjectKey, { todos: updatedTodos });
+      completeTodo(completedTodo);
 
       toast({
         title: t("toastTaskCompleted"),
@@ -97,11 +104,27 @@ export function SubjectCard({
       });
 
       // Reset and close dialog
-      setIsLogHoursDialogOpen(false);
-      setCompletedTodo(null);
-      setHoursSpent("");
+      resetAndCloseDialog();
     });
   };
+
+  const handleJustComplete = () => {
+    if (!completedTodo) return;
+    startTransition(() => {
+        completeTodo(completedTodo);
+        toast({
+            title: t("toastTaskCompleted"),
+            description: `"${completedTodo.text}" marked as complete.`,
+        });
+        resetAndCloseDialog();
+    });
+  };
+
+  const resetAndCloseDialog = () => {
+     setIsLogHoursDialogOpen(false);
+     setCompletedTodo(null);
+     setHoursSpent("");
+  }
 
   const handleDeleteTodo = (id: number) => {
     startTransition(() => {
@@ -158,7 +181,7 @@ export function SubjectCard({
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t("logHoursForTaskTitle")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t("logHoursForTaskDescription", { taskText: completedTodo?.text || "" })}
+                        {t("logHoursForTaskOptionalDescription", { taskText: completedTodo?.text || '' })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="py-4">
@@ -173,7 +196,10 @@ export function SubjectCard({
                     />
                 </div>
                 <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setHoursSpent('')}>{t("cancel")}</AlertDialogCancel>
+                    <AlertDialogCancel onClick={resetAndCloseDialog}>{t("cancel")}</AlertDialogCancel>
+                    <Button variant="secondary" onClick={handleJustComplete} disabled={isPending}>
+                        {t("justCompleteButton")}
+                    </Button>
                     <AlertDialogAction onClick={handleLogHoursForTodo} disabled={isPending || !hoursSpent}>
                         {isPending ? t("generatingButton") : t("logAndCompleteButton")}
                     </AlertDialogAction>
