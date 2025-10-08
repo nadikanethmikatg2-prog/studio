@@ -163,5 +163,8 @@
     "thu": "බ්‍රහස්පතින්දා",
     "fri": "සිකුරාදා",
     "sat": "සෙනසුරාදා",
-    "total": "එකතුව"
+    "total": "එකතුව",
+    "achievements": "ජයග්‍රහණ",
+    "achievementsDescription": "ඔබ ලාංඡන {total}න් {unlocked}ක් විවෘත කර ඇත.",
+    "locked": "අගුළු දමා ඇත"
 }

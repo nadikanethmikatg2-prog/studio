@@ -164,5 +164,8 @@
     "thu": "Thu",
     "fri": "Fri",
     "sat": "Sat",
-    "total": "Total"
+    "total": "Total",
+    "achievements": "Achievements",
+    "achievementsDescription": "You've unlocked {unlocked} of {total} badges.",
+    "locked": "Locked"
 }

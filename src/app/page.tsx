@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
 import { GuestPromptCard } from "@/components/dashboard/guest-prompt-card";
 import { StatsCard } from "@/components/dashboard/stats-card";
+import { BadgesCard } from "@/components/dashboard/badges-card";
 import { format, parseISO, differenceInCalendarDays } from "date-fns";
 
 // Dynamically import heavy components
@@ -367,6 +368,8 @@ export default function Home() {
 
   const { currentStreak, longestStreak } = calculateStreaks();
   const totalHoursStudied = Object.values(subjects).reduce((sum, s) => sum + s.totalHours, 0);
+  const totalTasksCompleted = Object.values(subjects).reduce((sum, s) => sum + s.todos.filter(t => t.completed).length, 0);
+
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
@@ -398,6 +401,11 @@ export default function Home() {
               currentStreak={currentStreak}
               longestStreak={longestStreak}
               totalHours={totalHoursStudied}
+            />
+            <BadgesCard
+              totalHours={totalHoursStudied}
+              longestStreak={longestStreak}
+              totalTasksCompleted={totalTasksCompleted}
             />
             <ProductivityChart dailyLogs={dailyLogs} subjects={subjects} />
             <SubjectPieChart subjects={subjects} />
