@@ -55,21 +55,21 @@ export function CountdownCard() {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-4 glass-card p-4">
-      <div className="flex flex-col items-center gap-2 text-primary text-sm">
-        <Timer className="h-5 w-5" />
+    <div className="flex flex-col items-center gap-2 glass-card p-3">
+      <div className="flex flex-col items-center gap-1 text-primary text-xs">
+        <Timer className="h-4 w-4" />
         <span className="font-semibold">{t("al2027")}</span>
       </div>
       <div className="flex flex-col gap-2 text-center">
           {timeParts.map((part) => (
             <div
               key={part.label}
-              className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-4 py-2 w-20"
+              className="flex flex-col items-center justify-center rounded-md bg-primary/20 px-3 py-1 w-16"
             >
-              <div className="text-2xl font-bold text-foreground/90">
+              <div className="text-xl font-bold text-foreground/90">
                 {String(part.value).padStart(2, "0")}
               </div>
-              <div className="text-xs uppercase tracking-wider text-foreground/80">
+              <div className="text-[10px] uppercase tracking-wider text-foreground/80">
                 {part.label}
               </div>
             </div>
@@ -78,3 +78,5 @@ export function CountdownCard() {
     </div>
   );
 }
+
+    
