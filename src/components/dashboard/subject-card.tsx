@@ -83,12 +83,14 @@ export function SubjectCard({
 
     const hours = parseFloat(hoursSpent);
     if (isNaN(hours) || hours <= 0) {
-      toast({
-        variant: "destructive",
-        title: t("toastInvalidInput"),
-        description: t("toastInvalidHours"),
-      });
-      return;
+        // If no hours are entered, just complete the task
+        completeTodo(selectedTodo);
+        toast({
+            title: t("toastTaskCompleted"),
+            description: `"${selectedTodo.text}" marked as complete.`,
+        });
+        resetAndCloseDialog();
+        return;
     }
 
     startTransition(() => {
@@ -126,18 +128,6 @@ export function SubjectCard({
         resetAndCloseDialog();
     });
   }
-
-  const handleJustComplete = () => {
-    if (!selectedTodo) return;
-    startTransition(() => {
-        completeTodo(selectedTodo);
-        toast({
-            title: t("toastTaskCompleted"),
-            description: `"${selectedTodo.text}" marked as complete.`,
-        });
-        resetAndCloseDialog();
-    });
-  };
 
   const resetAndCloseDialog = () => {
      setIsLogHoursDialogOpen(false);
@@ -214,15 +204,12 @@ export function SubjectCard({
                         autoFocus
                     />
                 </div>
-                <AlertDialogFooter className="sm:grid sm:grid-cols-3 sm:gap-2">
-                    <Button variant="secondary" onClick={handleJustComplete} disabled={isPending} className="sm:col-span-3">
-                        {t("justCompleteButton")}
-                    </Button>
+                <AlertDialogFooter className="sm:flex-row sm:justify-end sm:space-x-2">
                     <Button variant="outline" onClick={handleLogPartialProgress} disabled={isPending || !hoursSpent}>
-                        {t("logPartialProgressButton")}
+                        {t("partialCompleteButton")}
                     </Button>
-                     <Button onClick={handleLogHoursAndComplete} disabled={isPending || !hoursSpent} className="sm:col-span-2">
-                        {isPending ? t("loggingButton") : t("logAndCompleteButton")}
+                     <Button onClick={handleLogHoursAndComplete} disabled={isPending}>
+                        {isPending ? t("loggingButton") : t("fullCompleteButton")}
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>

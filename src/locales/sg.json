@@ -37,6 +37,8 @@
     "logHoursForTaskDescription": "How many hours did you spend on \"{taskText}\"?",
     "logHoursForTaskOptionalDescription": "Log time for \"{taskText}\", or mark it as complete.",
     "hoursSpent": "Hours Spent",
+    "fullCompleteButton": "I fully completed it",
+    "partialCompleteButton": "I haven't fully completed this yet",
     "logAndCompleteButton": "Log &amp; Complete",
     "justCompleteButton": "Mark as Complete (No Hours)",
     "logPartialProgressButton": "Log Partial Progress",

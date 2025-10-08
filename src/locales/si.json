@@ -37,6 +37,8 @@
     "logHoursForTaskDescription": "\"{taskText}\" සඳහා ඔබ කොපමණ පැය ගණනක් ගත කළාද?",
     "logHoursForTaskOptionalDescription": "\"{taskText}\" සඳහා කාලය සටහන් කරන්න, නැතහොත් එය සම්පූර්ණ ලෙස සලකුණු කරන්න.",
     "hoursSpent": "ගත කළ පැය ගණන",
+    "fullCompleteButton": "මම මෙය සම්පූර්ණයෙන්ම අවසන් කළා",
+    "partialCompleteButton": "මම මෙය තවම සම්පූර්ණයෙන් අවසන් කර නැත",
     "logAndCompleteButton": "සටහන් කර අවසන් කරන්න",
     "justCompleteButton": "සම්පූර්ණ ලෙස සලකුණු කරන්න (පැය රහිතව)",
     "logPartialProgressButton": "අර්ධ ප්‍රගතිය සටහන් කරන්න",
