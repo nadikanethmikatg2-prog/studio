@@ -48,7 +48,7 @@ export function SubjectCard({
   const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const [isLogHoursDialogOpen, setIsLogHoursDialogOpen] = useState(false);
-  const [completedTodo, setCompletedTodo] = useState<Todo | null>(null);
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [hoursSpent, setHoursSpent] = useState("");
   const { toast } = useToast();
 
@@ -66,10 +66,10 @@ export function SubjectCard({
 
       if (!todo.completed) {
         // If marking as complete, open dialog
-        setCompletedTodo(todo);
+        setSelectedTodo(todo);
         setIsLogHoursDialogOpen(true);
       } else {
-        // If un-marking, just update the state
+        // If un-marking, just update the state without opening dialog
         const updatedTodos = subject.todos.map((t) =>
           t.id === id ? { ...t, completed: false } : t
         );
@@ -78,8 +78,8 @@ export function SubjectCard({
     });
   };
 
-  const handleLogHoursForTodo = () => {
-    if (!completedTodo) return;
+  const handleLogHoursAndComplete = () => {
+    if (!selectedTodo) return;
 
     const hours = parseFloat(hoursSpent);
     if (isNaN(hours) || hours <= 0) {
@@ -92,29 +92,48 @@ export function SubjectCard({
     }
 
     startTransition(() => {
-      // Log the hours
       onLogHours(subjectKey, hours);
-
-      // Mark todo as complete
-      completeTodo(completedTodo);
+      completeTodo(selectedTodo);
 
       toast({
         title: t("toastTaskCompleted"),
-        description: t("toastLoggedHoursForTask", { hours, taskText: completedTodo.text }),
+        description: t("toastLoggedHoursForTask", { hours, taskText: selectedTodo.text }),
       });
 
-      // Reset and close dialog
       resetAndCloseDialog();
     });
   };
+  
+  const handleLogPartialProgress = () => {
+    if (!selectedTodo) return;
+
+    const hours = parseFloat(hoursSpent);
+    if (isNaN(hours) || hours <= 0) {
+      toast({
+        variant: "destructive",
+        title: t("toastInvalidInput"),
+        description: t("toastInvalidHours"),
+      });
+      return;
+    }
+    
+    startTransition(() => {
+        onLogHours(subjectKey, hours);
+        toast({
+            title: t("progressLogged"),
+            description: t("partialProgressLogged", { hours, taskText: selectedTodo.text }),
+        });
+        resetAndCloseDialog();
+    });
+  }
 
   const handleJustComplete = () => {
-    if (!completedTodo) return;
+    if (!selectedTodo) return;
     startTransition(() => {
-        completeTodo(completedTodo);
+        completeTodo(selectedTodo);
         toast({
             title: t("toastTaskCompleted"),
-            description: `"${completedTodo.text}" marked as complete.`,
+            description: `"${selectedTodo.text}" marked as complete.`,
         });
         resetAndCloseDialog();
     });
@@ -122,7 +141,7 @@ export function SubjectCard({
 
   const resetAndCloseDialog = () => {
      setIsLogHoursDialogOpen(false);
-     setCompletedTodo(null);
+     setSelectedTodo(null);
      setHoursSpent("");
   }
 
@@ -176,12 +195,12 @@ export function SubjectCard({
           </ScrollArea>
         </div>
 
-        <AlertDialog open={isLogHoursDialogOpen} onOpenChange={setIsLogHoursDialogOpen}>
+        <AlertDialog open={isLogHoursDialogOpen} onOpenChange={(isOpen) => !isOpen && resetAndCloseDialog()}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{t("logHoursForTaskTitle")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t("logHoursForTaskOptionalDescription", { taskText: completedTodo?.text || '' })}
+                        {t("logHoursForTaskOptionalDescription", { taskText: selectedTodo?.text || '' })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="py-4">
@@ -195,14 +214,16 @@ export function SubjectCard({
                         autoFocus
                     />
                 </div>
-                <AlertDialogFooter>
-                    <AlertDialogCancel onClick={resetAndCloseDialog}>{t("cancel")}</AlertDialogCancel>
-                    <Button variant="secondary" onClick={handleJustComplete} disabled={isPending}>
+                <AlertDialogFooter className="sm:grid sm:grid-cols-3 sm:gap-2">
+                    <Button variant="secondary" onClick={handleJustComplete} disabled={isPending} className="sm:col-span-3">
                         {t("justCompleteButton")}
                     </Button>
-                    <AlertDialogAction onClick={handleLogHoursForTodo} disabled={isPending || !hoursSpent}>
-                        {isPending ? t("generatingButton") : t("logAndCompleteButton")}
-                    </AlertDialogAction>
+                    <Button variant="outline" onClick={handleLogPartialProgress} disabled={isPending || !hoursSpent}>
+                        {t("logPartialProgressButton")}
+                    </Button>
+                     <Button onClick={handleLogHoursAndComplete} disabled={isPending || !hoursSpent} className="sm:col-span-2">
+                        {isPending ? t("loggingButton") : t("logAndCompleteButton")}
+                    </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
