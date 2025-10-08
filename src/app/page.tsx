@@ -395,7 +395,7 @@ export default function Home() {
       <header
         className={cn(
           "fixed top-4 left-1/2 z-40 hidden -translate-x-1/2 items-center gap-4 transition-transform duration-300 md:flex",
-          isScrolled && "-translate-y-24"
+          isScrolled ? "-translate-y-24" : "translate-y-0"
         )}
       >
         <SiteHeader onMenuClick={() => {}} />
@@ -407,7 +407,7 @@ export default function Home() {
       <header
         className={cn(
           "fixed top-4 left-1/2 z-40 flex w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-4 transition-transform duration-300 md:hidden",
-          isScrolled && "-translate-y-24"
+          isScrolled ? "-translate-y-24" : "translate-y-0"
         )}
       >
         <SiteHeader onMenuClick={() => setMobileMenuOpen(true)} />
@@ -454,6 +454,7 @@ export default function Home() {
               longestStreak={longestStreak}
               totalHours={totalHoursStudied}
             />
+            <SubjectPieChart subjects={subjects} />
             <ProductivityChart dailyLogs={dailyLogs} subjects={subjects} />
             <BadgesCard
               totalHours={totalHoursStudied}
@@ -474,3 +475,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
