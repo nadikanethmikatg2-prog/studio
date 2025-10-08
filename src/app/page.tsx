@@ -25,7 +25,6 @@ import { StatsCard } from "@/components/dashboard/stats-card";
 import { BadgesCard } from "@/components/dashboard/badges-card";
 import { CountdownCard } from "@/components/dashboard/countdown-card";
 import { format, parseISO, differenceInCalendarDays } from "date-fns";
-import { cn } from "@/lib/utils";
 
 // Dynamically import heavy components
 const WeeklyProgressChart = dynamic(() => import('@/components/dashboard/weekly-progress-chart').then(mod => mod.WeeklyProgressChart), {
@@ -376,8 +375,8 @@ export default function Home() {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background dashboard-container">
        <header className="fixed top-4 left-1/2 -translate-x-1/2 z-40 flex items-start gap-4">
-        <CountdownCard />
         <SiteHeader />
+        <CountdownCard />
       </header>
 
       <main className="flex-1 p-4 pt-32 md:p-6 lg:p-8">
@@ -429,5 +428,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
