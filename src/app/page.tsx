@@ -403,12 +403,12 @@ export default function Home() {
               longestStreak={longestStreak}
               totalHours={totalHoursStudied}
             />
+            <ProductivityChart dailyLogs={dailyLogs} subjects={subjects} />
             <BadgesCard
               totalHours={totalHoursStudied}
               longestStreak={longestStreak}
               totalTasksCompleted={totalTasksCompleted}
             />
-            <ProductivityChart dailyLogs={dailyLogs} subjects={subjects} />
           </div>
         </div>
       </main>
