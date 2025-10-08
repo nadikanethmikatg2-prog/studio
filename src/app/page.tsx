@@ -420,7 +420,7 @@ export default function Home() {
                     <UserMenu />
                     <CountdownCard />
                 </div>
-                <p className="text-xs text-muted-foreground text-center">© {new Date().getFullYear()} A/L Study Buddy</p>
+                <p className="text-xs text-muted-foreground text-center">© {new Date().getFullYear()} Nadika Nethmika</p>
             </div>
         </SheetContent>
       </Sheet>
